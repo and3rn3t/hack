@@ -1,3 +1,6 @@
+// Allow unused functions - these are prepared for future UI enhancements
+#![allow(dead_code)]
+
 use crossterm::{
     cursor, execute,
     style::{Color, Print, ResetColor, SetForegroundColor},

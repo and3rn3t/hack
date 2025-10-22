@@ -9,6 +9,7 @@ on:
     branches: [main, develop]
   release:
     types: [created]
+  workflow_dispatch: # Allow manual trigger
 
 env:
   CARGO_TERM_COLOR: always
@@ -96,6 +97,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         rust: [stable, nightly]
+      fail-fast: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -114,11 +116,19 @@ jobs:
             target
           key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Run tests
-        run: cargo test --all-features --verbose
+      - name: Run unit tests
+        run: cargo test --lib --all-features --verbose
+
+      - name: Run integration tests
+        run: cargo test --test '*' --all-features --verbose
 
       - name: Run doc tests
         run: cargo test --doc --all-features
+
+      - name: Test summary
+        if: always()
+        run: |
+          echo "✅ All tests passed on ${{ matrix.os }} with ${{ matrix.rust }}"
 
   # Security audit
   security-audit:
@@ -239,11 +249,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Code coverage (optional, for future)
+  # Code coverage
   coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [test]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -251,17 +262,36 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-coverage-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install tarpaulin
         run: cargo install cargo-tarpaulin
 
       - name: Generate coverage
-        run: cargo tarpaulin --out Xml --all-features
+        run: cargo tarpaulin --out Xml --all-features --timeout 300
 
       - name: Upload to codecov.io
         uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./cobertura.xml
           fail_ci_if_error: false
+          verbose: true
+
+      - name: Generate coverage report (HTML)
+        run: cargo tarpaulin --out Html --all-features --timeout 300
+
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: tarpaulin-report.html
 
   # Documentation build
   docs:

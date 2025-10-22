@@ -1,8 +1,134 @@
-# Terminal Setup Scripts
+# Project Scripts
 
-This directory contains scripts to verify and configure your terminal for The Hack: Ghost Protocol.
+This directory contains utility scripts for development, testing, and building The Hack: Ghost Protocol.
 
-## Scripts Overview
+## Quick Reference
+
+| Script               | Purpose                            | Platform |
+| -------------------- | ---------------------------------- | -------- |
+| `quick-check.*`      | Fast dev check (fmt, clippy, test) | All      |
+| `test-watch.*`       | Continuous testing on file changes | All      |
+| `test-verbose.*`     | Run tests with detailed output     | All      |
+| `test-coverage.*`    | Generate coverage reports          | All      |
+| `build-release.*`    | Build optimized release binary     | All      |
+| `clean-all.*`        | Clean all build artifacts          | All      |
+| `verify-terminal.*`  | Check terminal compatibility       | All      |
+| `setup-terminal.ps1` | Configure Windows terminal         | Windows  |
+
+## Development Scripts
+
+### `quick-check` - Fast Development Check
+
+Runs format, clippy, and tests in sequence. Perfect for pre-commit checks.
+
+**Usage:**
+
+```bash
+# Windows
+pwsh scripts/quick-check.ps1
+
+# Linux/macOS
+./scripts/quick-check.sh
+```
+
+**What it does:**
+
+1. Formats code with `cargo fmt`
+2. Runs `cargo clippy` with warnings as errors
+3. Runs all tests
+4. Shows total execution time
+
+### `clean-all` - Deep Clean
+
+Removes all build artifacts, coverage reports, and optionally save files.
+
+**Usage:**
+
+```bash
+# Windows
+pwsh scripts/clean-all.ps1
+
+# Linux/macOS
+./scripts/clean-all.sh
+```
+
+## Testing Scripts
+
+### `test-watch` - Continuous Testing
+
+Automatically re-runs tests when files change. Great for TDD workflow.
+
+**Requirements:** `cargo install cargo-watch`
+
+**Usage:**
+
+```bash
+# Watch all tests (Windows)
+pwsh scripts/test-watch.ps1
+
+# Watch specific test pattern
+pwsh scripts/test-watch.ps1 "challenges"
+
+# Linux/macOS
+./scripts/test-watch.sh
+./scripts/test-watch.sh "challenges"
+```
+
+### `test-verbose` - Detailed Test Output
+
+Runs tests with `--nocapture` to see all output including print statements.
+
+**Usage:**
+
+```bash
+# Run all tests verbosely (Windows)
+pwsh scripts/test-verbose.ps1
+
+# Run specific test
+pwsh scripts/test-verbose.ps1 "test_welcome_challenge"
+
+# Linux/macOS
+./scripts/test-verbose.sh
+./scripts/test-verbose.sh "test_welcome_challenge"
+```
+
+### `test-coverage` - Coverage Reports
+
+Generates HTML coverage report using `cargo-tarpaulin`.
+
+**Requirements:** `cargo install cargo-tarpaulin` (Linux/macOS/WSL only)
+
+**Usage:**
+
+```bash
+# Windows (requires WSL)
+wsl ./scripts/test-coverage.sh
+
+# Linux/macOS
+./scripts/test-coverage.sh
+```
+
+**Output:** `coverage/index.html`
+
+## Build Scripts
+
+### `build-release` - Optimized Build
+
+Builds release binary with optimizations and shows detailed stats.
+
+**Usage:**
+
+```bash
+# Windows
+pwsh scripts/build-release.ps1
+
+# Linux/macOS
+./scripts/build-release.sh
+```
+
+**Output:** `target/release/hack_simulator[.exe]`
+
+## Terminal Verification Scripts
 
 ### `verify-terminal.sh` (Linux/macOS)
 

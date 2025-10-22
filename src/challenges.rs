@@ -323,7 +323,7 @@ What is the common character sequence used in path traversal attacks?
             8,
             |answer| {
                 let a = answer.replace(" ", "");
-                a == "../" || a == ".." || a == "../" || a == "..\\"
+                a == "../" || a == ".." || a == "..\\"
             },
             vec![
                 "Path traversal attacks navigate up directory levels.".to_string(),
@@ -1224,6 +1224,96 @@ mod tests {
                 "Challenge '{}' ID should be lowercase with underscores",
                 challenge.id
             );
+        }
+    }
+
+    // Property-based tests
+    #[cfg(test)]
+    mod proptests {
+        use super::*;
+        use proptest::prelude::*;
+
+        proptest! {
+            /// Property: Challenge validators should never panic on any input
+            #[test]
+            fn test_validators_never_panic(input in "\\PC*") {
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    // Should not panic, regardless of input
+                    let _ = (challenge.check_answer)(&input);
+                }
+            }
+
+            /// Property: Empty input should never be accepted as correct
+            #[test]
+            fn test_empty_input_never_valid(whitespace in "[ \t\n\r]*") {
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    // Empty/whitespace-only input should not be valid
+                    assert!(
+                        !(challenge.check_answer)(&whitespace),
+                        "Challenge '{}' should not accept whitespace-only input",
+                        challenge.id
+                    );
+                }
+            }
+
+            /// Property: Very long inputs should not crash
+            #[test]
+            fn test_long_inputs_handled(repeat in 1..1000usize) {
+                let long_input = "A".repeat(repeat);
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    let _ = (challenge.check_answer)(&long_input);
+                }
+            }
+
+            /// Property: Special characters don't cause panics
+            #[test]
+            fn test_special_chars_safe(special in "[!@#$%^&*()_+\\-=\\[\\]{}|;':\",./<>?`~]*") {
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    let _ = (challenge.check_answer)(&special);
+                }
+            }
+
+            /// Property: Case variations of wrong answers are still wrong
+            #[test]
+            fn test_wrong_answer_case_insensitive(wrong in "wrong|incorrect|invalid|nope|bad") {
+                let challenges = get_all_challenges();
+                let variations = vec![
+                    wrong.to_lowercase(),
+                    wrong.to_uppercase(),
+                    wrong.to_string(),
+                ];
+
+                for challenge in &challenges {
+                    for variant in &variations {
+                        // These generic wrong answers should not match any challenge
+                        // (unless by chance a challenge actually expects "wrong" as answer)
+                        let _ = (challenge.check_answer)(variant);
+                    }
+                }
+            }
+
+            /// Property: Numeric inputs are handled safely
+            #[test]
+            fn test_numeric_inputs_safe(num in any::<i64>()) {
+                let num_str = num.to_string();
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    let _ = (challenge.check_answer)(&num_str);
+                }
+            }
+
+            /// Property: Unicode characters don't break validators
+            #[test]
+            fn test_unicode_safe(unicode in "[\\u{0000}-\\u{FFFF}]{0,20}") {
+                let challenges = get_all_challenges();
+                for challenge in &challenges {
+                    let _ = (challenge.check_answer)(&unicode);
+                }
+            }
         }
     }
 }

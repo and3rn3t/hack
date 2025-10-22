@@ -16,11 +16,19 @@ cargo test test_welcome_challenge
 
 # Run tests for the challenges module
 cargo test challenges::tests
+
+# Run integration tests only
+cargo test --test '*'
+
+# Run property-based tests
+cargo test proptests
 ```
 
 ## Test Suite Overview
 
-The project includes 34 automated tests that validate all aspects of the challenge system:
+**Current Test Count**: 88+ tests (34 challenge tests + 30 state tests + 14 integration tests + 10 property-based tests)
+
+The project includes comprehensive automated tests covering multiple aspects:
 
 ### Test Categories
 

@@ -68,14 +68,17 @@ Comprehensive configuration documentation:
 
 ### Development Guides
 
-| Document                                                                                        | Description                        | Audience                 |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------ |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)                                                           | Development workflow and standards | Contributors             |
-| [docs/ROADMAP.md](ROADMAP.md)                                                                   | Future features and timeline       | Community                |
-| [docs/TESTING.md](TESTING.md)                                                                   | Testing guide and best practices   | Developers               |
-| [docs/TOOLS.md](TOOLS.md)                                                                       | Linting and quality tools          | Developers               |
-| [docs/CI_CHECKS.md](CI_CHECKS.md)                                                               | CI/CD checks reference             | Developers               |
-| [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance       | Developers using Copilot |
+| Document                                                                                        | Description                           | Audience                 |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------ |
+| [CONTRIBUTING.md](../CONTRIBUTING.md)                                                           | Development workflow and standards    | Contributors             |
+| [docs/DEV_WORKFLOW.md](DEV_WORKFLOW.md)                                                         | Development scripts and VS Code tasks | Developers               |
+| [docs/ROADMAP.md](ROADMAP.md)                                                                   | Future features and timeline          | Community                |
+| [docs/TESTING.md](TESTING.md)                                                                   | Testing guide and best practices      | Developers               |
+| [docs/TESTING_STRATEGY.md](TESTING_STRATEGY.md)                                                 | Comprehensive testing strategy        | Developers               |
+| [docs/TOOLS.md](TOOLS.md)                                                                       | Linting and quality tools             | Developers               |
+| [docs/CI_CHECKS.md](CI_CHECKS.md)                                                               | CI/CD checks reference (legacy)       | Developers               |
+| [docs/CI_CD_PIPELINE.md](CI_CD_PIPELINE.md)                                                     | Complete CI/CD documentation          | Developers/Maintainers   |
+| [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance          | Developers using Copilot |
 
 ### Gameplay & Content
 
