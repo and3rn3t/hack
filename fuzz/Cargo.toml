@@ -1,0 +1,31 @@
+[package]
+name = "hack_simulator-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+hack_simulator = { path = ".." }
+serde_json = "1.0"
+
+[[bin]]
+name = "fuzz_challenge_validators"
+path = "fuzz_targets/fuzz_challenge_validators.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_state_deserialization"
+path = "fuzz_targets/fuzz_state_deserialization.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_state_operations"
+path = "fuzz_targets/fuzz_state_operations.rs"
+test = false
+doc = false
