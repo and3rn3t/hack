@@ -24,9 +24,10 @@ Everything you need to know about contributing:
 
 Guides for players:
 
-1. **[README.md](../README.md)** - How to install and play
-2. **[WALKTHROUGH.md](WALKTHROUGH.md)** - Solutions and hints for challenges
-3. **[DEMO.md](DEMO.md)** - Demo and showcase information
+1. **[README.md](../README.md)** - Quick start guide
+2. **[docs/TERMINAL_SETUP.md](TERMINAL_SETUP.md)** - Terminal configuration (important!)
+3. **[WALKTHROUGH.md](../WALKTHROUGH.md)** - Challenge solutions and hints
+4. **[DEMO.md](DEMO.md)** - Demo and showcase information
 
 ### Need Configuration Help?
 

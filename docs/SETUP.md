@@ -74,6 +74,40 @@ cargo run
 cargo run --release
 ```
 
+### Terminal Setup
+
+#### Importance
+
+This is a **terminal-based game** with ANSI colors and Unicode box-drawing characters. A properly configured terminal is essential for the best experience.
+
+#### Quick Check
+
+Run the terminal verification script:
+
+```bash
+# Windows
+pwsh scripts/verify-terminal.ps1
+
+# Linux/macOS
+bash scripts/verify-terminal.sh
+```
+
+#### Recommended Terminals
+
+-   **Windows**: Windows Terminal (install: `winget install Microsoft.WindowsTerminal`)
+-   **Linux**: GNOME Terminal, Alacritty, or Kitty
+-   **macOS**: iTerm2 or Terminal.app
+
+#### Quick Setup
+
+For automatic setup on Windows:
+
+```powershell
+pwsh scripts/setup-terminal.ps1
+```
+
+**For detailed terminal configuration, see [TERMINAL_SETUP.md](TERMINAL_SETUP.md)**
+
 ## Development Environment
 
 ### VS Code Setup

@@ -26,6 +26,11 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
 
 -   [Rust](https://www.rust-lang.org/tools/install) (2021 edition or later)
 -   Terminal that supports ANSI color codes
+    -   **Windows**: Windows Terminal (recommended), PowerShell 7+
+    -   **Linux**: Any modern terminal (GNOME Terminal, Konsole, Alacritty)
+    -   **macOS**: iTerm2 or Terminal.app
+
+**Terminal Setup:** For optimal experience, see [Terminal Setup Guide](docs/TERMINAL_SETUP.md)
 
 ### Installation
 

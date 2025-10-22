@@ -62,6 +62,7 @@ This document provides a quick reference to all configuration files and setup do
 
     - `README.md` - Project overview
     - `docs/SETUP.md` - Environment setup
+    - `docs/TERMINAL_SETUP.md` - Terminal configuration
 
 2. **Setup Environment:**
 
@@ -69,6 +70,10 @@ This document provides a quick reference to all configuration files and setup do
     # Clone repo
     git clone https://github.com/and3rn3t/hack.git
     cd hack
+
+    # Verify terminal (important!)
+    pwsh scripts/verify-terminal.ps1  # Windows
+    bash scripts/verify-terminal.sh   # Linux/macOS
 
     # Install Rust (if needed)
     # Visit https://rustup.rs/
