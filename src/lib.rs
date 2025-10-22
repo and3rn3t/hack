@@ -5,4 +5,5 @@ pub mod challenges;
 pub mod game;
 pub mod narrative;
 pub mod state;
+pub mod tutorial;
 pub mod ui;

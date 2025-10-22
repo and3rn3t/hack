@@ -1,4 +1,4 @@
-use crate::{challenges, narrative, state::GameState, ui};
+use crate::{challenges, narrative, state::GameState, tutorial, ui};
 use std::io;
 
 pub fn run_game() -> io::Result<()> {
@@ -25,7 +25,33 @@ pub fn run_game() -> io::Result<()> {
                 crossterm::style::Color::White,
             )?;
             let name = ui::read_input("Enter your name: ")?;
-            let state = GameState::new(name);
+            let mut state = GameState::new(name);
+            
+            // Offer tutorial for new players
+            if state.needs_tutorial() {
+                ui::print_colored(
+                    "\n\nWould you like to play the interactive tutorial?\n",
+                    crossterm::style::Color::Cyan,
+                )?;
+                ui::print_colored(
+                    "(Recommended for first-time players)\n",
+                    crossterm::style::Color::DarkGrey,
+                )?;
+                
+                let choice = ui::read_input("[Y/n]: ")?;
+                if choice.is_empty() || choice.to_lowercase().starts_with('y') {
+                    tutorial::run_tutorial(&mut state)?;
+                } else {
+                    ui::print_colored(
+                        "\nSkipping tutorial. You can review game mechanics in the README.\n",
+                        crossterm::style::Color::Yellow,
+                    )?;
+                    state.mark_tutorial_completed();
+                    state.save()?;
+                    ui::pause()?;
+                }
+            }
+            
             narrative::show_intro(&state.player_name)?;
             state
         }
@@ -120,6 +146,7 @@ pub fn run_game() -> io::Result<()> {
         println!("\n⚙️  OPTIONS:\n");
         ui::print_menu_option("1-N", "Select a challenge by number", None)?;
         ui::print_menu_option("stats", "View detailed statistics", None)?;
+        ui::print_menu_option("help", "Show available tooltips", None)?;
         ui::print_menu_option("save", "Save your progress", None)?;
         ui::print_menu_option("quit", "Exit the Ghost Protocol", None)?;
 
@@ -127,6 +154,7 @@ pub fn run_game() -> io::Result<()> {
 
         match choice.to_lowercase().as_str() {
             "stats" => show_stats(&state)?,
+            "help" | "tutorial" | "?" => show_help()?,
             "save" => {
                 state.save()?;
                 ui::print_success("Game saved successfully!")?;
@@ -311,5 +339,101 @@ fn show_stats(state: &GameState) -> io::Result<()> {
     }
 
     ui::pause()?;
+    Ok(())
+}
+
+fn show_help() -> io::Result<()> {
+    ui::clear_screen()?;
+    
+    ui::print_colored(
+        "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
+        crossterm::style::Color::Cyan,
+    )?;
+    ui::print_colored(
+        "║                          📚 HELP & TOOLTIPS 📚                           ║\n",
+        crossterm::style::Color::Yellow,
+    )?;
+    ui::print_colored(
+        "╚═══════════════════════════════════════════════════════════════════════════╝\n",
+        crossterm::style::Color::Cyan,
+    )?;
+    
+    println!("\nSelect a topic to learn more:\n");
+    ui::print_menu_option("1", "Sanity System", None)?;
+    ui::print_menu_option("2", "Experience & Levels", None)?;
+    ui::print_menu_option("3", "Hint System", None)?;
+    ui::print_menu_option("4", "Challenge Levels", None)?;
+    ui::print_menu_option("5", "All Commands", None)?;
+    ui::print_menu_option("back", "Return to game", None)?;
+    
+    let choice = ui::read_input("\n> Topic: ")?;
+    
+    match choice.as_str() {
+        "1" => {
+            tutorial::show_tooltip("sanity")?;
+            ui::pause()?;
+            show_help()?; // Recursive for multiple lookups
+        }
+        "2" => {
+            tutorial::show_tooltip("xp")?;
+            ui::pause()?;
+            show_help()?;
+        }
+        "3" => {
+            tutorial::show_tooltip("hints")?;
+            ui::pause()?;
+            show_help()?;
+        }
+        "4" => {
+            tutorial::show_tooltip("levels")?;
+            ui::pause()?;
+            show_help()?;
+        }
+        "5" => {
+            show_all_commands()?;
+            ui::pause()?;
+            show_help()?;
+        }
+        _ => {} // Return to game
+    }
+    
+    Ok(())
+}
+
+fn show_all_commands() -> io::Result<()> {
+    ui::print_colored(
+        "\n⚙️  ALL AVAILABLE COMMANDS\n",
+        crossterm::style::Color::Cyan,
+    )?;
+    ui::print_separator()?;
+    
+    ui::print_colored(
+        r#"
+MAIN MENU:
+  [1-N]  → Select challenge by number
+  stats  → View detailed statistics
+  help   → Show this help menu
+  save   → Manually save progress
+  quit   → Exit game (auto-saves)
+
+DURING CHALLENGES:
+  hint   → Get progressive hints
+  skip   → Skip current challenge
+
+NAVIGATION (Input):
+  ↑/↓    → Navigate command history
+  ←/→    → Move cursor within input
+  Home   → Jump to start of line
+  End    → Jump to end of line
+  
+TIPS:
+  • Use hints liberally - learning is the goal!
+  • Watch your sanity meter carefully
+  • Failed challenges cost extra sanity
+  • Save often (or it auto-saves after each challenge)
+"#,
+        crossterm::style::Color::White,
+    )?;
+    
     Ok(())
 }

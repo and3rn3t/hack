@@ -112,6 +112,7 @@
   ],
 
   // Additional recommendations
-  "workbench.colorTheme": "Default Dark+",
-  "workbench.iconTheme": "vs-setal"
+  "workbench.colorTheme": "Gothic Emerald Crypt",
+  "workbench.iconTheme": "material-icon-theme",
+  "makefile.configureOnOpen": false
 }

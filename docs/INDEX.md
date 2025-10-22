@@ -80,6 +80,14 @@ Comprehensive configuration documentation:
 | [docs/CI_CD_PIPELINE.md](CI_CD_PIPELINE.md)                                                     | Complete CI/CD documentation          | Developers/Maintainers   |
 | [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance          | Developers using Copilot |
 
+### Features & User Experience
+
+| Document                                      | Description                            | Audience           |
+| --------------------------------------------- | -------------------------------------- | ------------------ |
+| [docs/BETTER_FEEDBACK.md](BETTER_FEEDBACK.md) | Intelligent feedback and learning tips | Developers/Players |
+| [docs/COMMAND_HISTORY.md](COMMAND_HISTORY.md) | Command history with arrow keys        | Developers/Players |
+| [docs/TERMINAL_SETUP.md](TERMINAL_SETUP.md)   | Terminal configuration                 | Players            |
+
 ### Gameplay & Content
 
 | Document                         | Description                   | Audience |

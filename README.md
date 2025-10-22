@@ -69,6 +69,14 @@ cargo test
 -   **hint**: Get a hint during a challenge (can be used multiple times)
 -   **skip**: Skip a challenge and try it later
 
+### Navigation Features
+
+-   **Arrow Keys**: Use ↑/↓ to navigate through command history
+-   **Left/Right Arrows**: Move cursor within your current input
+-   **Home/End**: Jump to beginning/end of input
+-   **Backspace/Delete**: Edit your input
+-   **Tab**: Command completion (coming soon)
+
 ## 📚 Challenge Categories
 
 ### Level 0: The Awakening (Beginner)

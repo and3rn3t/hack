@@ -74,14 +74,114 @@ impl Challenge {
                 return Ok(true);
             } else {
                 attempts += 1;
+
+                // Provide intelligent feedback based on the answer
+                self.provide_feedback(&input, attempts)?;
+
                 if attempts >= max_attempts {
                     ui::print_error("Maximum attempts reached. Challenge failed.")?;
+
+                    // Show helpful guidance for next time
+                    self.show_learning_resources()?;
+
                     state.modify_sanity(-10);
                     ui::pause()?;
                     return Ok(false);
                 }
-                ui::print_error("Incorrect answer. Try again.")?;
             }
+        }
+    }
+
+    fn provide_feedback(&self, answer: &str, attempt_num: usize) -> io::Result<()> {
+        // Basic feedback - can be enhanced per challenge
+        if attempt_num == 1 {
+            ui::print_colored("\n❌ Incorrect. ", crossterm::style::Color::Red)?;
+            ui::print_colored(
+                "Review the challenge description carefully.\n",
+                crossterm::style::Color::White,
+            )?;
+        } else if attempt_num == 2 {
+            ui::print_colored("\n❌ Still incorrect. ", crossterm::style::Color::Red)?;
+            ui::print_colored(
+                "Consider using 'hint' for guidance.\n",
+                crossterm::style::Color::Yellow,
+            )?;
+        } else if attempt_num >= 3 {
+            ui::print_colored("\n❌ Incorrect. ", crossterm::style::Color::Red)?;
+
+            // Provide specific feedback based on answer analysis
+            if answer.is_empty() {
+                ui::print_colored(
+                    "Your answer is empty. Please provide a value.\n",
+                    crossterm::style::Color::White,
+                )?;
+            } else if answer.len() < 3 {
+                ui::print_colored(
+                    "Your answer seems very short. Check if you're missing something.\n",
+                    crossterm::style::Color::White,
+                )?;
+            } else if answer.len() > 100 {
+                ui::print_colored(
+                    "Your answer is quite long. The solution might be simpler.\n",
+                    crossterm::style::Color::White,
+                )?;
+            } else {
+                ui::print_colored(
+                    &format!(
+                        "You've tried {} times. Use 'hint' if you need help.\n",
+                        attempt_num
+                    ),
+                    crossterm::style::Color::White,
+                )?;
+            }
+        }
+
+        Ok(())
+    }
+
+    fn show_learning_resources(&self) -> io::Result<()> {
+        ui::print_separator()?;
+        ui::print_colored("\n💡 LEARNING RESOURCES:\n", crossterm::style::Color::Cyan)?;
+
+        // Provide category-specific learning tips
+        let category_tip = self.get_category_tip();
+        ui::print_colored(
+            &format!("   • {}\n", category_tip),
+            crossterm::style::Color::White,
+        )?;
+
+        ui::print_colored(
+            "   • Review the challenge description and hints carefully\n",
+            crossterm::style::Color::White,
+        )?;
+
+        ui::print_colored(
+            "   • Try searching online for the concepts mentioned\n",
+            crossterm::style::Color::White,
+        )?;
+
+        Ok(())
+    }
+
+    fn get_category_tip(&self) -> String {
+        // Determine category based on challenge ID and provide relevant tips
+        if self.id.contains("base64")
+            || self.id.contains("hex")
+            || self.id.contains("binary")
+            || self.id.contains("url")
+            || self.id.contains("rot13")
+        {
+            "Practice encoding/decoding techniques - try online tools".to_string()
+        } else if self.id.contains("sql") || self.id.contains("http") {
+            "Review web security fundamentals and common vulnerabilities".to_string()
+        } else if self.id.contains("caesar") || self.id.contains("xor") {
+            "Study cryptography basics and cipher techniques".to_string()
+        } else if self.id.contains("buffer") || self.id.contains("format") {
+            "Learn about binary exploitation and memory safety".to_string()
+        } else if self.id.contains("file") || self.id.contains("port") {
+            "Understand system fundamentals and reconnaissance".to_string()
+        } else {
+            "Research the specific technique mentioned in the challenge".to_string()
         }
     }
 }

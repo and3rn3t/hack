@@ -2,6 +2,7 @@ mod challenges;
 mod game;
 mod narrative;
 mod state;
+mod tutorial;
 mod ui;
 
 use crossterm::{

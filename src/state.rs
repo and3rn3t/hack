@@ -14,6 +14,8 @@ pub struct GameState {
     pub player_name: String,
     pub sanity: i32,
     pub experience: i32,
+    #[serde(default)]
+    pub tutorial_completed: bool,
 }
 
 impl GameState {
@@ -25,6 +27,7 @@ impl GameState {
             player_name,
             sanity: 100,
             experience: 0,
+            tutorial_completed: false,
         }
     }
 
@@ -76,6 +79,14 @@ impl GameState {
 
     pub fn has_completed(&self, challenge_id: &str) -> bool {
         self.completed_challenges.contains(challenge_id)
+    }
+
+    pub fn mark_tutorial_completed(&mut self) {
+        self.tutorial_completed = true;
+    }
+
+    pub fn needs_tutorial(&self) -> bool {
+        !self.tutorial_completed && self.completed_challenges.is_empty()
     }
 }
 
