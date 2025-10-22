@@ -6,10 +6,10 @@ This game requires a terminal with ANSI color support and Unicode character rend
 
 ## Minimum Requirements
 
-- **ANSI Color Support**: 256-color or TrueColor support
-- **Unicode Support**: UTF-8 encoding
-- **Minimum Size**: 80 columns × 24 rows (recommended: 100 × 30)
-- **Font**: Monospace font with good box-drawing character support
+-   **ANSI Color Support**: 256-color or TrueColor support
+-   **Unicode Support**: UTF-8 encoding
+-   **Minimum Size**: 80 columns × 24 rows (recommended: 100 × 30)
+-   **Font**: Monospace font with good box-drawing character support
 
 ## Platform-Specific Configuration
 
@@ -33,42 +33,42 @@ winget install Microsoft.WindowsTerminal
 
 ```json
 {
-  "profiles": {
-    "defaults": {
-      "colorScheme": "One Half Dark",
-      "font": {
-        "face": "Cascadia Code",
-        "size": 11
-      },
-      "useAcrylic": false,
-      "opacity": 100,
-      "cursorShape": "bar",
-      "antialiasingMode": "cleartype"
-    }
-  },
-  "schemes": [
-    {
-      "name": "Hack Horror Theme",
-      "background": "#0C0C0C",
-      "foreground": "#CCCCCC",
-      "black": "#0C0C0C",
-      "blue": "#0037DA",
-      "cyan": "#3A96DD",
-      "green": "#13A10E",
-      "purple": "#881798",
-      "red": "#C50F1F",
-      "white": "#CCCCCC",
-      "yellow": "#C19C00",
-      "brightBlack": "#767676",
-      "brightBlue": "#3B78FF",
-      "brightCyan": "#61D6D6",
-      "brightGreen": "#16C60C",
-      "brightPurple": "#B4009E",
-      "brightRed": "#E74856",
-      "brightWhite": "#F2F2F2",
-      "brightYellow": "#F9F1A5"
-    }
-  ]
+    "profiles": {
+        "defaults": {
+            "colorScheme": "One Half Dark",
+            "font": {
+                "face": "Cascadia Code",
+                "size": 11
+            },
+            "useAcrylic": false,
+            "opacity": 100,
+            "cursorShape": "bar",
+            "antialiasingMode": "cleartype"
+        }
+    },
+    "schemes": [
+        {
+            "name": "Hack Horror Theme",
+            "background": "#0C0C0C",
+            "foreground": "#CCCCCC",
+            "black": "#0C0C0C",
+            "blue": "#0037DA",
+            "cyan": "#3A96DD",
+            "green": "#13A10E",
+            "purple": "#881798",
+            "red": "#C50F1F",
+            "white": "#CCCCCC",
+            "yellow": "#C19C00",
+            "brightBlack": "#767676",
+            "brightBlue": "#3B78FF",
+            "brightCyan": "#61D6D6",
+            "brightGreen": "#16C60C",
+            "brightPurple": "#B4009E",
+            "brightRed": "#E74856",
+            "brightWhite": "#F2F2F2",
+            "brightYellow": "#F9F1A5"
+        }
+    ]
 }
 ```
 
@@ -115,9 +115,9 @@ Add-Content $PROFILE "`n[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 #### Command Prompt (Not Recommended)
 
-- Limited color support
-- Poor Unicode rendering
-- Use Windows Terminal or PowerShell instead
+-   Limited color support
+-   Poor Unicode rendering
+-   Use Windows Terminal or PowerShell instead
 
 ### Linux
 
@@ -135,9 +135,9 @@ sudo dnf install gnome-terminal  # Fedora
 1. Open Preferences (Ctrl+,)
 2. Create new profile: "Hack Horror"
 3. Set colors:
-   - Background: #0C0C0C
-   - Foreground: #CCCCCC
-   - Use built-in scheme or customize
+    - Background: #0C0C0C
+    - Foreground: #CCCCCC
+    - Use built-in scheme or customize
 4. Set font: Monospace 11
 5. Set initial terminal size: 100 × 30
 
@@ -174,52 +174,52 @@ sudo apt install alacritty  # Debian/Ubuntu
 # Optimized for The Hack: Ghost Protocol
 
 window:
-  dimensions:
-    columns: 100
-    lines: 30
-  padding:
-    x: 2
-    y: 2
-  opacity: 1.0
+    dimensions:
+        columns: 100
+        lines: 30
+    padding:
+        x: 2
+        y: 2
+    opacity: 1.0
 
 font:
-  normal:
-    family: "Fira Code"
-    style: Regular
-  size: 11.0
+    normal:
+        family: "Fira Code"
+        style: Regular
+    size: 11.0
 
 colors:
-  primary:
-    background: '#0C0C0C'
-    foreground: '#CCCCCC'
-  normal:
-    black:   '#0C0C0C'
-    red:     '#C50F1F'
-    green:   '#13A10E'
-    yellow:  '#C19C00'
-    blue:    '#0037DA'
-    magenta: '#881798'
-    cyan:    '#3A96DD'
-    white:   '#CCCCCC'
-  bright:
-    black:   '#767676'
-    red:     '#E74856'
-    green:   '#16C60C'
-    yellow:  '#F9F1A5'
-    blue:    '#3B78FF'
-    magenta: '#B4009E'
-    cyan:    '#61D6D6'
-    white:   '#F2F2F2'
+    primary:
+        background: "#0C0C0C"
+        foreground: "#CCCCCC"
+    normal:
+        black: "#0C0C0C"
+        red: "#C50F1F"
+        green: "#13A10E"
+        yellow: "#C19C00"
+        blue: "#0037DA"
+        magenta: "#881798"
+        cyan: "#3A96DD"
+        white: "#CCCCCC"
+    bright:
+        black: "#767676"
+        red: "#E74856"
+        green: "#16C60C"
+        yellow: "#F9F1A5"
+        blue: "#3B78FF"
+        magenta: "#B4009E"
+        cyan: "#61D6D6"
+        white: "#F2F2F2"
 
 # Performance
 scrolling:
-  history: 10000
-  multiplier: 3
+    history: 10000
+    multiplier: 3
 
 # Remove delay for escape sequences
 keyboard:
-  bindings:
-    - { key: Escape, action: ToggleViMode }
+    bindings:
+        - { key: Escape, action: ToggleViMode }
 ```
 
 #### Kitty (GPU-Accelerated)
@@ -278,40 +278,40 @@ brew install --cask iterm2
 
 1. Preferences → Profiles → Create new profile "Hack Horror"
 2. Colors:
-   - Background: RGB(12, 12, 12)
-   - Foreground: RGB(204, 204, 204)
-   - Import color preset or set manually
+    - Background: RGB(12, 12, 12)
+    - Foreground: RGB(204, 204, 204)
+    - Import color preset or set manually
 3. Text:
-   - Font: Menlo or SF Mono, 11pt
-   - Unicode normalization: NFC
+    - Font: Menlo or SF Mono, 11pt
+    - Unicode normalization: NFC
 4. Window:
-   - Columns: 100
-   - Rows: 30
+    - Columns: 100
+    - Rows: 30
 5. Terminal:
-   - Report terminal type: xterm-256color
-   - Character encoding: Unicode (UTF-8)
+    - Report terminal type: xterm-256color
+    - Character encoding: Unicode (UTF-8)
 
 **iTerm2 Profile JSON (Import):**
 
 ```json
 {
-  "Name": "Hack Horror",
-  "Guid": "hack-horror-theme",
-  "Background Color": {
-    "Red": 0.047,
-    "Green": 0.047,
-    "Blue": 0.047
-  },
-  "Foreground Color": {
-    "Red": 0.8,
-    "Green": 0.8,
-    "Blue": 0.8
-  },
-  "Ansi 0 Color": {
-    "Red": 0.047,
-    "Green": 0.047,
-    "Blue": 0.047
-  }
+    "Name": "Hack Horror",
+    "Guid": "hack-horror-theme",
+    "Background Color": {
+        "Red": 0.047,
+        "Green": 0.047,
+        "Blue": 0.047
+    },
+    "Foreground Color": {
+        "Red": 0.8,
+        "Green": 0.8,
+        "Blue": 0.8
+    },
+    "Ansi 0 Color": {
+        "Red": 0.047,
+        "Green": 0.047,
+        "Blue": 0.047
+    }
 }
 ```
 
@@ -336,10 +336,10 @@ alias hack='cd ~/projects/hack && cargo run'
 1. Preferences → Profiles
 2. Duplicate "Basic" profile → Rename to "Hack Horror"
 3. Text:
-   - Font: SF Mono, 11pt
-   - Character encoding: Unicode (UTF-8)
+    - Font: SF Mono, 11pt
+    - Character encoding: Unicode (UTF-8)
 4. Window:
-   - Columns: 100, Rows: 30
+    - Columns: 100, Rows: 30
 5. Colors: Adjust to dark theme
 
 ## Font Recommendations
@@ -348,21 +348,21 @@ alias hack='cd ~/projects/hack && cargo run'
 
 1. **Cascadia Code** (Best for Windows Terminal)
 
-   ```powershell
-   # Pre-installed with Windows Terminal
-   ```
+    ```powershell
+    # Pre-installed with Windows Terminal
+    ```
 
 2. **JetBrains Mono**
 
-   ```powershell
-   choco install jetbrainsmono
-   ```
+    ```powershell
+    choco install jetbrainsmono
+    ```
 
 3. **Fira Code**
 
-   ```powershell
-   choco install firacode
-   ```
+    ```powershell
+    choco install firacode
+    ```
 
 ### Linux
 
@@ -517,10 +517,10 @@ set bell-style none  # Bash
 
 The game uses:
 
-- Alternate screen buffer (no scrollback pollution)
-- Direct cursor positioning (fast)
-- Minimal ANSI escape sequences
-- Efficient color codes
+-   Alternate screen buffer (no scrollback pollution)
+-   Direct cursor positioning (fast)
+-   Minimal ANSI escape sequences
+-   Efficient color codes
 
 ## Troubleshooting
 
@@ -547,10 +547,10 @@ export TERM=xterm-256color
 1. Install a proper monospace font (see recommendations)
 2. Set UTF-8 encoding:
 
-   ```bash
-   export LANG=en_US.UTF-8
-   export LC_ALL=en_US.UTF-8
-   ```
+    ```bash
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+    ```
 
 3. Use Windows Terminal on Windows
 
@@ -593,23 +593,23 @@ tput lines # Should be 24+
 
 ### During Development
 
-- Use integrated terminal in VS Code for quick testing
-- Use native terminal for full gameplay experience
-- Keep terminal at least 100×30 for best layout
+-   Use integrated terminal in VS Code for quick testing
+-   Use native terminal for full gameplay experience
+-   Keep terminal at least 100×30 for best layout
 
 ### For Players
 
-- Maximize terminal window
-- Use dark theme for horror atmosphere
-- Disable distractions (notifications, other windows)
-- Good lighting to avoid eye strain
+-   Maximize terminal window
+-   Use dark theme for horror atmosphere
+-   Disable distractions (notifications, other windows)
+-   Good lighting to avoid eye strain
 
 ### For Streamers/Recording
 
-- Use 120×40 or larger for better visibility
-- Increase font size (13-14pt)
-- Use high-contrast color scheme
-- Consider recording at 1080p or higher
+-   Use 120×40 or larger for better visibility
+-   Increase font size (13-14pt)
+-   Use high-contrast color scheme
+-   Consider recording at 1080p or higher
 
 ## Quick Setup Commands
 
@@ -668,18 +668,18 @@ cargo run
 
 Look for:
 
-- ✅ Colors display correctly
-- ✅ Box-drawing characters render properly
-- ✅ No flickering or tearing
-- ✅ Smooth screen updates
-- ✅ Responsive input
+-   ✅ Colors display correctly
+-   ✅ Box-drawing characters render properly
+-   ✅ No flickering or tearing
+-   ✅ Smooth screen updates
+-   ✅ Responsive input
 
 ## Additional Resources
 
-- [Crossterm Documentation](https://docs.rs/crossterm/)
-- [Windows Terminal Documentation](https://docs.microsoft.com/windows-terminal/)
-- [iTerm2 Documentation](https://iterm2.com/documentation.html)
-- [ANSI Escape Codes Reference](https://en.wikipedia.org/wiki/ANSI_escape_code)
+-   [Crossterm Documentation](https://docs.rs/crossterm/)
+-   [Windows Terminal Documentation](https://docs.microsoft.com/windows-terminal/)
+-   [iTerm2 Documentation](https://iterm2.com/documentation.html)
+-   [ANSI Escape Codes Reference](https://en.wikipedia.org/wiki/ANSI_escape_code)
 
 ---
 

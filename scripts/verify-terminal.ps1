@@ -36,10 +36,12 @@ $psVersion = $PSVersionTable.PSVersion
 Write-Host "   Version: $psVersion"
 if ($psVersion.Major -ge 7) {
     Write-Pass "PowerShell 7+ detected (optimal)"
-} elseif ($psVersion.Major -ge 5) {
+}
+elseif ($psVersion.Major -ge 5) {
     Write-Warn "PowerShell 5.x (consider upgrading to PowerShell 7)"
     $script:warnings++
-} else {
+}
+else {
     Write-Fail "PowerShell version too old"
     $script:errors++
 }
@@ -53,17 +55,20 @@ try {
     Write-Host "   Current size: $($cols)x$($rows)"
     Write-Host "   Minimum required: 80x24"
     Write-Host "   Recommended: 100x30"
-    
+
     if ($cols -ge 100 -and $rows -ge 30) {
         Write-Pass "Optimal size"
-    } elseif ($cols -ge 80 -and $rows -ge 24) {
+    }
+    elseif ($cols -ge 80 -and $rows -ge 24) {
         Write-Warn "Adequate size (consider expanding)"
         $script:warnings++
-    } else {
+    }
+    else {
         Write-Fail "Terminal too small"
         $script:errors++
     }
-} catch {
+}
+catch {
     Write-Fail "Could not determine terminal size"
     $script:errors++
 }
@@ -77,7 +82,8 @@ Write-Host "   Input Encoding: $($inputEncoding.EncodingName)"
 
 if ($outputEncoding.EncodingName -match "UTF-8" -and $inputEncoding.EncodingName -match "UTF-8") {
     Write-Pass "UTF-8 encoding configured"
-} else {
+}
+else {
     Write-Fail "UTF-8 encoding not set"
     Write-Host "   Add to PowerShell profile (`$PROFILE):" -ForegroundColor Yellow
     Write-Host "   [Console]::OutputEncoding = [System.Text.Encoding]::UTF8" -ForegroundColor Yellow
@@ -90,7 +96,8 @@ Write-SectionHeader "4. Terminal Emulator"
 $isWindowsTerminal = $env:WT_SESSION
 if ($isWindowsTerminal) {
     Write-Pass "Running in Windows Terminal (optimal)"
-} else {
+}
+else {
     Write-Warn "Not running in Windows Terminal"
     Write-Host "   Windows Terminal provides better color and Unicode support" -ForegroundColor Yellow
     Write-Host "   Install: winget install Microsoft.WindowsTerminal" -ForegroundColor Yellow
@@ -132,7 +139,8 @@ Write-SectionHeader "7. Required Tools"
 try {
     $cargoVersion = cargo --version 2>&1
     Write-Pass "cargo found ($cargoVersion)"
-} catch {
+}
+catch {
     Write-Fail "cargo not found"
     Write-Host "   Install Rust from: https://rustup.rs/" -ForegroundColor Yellow
     $script:errors++
@@ -141,7 +149,8 @@ try {
 try {
     $rustcVersion = rustc --version 2>&1
     Write-Pass "rustc found ($rustcVersion)"
-} catch {
+}
+catch {
     Write-Fail "rustc not found"
     $script:errors++
 }
@@ -151,7 +160,8 @@ Write-SectionHeader "8. Environment Variables"
 if ($env:TERM) {
     Write-Host "   TERM: $($env:TERM)"
     Write-Pass "TERM variable set"
-} else {
+}
+else {
     Write-Host "   TERM: not set"
     Write-Warn "TERM variable not set (usually not needed on Windows)"
 }
@@ -159,7 +169,8 @@ if ($env:TERM) {
 if ($env:COLORTERM) {
     Write-Host "   COLORTERM: $($env:COLORTERM)"
     Write-Pass "COLORTERM set (truecolor support)"
-} else {
+}
+else {
     Write-Host "   COLORTERM: not set"
 }
 
@@ -177,7 +188,8 @@ if ($env:TERM_PROGRAM -eq "vscode") {
 $winVersion = [System.Environment]::OSVersion.Version
 if ($winVersion.Major -ge 10 -and $winVersion.Build -ge 17763) {
     Write-Pass "Modern Windows version with ConPTY support"
-} else {
+}
+else {
     Write-Warn "Old Windows version, terminal features may be limited"
     $script:warnings++
 }
@@ -196,14 +208,16 @@ if ($script:errors -eq 0) {
         Write-Host "You're ready to play The Hack: Ghost Protocol!" -ForegroundColor Green
         Write-Host "Run: " -NoNewline
         Write-Host "cargo run" -ForegroundColor Cyan
-    } else {
+    }
+    else {
         Write-Host "⚠ Terminal is adequate but could be improved." -ForegroundColor Yellow
         Write-Host ""
         Write-Host "Consider the recommendations above for the best experience." -ForegroundColor Yellow
         Write-Host "You can still play: " -NoNewline
         Write-Host "cargo run" -ForegroundColor Cyan
     }
-} else {
+}
+else {
     Write-Host "✗ Some critical checks failed." -ForegroundColor Red
     Write-Host ""
     Write-Host "Please address the issues above before playing." -ForegroundColor Red
@@ -219,18 +233,18 @@ if ($script:errors -gt 0 -or $script:warnings -gt 0) {
     Write-Host ""
     Write-Host "Quick Fix Suggestions:" -ForegroundColor Yellow
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
-    
+
     if ($outputEncoding.EncodingName -notmatch "UTF-8") {
         Write-Host "→ Set UTF-8 encoding:" -ForegroundColor Yellow
         Write-Host "  [Console]::OutputEncoding = [System.Text.Encoding]::UTF8" -ForegroundColor White
         Write-Host "  [Console]::InputEncoding = [System.Text.Encoding]::UTF8" -ForegroundColor White
     }
-    
+
     if (-not $isWindowsTerminal) {
         Write-Host "→ Install Windows Terminal:" -ForegroundColor Yellow
         Write-Host "  winget install Microsoft.WindowsTerminal" -ForegroundColor White
     }
-    
+
     if ($cols -lt 80 -or $rows -lt 24) {
         Write-Host "→ Resize terminal window to at least 80x24" -ForegroundColor Yellow
     }
