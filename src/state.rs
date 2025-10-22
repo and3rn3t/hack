@@ -47,7 +47,7 @@ impl GameState {
     pub fn complete_challenge(&mut self, challenge_id: &str, reward_xp: i32) {
         self.completed_challenges.insert(challenge_id.to_string());
         self.experience += reward_xp;
-        
+
         // Level progression based on experience
         let new_level = ((self.experience / 100).min(10)) as usize;
         if new_level > self.current_level {

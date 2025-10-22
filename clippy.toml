@@ -1,16 +1,17 @@
 # Clippy Configuration for The Hack: Ghost Protocol
-# Configure via .cargo/config.toml or command line
+# This file configures clippy lints for the project
+# Run with: cargo clippy --all-targets --all-features -- -D warnings
 
-# This file documents the clippy lints we enable/disable
-# Run with: cargo clippy -- -D warnings
+# NOTE: Clippy lints are controlled via command-line flags in CI/CD
+# This file only controls clippy.toml-specific settings
 
-# Deny all warnings in CI
-warn = ["clippy::all", "clippy::pedantic", "clippy::nursery"]
+# Complexity thresholds
+cognitive-complexity-threshold = 30
+type-complexity-threshold = 500
 
-# Allow certain pedantic lints
-allow = [
-  "clippy::module_name_repetitions",
-  "clippy::must_use_candidate",
-  "clippy::missing_errors_doc",
-  "clippy::missing_panics_doc",
-]
+# Allow certain patterns
+too-many-arguments-threshold = 10
+too-many-lines-threshold = 200
+
+# Documentation requirements
+missing-docs-in-crate-items = false

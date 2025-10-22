@@ -42,9 +42,7 @@ pub fn run_game() -> io::Result<()> {
         if level_challenges.is_empty() {
             // Check if player completed all challenges
             let all_challenges = challenges::get_all_challenges();
-            let completed_all = all_challenges
-                .iter()
-                .all(|c| state.has_completed(&c.id));
+            let completed_all = all_challenges.iter().all(|c| state.has_completed(&c.id));
 
             if completed_all {
                 // Game complete!
@@ -67,7 +65,8 @@ pub fn run_game() -> io::Result<()> {
             crossterm::style::Color::Cyan,
         )?;
         ui::print_colored(
-            &format!("║{} LEVEL {} - CHALLENGE SELECTION {}║\n",
+            &format!(
+                "║{} LEVEL {} - CHALLENGE SELECTION {}║\n",
                 " ".repeat(20),
                 state.current_level,
                 " ".repeat(20)
@@ -83,7 +82,8 @@ pub fn run_game() -> io::Result<()> {
         println!();
         ui::print_progress_bar(state.sanity, 100, "Sanity")?;
         ui::print_colored(
-            &format!("Experience: {} XP  │  Level: {}  │  Challenges: {}/{}\n",
+            &format!(
+                "Experience: {} XP  │  Level: {}  │  Challenges: {}/{}\n",
                 state.experience,
                 state.current_level,
                 state.completed_challenges.len(),
@@ -106,7 +106,13 @@ pub fn run_game() -> io::Result<()> {
             ui::print_colored(&format!("[{}]", idx + 1), crossterm::style::Color::Cyan)?;
             print!(" {} ", challenge.title);
             ui::print_colored(status, status_color)?;
-            ui::print_colored(&format!(" (+{} XP, -{} sanity)", challenge.xp_reward, challenge.sanity_cost), crossterm::style::Color::DarkGrey)?;
+            ui::print_colored(
+                &format!(
+                    " (+{} XP, -{} sanity)",
+                    challenge.xp_reward, challenge.sanity_cost
+                ),
+                crossterm::style::Color::DarkGrey,
+            )?;
             println!();
         }
 
@@ -128,7 +134,10 @@ pub fn run_game() -> io::Result<()> {
             }
             "quit" => {
                 state.save()?;
-                ui::print_colored("\n\nThe Ghost Protocol awaits your return...\n", crossterm::style::Color::Red)?;
+                ui::print_colored(
+                    "\n\nThe Ghost Protocol awaits your return...\n",
+                    crossterm::style::Color::Red,
+                )?;
                 ui::pause()?;
                 break;
             }
@@ -194,7 +203,8 @@ fn show_stats(state: &GameState) -> io::Result<()> {
         crossterm::style::Color::Magenta,
     )?;
     ui::print_colored(
-        &format!("║{} 📊 PLAYER STATISTICS {}║\n",
+        &format!(
+            "║{} 📊 PLAYER STATISTICS {}║\n",
             " ".repeat(25),
             " ".repeat(25)
         ),
@@ -206,9 +216,18 @@ fn show_stats(state: &GameState) -> io::Result<()> {
     )?;
 
     println!();
-    ui::print_colored(&format!("👤 Player: {}\n", state.player_name), crossterm::style::Color::Cyan)?;
-    ui::print_colored(&format!("⚡ Current Level: {}\n", state.current_level), crossterm::style::Color::Yellow)?;
-    ui::print_colored(&format!("🌟 Experience: {} XP\n", state.experience), crossterm::style::Color::Green)?;
+    ui::print_colored(
+        &format!("👤 Player: {}\n", state.player_name),
+        crossterm::style::Color::Cyan,
+    )?;
+    ui::print_colored(
+        &format!("⚡ Current Level: {}\n", state.current_level),
+        crossterm::style::Color::Yellow,
+    )?;
+    ui::print_colored(
+        &format!("🌟 Experience: {} XP\n", state.experience),
+        crossterm::style::Color::Green,
+    )?;
 
     println!();
     ui::print_progress_bar(state.sanity, 100, "🧠 Sanity")?;
@@ -217,7 +236,7 @@ fn show_stats(state: &GameState) -> io::Result<()> {
     ui::print_progress_bar(
         state.completed_challenges.len() as i32,
         all_challenges.len() as i32,
-        "✓  Challenges Completed"
+        "✓  Challenges Completed",
     )?;
 
     ui::print_separator()?;
@@ -229,7 +248,8 @@ fn show_stats(state: &GameState) -> io::Result<()> {
             continue;
         }
 
-        let completed = level_challenges.iter()
+        let completed = level_challenges
+            .iter()
             .filter(|c| state.has_completed(&c.id))
             .count();
         let total = level_challenges.len();
@@ -246,9 +266,15 @@ fn show_stats(state: &GameState) -> io::Result<()> {
         let bars = "█".repeat((completed as f32 / total as f32 * 10.0) as usize);
         let empty = "░".repeat(10 - (completed as f32 / total as f32 * 10.0) as usize);
 
-        ui::print_colored(&format!("  Level {}: ", level), crossterm::style::Color::White)?;
+        ui::print_colored(
+            &format!("  Level {}: ", level),
+            crossterm::style::Color::White,
+        )?;
         ui::print_colored(&format!("[{}{}]", bars, empty), color)?;
-        ui::print_colored(&format!(" {}/{} ({}%)\n", completed, total, percentage), color)?;
+        ui::print_colored(
+            &format!(" {}/{} ({}%)\n", completed, total, percentage),
+            color,
+        )?;
     }
 
     ui::print_separator()?;

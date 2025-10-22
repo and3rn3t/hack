@@ -1,0 +1,8 @@
+# Rust toolchain configuration
+# This ensures everyone uses the same Rust version
+# See: https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file
+
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy", "rust-src"]
+profile = "default"

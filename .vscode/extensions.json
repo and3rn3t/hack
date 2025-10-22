@@ -31,11 +31,14 @@
     // Testing & Quality
     "swellaby.vscode-rust-test-adapter", // Test explorer
     "hbenl.vscode-test-explorer", // Test explorer UI
+    "sonarsource.sonarlint-vscode", // Additional linting
 
     // Optional but Useful
     "editorconfig.editorconfig", // EditorConfig support
     "wayou.vscode-todo-highlight", // TODO/FIXME highlighting
-    "pflannery.vscode-versionlens" // Dependency version info
+    "pflannery.vscode-versionlens", // Dependency version info
+    "skellock.just", // Justfile syntax support
+    "tamasfe.even-better-toml" // Better TOML support
   ],
 
   "unwantedRecommendations": [

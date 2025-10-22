@@ -1,81 +1,16 @@
 # Rustfmt Configuration for The Hack: Ghost Protocol
+# Only stable features (no nightly required)
 # https://rust-lang.github.io/rustfmt/
 
-# Edition specification
 edition = "2021"
-
-# Maximum line width
 max_width = 100
-
-# Ideal maximum line width (rustfmt will try harder to stay below this)
 use_small_heuristics = "Default"
-
-# Indentation
-indent_style = "Block"
 tab_spaces = 4
-
-# Imports
-imports_granularity = "Crate"
-group_imports = "StdExternalCrate"
 reorder_imports = true
-
-# Comments
-comment_width = 80
-wrap_comments = true
-normalize_comments = true
-normalize_doc_attributes = true
-
-# Format strings
-format_strings = true
-
-# Macro formatting
-format_macro_matchers = true
-format_macro_bodies = true
-
-# Chain formatting
-chain_width = 80
-overflow_delimited_expr = true
-
-# Where clause
-where_single_line = false
-
-# Match arms
-match_arm_blocks = true
 match_arm_leading_pipes = "Never"
-
-# Control flow
-control_brace_style = "AlwaysSameLine"
-else_if_brace_style = "AlwaysSameLine"
-
-# Use field init shorthand if possible
 use_field_init_shorthand = true
-
-# Use try shorthand
 use_try_shorthand = true
-
-# Combine control flow expressions with function calls
-combine_control_expr = true
-
-# Struct literal formatting
-struct_lit_single_line = true
-
-# Function formatting
-fn_args_layout = "Tall"
-fn_single_line = false
-
-# Trait bounds
-trait_bounds_on_self = true
-
-# Attributes
 merge_derives = true
-
-# Reorder impl items
-reorder_impl_items = true
-
-# Remove blank lines at start or end of block
-blank_lines_upper_bound = 2
-blank_lines_lower_bound = 0
-
-# Misc
+reorder_modules = true
 newline_style = "Auto"
 remove_nested_parens = true

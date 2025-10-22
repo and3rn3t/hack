@@ -4,31 +4,31 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
 
 ## 🎮 Features
 
--   **Horror Theme**: A chilling narrative that unfolds as you progress through the challenges
--   **Progressive Difficulty**: Start with basic challenges and advance to complex hacking scenarios
--   **Beginner-Friendly**: Designed for non-techies with hints and educational content
--   **CTF Challenges**: Multiple categories including:
-    -   Basic encoding (Base64, Hex, Caesar cipher)
-    -   File system exploration
-    -   Network analysis
-    -   SQL injection
-    -   Cryptography
-    -   Web/Mobile security
-    -   Buffer overflow concepts
-    -   Reverse engineering
--   **Sanity System**: A unique horror twist - lose sanity as you delve deeper
--   **Save/Load System**: Progress is automatically saved
--   **Terminal UI**: Full terminal interface with colored output and ASCII art
+- **Horror Theme**: A chilling narrative that unfolds as you progress through the challenges
+- **Progressive Difficulty**: Start with basic challenges and advance to complex hacking scenarios
+- **Beginner-Friendly**: Designed for non-techies with hints and educational content
+- **CTF Challenges**: Multiple categories including:
+  - Basic encoding (Base64, Hex, Caesar cipher)
+  - File system exploration
+  - Network analysis
+  - SQL injection
+  - Cryptography
+  - Web/Mobile security
+  - Buffer overflow concepts
+  - Reverse engineering
+- **Sanity System**: A unique horror twist - lose sanity as you delve deeper
+- **Save/Load System**: Progress is automatically saved
+- **Terminal UI**: Full terminal interface with colored output and ASCII art
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
--   [Rust](https://www.rust-lang.org/tools/install) (2021 edition or later)
--   Terminal that supports ANSI color codes
-    -   **Windows**: Windows Terminal (recommended), PowerShell 7+
-    -   **Linux**: Any modern terminal (GNOME Terminal, Konsole, Alacritty)
-    -   **macOS**: iTerm2 or Terminal.app
+- [Rust](https://www.rust-lang.org/tools/install) (2021 edition or later)
+- Terminal that supports ANSI color codes
+  - **Windows**: Windows Terminal (recommended), PowerShell 7+
+  - **Linux**: Any modern terminal (GNOME Terminal, Konsole, Alacritty)
+  - **macOS**: iTerm2 or Terminal.app
 
 **Terminal Setup:** For optimal experience, see [Terminal Setup Guide](docs/TERMINAL_SETUP.md)
 
@@ -57,74 +57,74 @@ cargo test
 
 ### Game Commands
 
--   **[1-N]**: Select a challenge by number
--   **stats**: View your detailed statistics
--   **save**: Manually save your game (auto-saves after each challenge)
--   **quit**: Exit the game (progress is saved)
--   **hint**: Get a hint during a challenge (can be used multiple times)
--   **skip**: Skip a challenge and try it later
+- **[1-N]**: Select a challenge by number
+- **stats**: View your detailed statistics
+- **save**: Manually save your game (auto-saves after each challenge)
+- **quit**: Exit the game (progress is saved)
+- **hint**: Get a hint during a challenge (can be used multiple times)
+- **skip**: Skip a challenge and try it later
 
 ## 📚 Challenge Categories
 
 ### Level 0: The Awakening (Beginner)
 
--   Base64 encoding/decoding
--   Hidden file discovery
--   Basic network port analysis
--   ROT13 cipher decoding
--   Binary to ASCII conversion
--   URL encoding/decoding
+- Base64 encoding/decoding
+- Hidden file discovery
+- Basic network port analysis
+- ROT13 cipher decoding
+- Binary to ASCII conversion
+- URL encoding/decoding
 
 ### Level 1: Whispers in the Code (Intermediate)
 
--   Caesar cipher cryptography
--   SQL injection basics
--   Hexadecimal decoding
--   JWT token vulnerabilities
--   Path traversal attacks
--   MD5 hash cracking
--   Command injection
+- Caesar cipher cryptography
+- SQL injection basics
+- Hexadecimal decoding
+- JWT token vulnerabilities
+- Path traversal attacks
+- MD5 hash cracking
+- Command injection
 
 ### Level 2: The Forgotten Server (Web/Mobile)
 
--   HTTP header analysis
--   Mobile deep link exploitation
--   DNS tunneling detection
--   Cross-Site Scripting (XSS)
--   API key leakage and secret exposure
--   Session hijacking
--   CORS misconfigurations
+- HTTP header analysis
+- Mobile deep link exploitation
+- DNS tunneling detection
+- Cross-Site Scripting (XSS)
+- API key leakage and secret exposure
+- Session hijacking
+- CORS misconfigurations
 
 ### Level 3+: Advanced Territories
 
--   Buffer overflow concepts
--   Reverse engineering and XOR operations
--   Format string vulnerabilities
--   Race conditions
--   Integer overflow exploits
--   Advanced cryptography
--   Final protocol challenges
+- Buffer overflow concepts
+- Reverse engineering and XOR operations
+- Format string vulnerabilities
+- Race conditions
+- Integer overflow exploits
+- Advanced cryptography
+- Final protocol challenges
 
 ## 🎓 Educational Value
 
 This simulator teaches:
 
--   **Encoding schemes**: Base64, Hexadecimal, ASCII
--   **Cryptography**: Caesar cipher, XOR operations
--   **Web security**: HTTP headers, SQL injection
--   **Mobile security**: Deep linking, app analysis
--   **Network basics**: Port scanning, service identification
--   **Binary exploitation**: Buffer overflows (conceptual)
--   **Reverse engineering**: XOR logic, decompilation basics
+- **Encoding schemes**: Base64, Hexadecimal, ASCII
+- **Cryptography**: Caesar cipher, XOR operations
+- **Web security**: HTTP headers, SQL injection
+- **Mobile security**: Deep linking, app analysis
+- **Network basics**: Port scanning, service identification
+- **Binary exploitation**: Buffer overflows (conceptual)
+- **Reverse engineering**: XOR logic, decompilation basics
 
 ## 🔧 Technical Details
 
 ### Built With
 
--   **Rust** - A modern, safe systems programming language
--   **crossterm** - Cross-platform terminal manipulation
--   **serde** - Serialization/deserialization for save system
--   **rand** - Random number generation for game elements
+- **Rust** - A modern, safe systems programming language
+- **crossterm** - Cross-platform terminal manipulation
+- **serde** - Serialization/deserialization for save system
+- **rand** - Random number generation for game elements
 
 ### Architecture
 
@@ -140,12 +140,12 @@ src/
 
 ## 🎨 Horror Theme Elements
 
--   **ASCII art banners**: Atmospheric visual design
--   **Glitch effects**: Corrupted text for immersion
--   **Sanity meter**: Psychological horror mechanic
--   **Dark narrative**: Unfolding ghost story
--   **Ominous messages**: Environmental storytelling
--   **Twist ending**: Satisfying horror conclusion
+- **ASCII art banners**: Atmospheric visual design
+- **Glitch effects**: Corrupted text for immersion
+- **Sanity meter**: Psychological horror mechanic
+- **Dark narrative**: Unfolding ghost story
+- **Ominous messages**: Environmental storytelling
+- **Twist ending**: Satisfying horror conclusion
 
 ## 🛠️ Development
 
@@ -153,16 +153,16 @@ src/
 
 Get started quickly with our comprehensive setup guide:
 
--   📖 **[Setup Guide](docs/SETUP.md)** - Complete development environment setup
--   ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - All configuration options explained
--   📋 **[Configuration Summary](docs/CONFIG_SUMMARY.md)** - Quick reference for all config files
--   ✅ **[Setup Checklist](.github/CHECKLIST.md)** - Verify your environment is ready
+- 📖 **[Setup Guide](docs/SETUP.md)** - Complete development environment setup
+- ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - All configuration options explained
+- 📋 **[Configuration Summary](docs/CONFIG_SUMMARY.md)** - Quick reference for all config files
+- ✅ **[Setup Checklist](.github/CHECKLIST.md)** - Verify your environment is ready
 
 ### For Contributors
 
--   🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
--   🗺️ **[Roadmap](docs/ROADMAP.md)** - Future plans and innovations
--   🔒 **[Security Policy](SECURITY.md)** - Reporting security issues
+- 🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- 🗺️ **[Roadmap](docs/ROADMAP.md)** - Future plans and innovations
+- 🔒 **[Security Policy](SECURITY.md)** - Reporting security issues
 
 ### Quick Start
 
@@ -210,10 +210,10 @@ src/
 
 The project includes comprehensive configuration for:
 
--   **Rust/Cargo**: `Cargo.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`
--   **Editor**: `.editorconfig`, `.vscode/` settings
--   **CI/CD**: `.github/workflows/ci.yml`
--   **Git**: `.gitignore`
+- **Rust/Cargo**: `Cargo.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`
+- **Editor**: `.editorconfig`, `.vscode/` settings
+- **CI/CD**: `.github/workflows/ci.yml`
+- **Git**: `.gitignore`
 
 See [Configuration Guide](docs/CONFIGURATION.md) for details.
 
@@ -225,9 +225,9 @@ The game includes educational hints and progressive difficulty to ensure accessi
 
 The game includes mobile security challenges that teach:
 
--   Deep link vulnerabilities
--   Mobile app security concepts
--   Cross-platform security considerations
+- Deep link vulnerabilities
+- Mobile app security concepts
+- Cross-platform security considerations
 
 These challenges are accessible through the terminal interface and don't require actual mobile devices.
 

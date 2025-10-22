@@ -44,7 +44,11 @@ impl Challenge {
 
         loop {
             println!("\n");
-            let input = ui::read_input(&format!("Enter your answer (attempt {}/{}) or 'hint' for help or 'skip': ", attempts + 1, max_attempts))?;
+            let input = ui::read_input(&format!(
+                "Enter your answer (attempt {}/{}) or 'hint' for help or 'skip': ",
+                attempts + 1,
+                max_attempts
+            ))?;
 
             if input.to_lowercase() == "hint" {
                 if !self.hints.is_empty() {
@@ -243,7 +247,9 @@ What SQL injection payload would you use for the username field?
             10,
             |answer| {
                 let normalized = answer.to_lowercase().replace(" ", "");
-                normalized.contains("'or'1'='1'--") || normalized.contains("'or1=1--") || normalized == "admin'--"
+                normalized.contains("'or'1'='1'--")
+                    || normalized.contains("'or1=1--")
+                    || normalized == "admin'--"
             },
             vec![
                 "Think about how to make the WHERE clause always true.".to_string(),
@@ -294,7 +300,8 @@ What security vulnerability allows you to modify the token without a signature?
             },
             vec![
                 "The 'alg' field is set to 'none', bypassing signature verification.".to_string(),
-                "This vulnerability is called 'Algorithm Confusion' or 'None Algorithm'.".to_string(),
+                "This vulnerability is called 'Algorithm Confusion' or 'None Algorithm'."
+                    .to_string(),
                 "Answer: algorithm confusion (or 'none algorithm')".to_string(),
             ],
         ),
@@ -486,7 +493,8 @@ What type of security issue is this called?
                     || a == "secret exposure"
             },
             vec![
-                "Secrets accidentally committed to Git repos are a major security risk.".to_string(),
+                "Secrets accidentally committed to Git repos are a major security risk."
+                    .to_string(),
                 "Even if deleted, they remain in Git history forever.".to_string(),
                 "This is called a 'secret leak' or 'credential leak'.".to_string(),
             ],
@@ -585,7 +593,7 @@ What single character input would grant access?
             3,
             125,
             15,
-            |answer| answer.chars().next() == Some('o') || answer == "111" || answer == "0x6F",
+            |answer| answer.starts_with('o') || answer == "111" || answer == "0x6F",
             vec![
                 "XOR is reversible: A XOR B = C means A XOR C = B".to_string(),
                 "Calculate: 0x2D XOR 0x42 = ?".to_string(),
@@ -719,9 +727,19 @@ mod tests {
     fn test_all_challenges_have_valid_ids() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(!challenge.id.is_empty(), "Challenge '{}' has empty ID", challenge.title);
-            assert!(challenge.id.chars().all(|c| c.is_alphanumeric() || c == '_'),
-                "Challenge '{}' has invalid ID characters", challenge.title);
+            assert!(
+                !challenge.id.is_empty(),
+                "Challenge '{}' has empty ID",
+                challenge.title
+            );
+            assert!(
+                challenge
+                    .id
+                    .chars()
+                    .all(|c| c.is_alphanumeric() || c == '_'),
+                "Challenge '{}' has invalid ID characters",
+                challenge.title
+            );
         }
     }
 
@@ -730,8 +748,11 @@ mod tests {
         let challenges = get_all_challenges();
         let mut ids = std::collections::HashSet::new();
         for challenge in &challenges {
-            assert!(ids.insert(challenge.id.clone()),
-                "Duplicate challenge ID found: {}", challenge.id);
+            assert!(
+                ids.insert(challenge.id.clone()),
+                "Duplicate challenge ID found: {}",
+                challenge.id
+            );
         }
     }
 
@@ -739,7 +760,11 @@ mod tests {
     fn test_all_challenges_have_titles() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(!challenge.title.is_empty(), "Challenge '{}' has empty title", challenge.id);
+            assert!(
+                !challenge.title.is_empty(),
+                "Challenge '{}' has empty title",
+                challenge.id
+            );
         }
     }
 
@@ -747,10 +772,16 @@ mod tests {
     fn test_all_challenges_have_descriptions() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(!challenge.description.is_empty(),
-                "Challenge '{}' has empty description", challenge.id);
-            assert!(challenge.description.len() > 20,
-                "Challenge '{}' has too short description", challenge.id);
+            assert!(
+                !challenge.description.is_empty(),
+                "Challenge '{}' has empty description",
+                challenge.id
+            );
+            assert!(
+                challenge.description.len() > 20,
+                "Challenge '{}' has too short description",
+                challenge.id
+            );
         }
     }
 
@@ -758,10 +789,16 @@ mod tests {
     fn test_all_challenges_have_hints() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(!challenge.hints.is_empty(),
-                "Challenge '{}' has no hints", challenge.id);
-            assert!(challenge.hints.len() >= 2,
-                "Challenge '{}' should have at least 2 hints", challenge.id);
+            assert!(
+                !challenge.hints.is_empty(),
+                "Challenge '{}' has no hints",
+                challenge.id
+            );
+            assert!(
+                challenge.hints.len() >= 2,
+                "Challenge '{}' should have at least 2 hints",
+                challenge.id
+            );
         }
     }
 
@@ -769,10 +806,16 @@ mod tests {
     fn test_challenge_rewards_are_positive() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(challenge.xp_reward > 0,
-                "Challenge '{}' has non-positive XP reward", challenge.id);
-            assert!(challenge.sanity_cost > 0,
-                "Challenge '{}' has non-positive sanity cost", challenge.id);
+            assert!(
+                challenge.xp_reward > 0,
+                "Challenge '{}' has non-positive XP reward",
+                challenge.id
+            );
+            assert!(
+                challenge.sanity_cost > 0,
+                "Challenge '{}' has non-positive sanity cost",
+                challenge.id
+            );
         }
     }
 
@@ -780,8 +823,12 @@ mod tests {
     fn test_challenge_levels_are_valid() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(challenge.level <= 4,
-                "Challenge '{}' has invalid level {}", challenge.id, challenge.level);
+            assert!(
+                challenge.level <= 4,
+                "Challenge '{}' has invalid level {}",
+                challenge.id,
+                challenge.level
+            );
         }
     }
 
@@ -794,10 +841,16 @@ mod tests {
         let level_3: Vec<_> = challenges.iter().filter(|c| c.level == 3).collect();
 
         if !level_0.is_empty() && !level_3.is_empty() {
-            let avg_xp_0: i32 = level_0.iter().map(|c| c.xp_reward).sum::<i32>() / level_0.len() as i32;
-            let avg_xp_3: i32 = level_3.iter().map(|c| c.xp_reward).sum::<i32>() / level_3.len() as i32;
-            assert!(avg_xp_0 < avg_xp_3,
-                "Level 0 average XP ({}) should be less than Level 3 average XP ({})", avg_xp_0, avg_xp_3);
+            let avg_xp_0: i32 =
+                level_0.iter().map(|c| c.xp_reward).sum::<i32>() / level_0.len() as i32;
+            let avg_xp_3: i32 =
+                level_3.iter().map(|c| c.xp_reward).sum::<i32>() / level_3.len() as i32;
+            assert!(
+                avg_xp_0 < avg_xp_3,
+                "Level 0 average XP ({}) should be less than Level 3 average XP ({})",
+                avg_xp_0,
+                avg_xp_3
+            );
         }
     }
 
@@ -818,7 +871,10 @@ mod tests {
     #[test]
     fn test_welcome_challenge() {
         let challenges = get_all_challenges();
-        let welcome = challenges.iter().find(|c| c.id == "welcome").expect("Welcome challenge not found");
+        let welcome = challenges
+            .iter()
+            .find(|c| c.id == "welcome")
+            .expect("Welcome challenge not found");
 
         // Test correct answer
         assert!((welcome.check_answer)("welcome to the ghost protocol"));
@@ -834,7 +890,10 @@ mod tests {
     #[test]
     fn test_file_discovery_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "file_discovery").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "file_discovery")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("ghost_admin_2024"));
         assert!(!(challenge.check_answer)("ghost_admin"));
@@ -844,7 +903,10 @@ mod tests {
     #[test]
     fn test_port_scan_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "port_scan").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "port_scan")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("6666"));
         assert!(!(challenge.check_answer)("666"));
@@ -854,7 +916,10 @@ mod tests {
     #[test]
     fn test_rot13_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "rot13_ghost").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "rot13_ghost")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("ROTATION"));
         assert!((challenge.check_answer)("rotation"));
@@ -865,7 +930,10 @@ mod tests {
     #[test]
     fn test_binary_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "binary_basics").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "binary_basics")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("GHOST"));
         assert!((challenge.check_answer)("ghost"));
@@ -875,7 +943,10 @@ mod tests {
     #[test]
     fn test_url_decode_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "url_decode").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "url_decode")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("UNLOCK"));
         assert!((challenge.check_answer)("unlock"));
@@ -885,7 +956,10 @@ mod tests {
     #[test]
     fn test_caesar_cipher_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "caesar_cipher").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "caesar_cipher")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("cryptography"));
         assert!((challenge.check_answer)("CRYPTOGRAPHY"));
@@ -896,7 +970,10 @@ mod tests {
     #[test]
     fn test_sql_injection_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "sql_injection_basics").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "sql_injection_basics")
+            .expect("Challenge not found");
 
         // Test various SQL injection payloads
         assert!((challenge.check_answer)("' OR '1'='1' --"));
@@ -912,7 +989,10 @@ mod tests {
     #[test]
     fn test_hex_decode_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "hex_decode").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "hex_decode")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("HEXADECIMAL"));
         assert!((challenge.check_answer)("hexadecimal"));
@@ -922,7 +1002,10 @@ mod tests {
     #[test]
     fn test_jwt_token_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "jwt_token").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "jwt_token")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("algorithm confusion"));
         assert!((challenge.check_answer)("Algorithm Confusion"));
@@ -934,7 +1017,10 @@ mod tests {
     #[test]
     fn test_path_traversal_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "path_traversal").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "path_traversal")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("../"));
         assert!((challenge.check_answer)(".."));
@@ -945,7 +1031,10 @@ mod tests {
     #[test]
     fn test_md5_collision_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "md5_collision").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "md5_collision")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("password"));
         assert!((challenge.check_answer)("PASSWORD"));
@@ -955,7 +1044,10 @@ mod tests {
     #[test]
     fn test_command_injection_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "command_injection").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "command_injection")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)(";"));
         assert!((challenge.check_answer)("&"));
@@ -969,7 +1061,10 @@ mod tests {
     #[test]
     fn test_xss_attack_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "xss_attack").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "xss_attack")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("script"));
         assert!((challenge.check_answer)("SCRIPT"));
@@ -980,7 +1075,10 @@ mod tests {
     #[test]
     fn test_session_hijack_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "session_hijack").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "session_hijack")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("session hijacking"));
         assert!((challenge.check_answer)("Session Hijacking"));
@@ -992,7 +1090,10 @@ mod tests {
     #[test]
     fn test_cors_bypass_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "cors_bypass").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "cors_bypass")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("cors"));
         assert!((challenge.check_answer)("CORS"));
@@ -1004,7 +1105,10 @@ mod tests {
     #[test]
     fn test_buffer_overflow_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "binary_exploit").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "binary_exploit")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("BUFFER OVERFLOW"));
         assert!((challenge.check_answer)("buffer overflow"));
@@ -1016,7 +1120,10 @@ mod tests {
     #[test]
     fn test_reverse_engineering_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "reverse_engineering").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "reverse_engineering")
+            .expect("Challenge not found");
 
         // 0x2D XOR 0x42 = 0x6F = 111 = 'o'
         assert!((challenge.check_answer)("o"));
@@ -1028,7 +1135,10 @@ mod tests {
     #[test]
     fn test_format_string_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "format_string").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "format_string")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("format string"));
         assert!((challenge.check_answer)("Format String Vulnerability"));
@@ -1039,7 +1149,10 @@ mod tests {
     #[test]
     fn test_race_condition_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "race_condition").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "race_condition")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("race condition"));
         assert!((challenge.check_answer)("Race Condition"));
@@ -1051,7 +1164,10 @@ mod tests {
     #[test]
     fn test_integer_overflow_challenge() {
         let challenges = get_all_challenges();
-        let challenge = challenges.iter().find(|c| c.id == "integer_overflow").expect("Challenge not found");
+        let challenge = challenges
+            .iter()
+            .find(|c| c.id == "integer_overflow")
+            .expect("Challenge not found");
 
         assert!((challenge.check_answer)("integer overflow"));
         assert!((challenge.check_answer)("Integer Overflow"));
@@ -1086,8 +1202,12 @@ mod tests {
         let challenges = get_all_challenges();
         for challenge in &challenges {
             for (i, hint) in challenge.hints.iter().enumerate() {
-                assert!(!hint.is_empty(),
-                    "Challenge '{}' has empty hint at index {}", challenge.id, i);
+                assert!(
+                    !hint.is_empty(),
+                    "Challenge '{}' has empty hint at index {}",
+                    challenge.id,
+                    i
+                );
             }
         }
     }
@@ -1096,8 +1216,14 @@ mod tests {
     fn test_challenge_ids_follow_naming_convention() {
         let challenges = get_all_challenges();
         for challenge in &challenges {
-            assert!(challenge.id.chars().all(|c| c.is_lowercase() || c.is_numeric() || c == '_'),
-                "Challenge '{}' ID should be lowercase with underscores", challenge.id);
+            assert!(
+                challenge
+                    .id
+                    .chars()
+                    .all(|c| c.is_lowercase() || c.is_numeric() || c == '_'),
+                "Challenge '{}' ID should be lowercase with underscores",
+                challenge.id
+            );
         }
     }
 }

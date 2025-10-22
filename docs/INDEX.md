@@ -73,6 +73,8 @@ Comprehensive configuration documentation:
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                           | Development workflow and standards | Contributors             |
 | [docs/ROADMAP.md](ROADMAP.md)                                                                   | Future features and timeline       | Community                |
 | [docs/TESTING.md](TESTING.md)                                                                   | Testing guide and best practices   | Developers               |
+| [docs/TOOLS.md](TOOLS.md)                                                                       | Linting and quality tools          | Developers               |
+| [docs/CI_CHECKS.md](CI_CHECKS.md)                                                               | CI/CD checks reference             | Developers               |
 | [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance       | Developers using Copilot |
 
 ### Gameplay & Content

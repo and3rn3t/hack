@@ -133,6 +133,20 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  # Dependency checks with cargo-deny
+  deny:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install cargo-deny
+        run: cargo install cargo-deny
+
+      - name: Run cargo-deny
+        run: cargo deny check
+
   # Build release binaries
   build:
     name: Build Release

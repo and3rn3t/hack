@@ -1,6 +1,5 @@
 use crossterm::{
-    cursor,
-    execute,
+    cursor, execute,
     style::{Color, Print, ResetColor, SetForegroundColor},
     terminal::{Clear, ClearType},
 };
@@ -44,7 +43,10 @@ pub fn print_horror_banner() -> io::Result<()> {
 }
 
 pub fn print_separator() -> io::Result<()> {
-    print_colored("\n─────────────────────────────────────────────────────────────────────\n", Color::DarkGrey)
+    print_colored(
+        "\n─────────────────────────────────────────────────────────────────────\n",
+        Color::DarkGrey,
+    )
 }
 
 pub fn read_input(prompt: &str) -> io::Result<String> {
@@ -111,7 +113,13 @@ pub fn print_progress_bar(current: i32, max: i32, label: &str) -> io::Result<()>
     };
 
     let bar = "█".repeat(filled) + &"░".repeat(empty);
-    print_colored(&format!("{}: [{}] {}/{} ({}%)\n", label, bar, current, max, percentage), color)
+    print_colored(
+        &format!(
+            "{}: [{}] {}/{} ({}%)\n",
+            label, bar, current, max, percentage
+        ),
+        color,
+    )
 }
 
 pub fn print_box(title: &str, content: &str, color: Color) -> io::Result<()> {
@@ -119,17 +127,24 @@ pub fn print_box(title: &str, content: &str, color: Color) -> io::Result<()> {
     let title_padding = (width - title.len() - 4) / 2;
 
     print_colored(&format!("\n╔{}╗\n", "═".repeat(width)), color)?;
-    print_colored(&format!("║{}{} {}{}║\n",
-        " ".repeat(title_padding),
-        title,
-        " ".repeat(width - title.len() - title_padding - 2),
-        " "
-    ), color)?;
+    print_colored(
+        &format!(
+            "║{}{} {}{}║\n",
+            " ".repeat(title_padding),
+            title,
+            " ".repeat(width - title.len() - title_padding - 2),
+            " "
+        ),
+        color,
+    )?;
     print_colored(&format!("╠{}╣\n", "═".repeat(width)), color)?;
 
     for line in content.lines() {
         let padding = width - line.len() - 2;
-        print_colored(&format!("║ {}{}║\n", line, " ".repeat(padding)), Color::White)?;
+        print_colored(
+            &format!("║ {}{}║\n", line, " ".repeat(padding)),
+            Color::White,
+        )?;
     }
 
     print_colored(&format!("╚{}╝\n", "═".repeat(width)), color)?;
@@ -149,21 +164,34 @@ pub fn print_menu_option(number: &str, text: &str, status: Option<&str>) -> io::
 pub fn print_challenge_header(title: &str, level: usize, xp: i32, sanity: i32) -> io::Result<()> {
     clear_screen()?;
 
-    print_colored("\n╔═══════════════════════════════════════════════════════════════════════════╗\n", Color::Magenta)?;
-    print_colored(&format!("║ 🎯 {}{}║\n",
-        title,
-        " ".repeat(73 - title.len())
-    ), Color::Yellow)?;
-    print_colored("╠═══════════════════════════════════════════════════════════════════════════╣\n", Color::Magenta)?;
+    print_colored(
+        "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
+        Color::Magenta,
+    )?;
+    print_colored(
+        &format!("║ 🎯 {}{}║\n", title, " ".repeat(73 - title.len())),
+        Color::Yellow,
+    )?;
+    print_colored(
+        "╠═══════════════════════════════════════════════════════════════════════════╣\n",
+        Color::Magenta,
+    )?;
 
-    print_colored(&format!("║ Level: {}  │  Reward: {} XP  │  Sanity Cost: -{} {}║\n",
-        level,
-        xp,
-        sanity,
-        " ".repeat(73 - 50)
-    ), Color::White)?;
+    print_colored(
+        &format!(
+            "║ Level: {}  │  Reward: {} XP  │  Sanity Cost: -{} {}║\n",
+            level,
+            xp,
+            sanity,
+            " ".repeat(73 - 50)
+        ),
+        Color::White,
+    )?;
 
-    print_colored("╚═══════════════════════════════════════════════════════════════════════════╝\n\n", Color::Magenta)?;
+    print_colored(
+        "╚═══════════════════════════════════════════════════════════════════════════╝\n\n",
+        Color::Magenta,
+    )?;
 
     Ok(())
 }

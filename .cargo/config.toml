@@ -21,8 +21,17 @@ cl = "clippy -- -D warnings"
 f = "fmt"
 doc = "doc --no-deps --open"
 
-# Complete check
+# Complete check (matches CI/CD)
 full-check = "clippy --all-targets --all-features -- -D warnings"
+
+# CI-equivalent checks
+ci-fmt = "fmt --all -- --check"
+ci-clippy = "clippy --all-targets --all-features -- -D warnings"
+ci-test = "test --all-features --verbose"
+ci-check = "check --all-features"
+
+# Run all CI checks locally
+ci = ["ci-fmt", "ci-clippy", "ci-test"]
 
 # Watch mode (requires cargo-watch)
 # Install: cargo install cargo-watch

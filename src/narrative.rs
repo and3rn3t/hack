@@ -40,28 +40,59 @@ pub fn show_level_transition(level: usize, sanity: i32) -> io::Result<()> {
     ui::clear_screen()?;
 
     let level_info = [
-        ("Level 0: The Awakening", "You begin your descent into the cursed system...", Color::Cyan),
-        ("Level 1: Whispers in the Code", "Strange patterns emerge. The code speaks to you...", Color::Blue),
-        ("Level 2: The Forgotten Server", "You reach deeper layers. Reality blurs at the edges...", Color::Magenta),
-        ("Level 3: Cryptic Messages", "The ghosts grow restless. They know you're here...", Color::Red),
-        ("Level 4: The Final Protocol", "You're close to the truth. But at what cost?", Color::DarkRed),
+        (
+            "Level 0: The Awakening",
+            "You begin your descent into the cursed system...",
+            Color::Cyan,
+        ),
+        (
+            "Level 1: Whispers in the Code",
+            "Strange patterns emerge. The code speaks to you...",
+            Color::Blue,
+        ),
+        (
+            "Level 2: The Forgotten Server",
+            "You reach deeper layers. Reality blurs at the edges...",
+            Color::Magenta,
+        ),
+        (
+            "Level 3: Cryptic Messages",
+            "The ghosts grow restless. They know you're here...",
+            Color::Red,
+        ),
+        (
+            "Level 4: The Final Protocol",
+            "You're close to the truth. But at what cost?",
+            Color::DarkRed,
+        ),
     ];
 
-    let (level_name, level_message, level_color) = level_info
-        .get(level)
-        .unwrap_or(&("Unknown Level", "The void awaits...", Color::White));
+    let (level_name, level_message, level_color) =
+        level_info
+            .get(level)
+            .unwrap_or(&("Unknown Level", "The void awaits...", Color::White));
 
     // Animated level banner
     println!("\n");
-    ui::print_colored("╔═══════════════════════════════════════════════════════════════════════════╗\n", *level_color)?;
+    ui::print_colored(
+        "╔═══════════════════════════════════════════════════════════════════════════╗\n",
+        *level_color,
+    )?;
     ui::print_colored(&format!("║{}║\n", " ".repeat(75)), *level_color)?;
-    ui::print_colored(&format!("║{} {} {}║\n",
-        " ".repeat((75 - level_name.len()) / 2),
-        level_name,
-        " ".repeat((75 - level_name.len() + 1) / 2)
-    ), Color::Yellow)?;
+    ui::print_colored(
+        &format!(
+            "║{} {} {}║\n",
+            " ".repeat((75 - level_name.len()) / 2),
+            level_name,
+            " ".repeat((75 - level_name.len()).div_ceil(2))
+        ),
+        Color::Yellow,
+    )?;
     ui::print_colored(&format!("║{}║\n", " ".repeat(75)), *level_color)?;
-    ui::print_colored("╚═══════════════════════════════════════════════════════════════════════════╝\n", *level_color)?;
+    ui::print_colored(
+        "╚═══════════════════════════════════════════════════════════════════════════╝\n",
+        *level_color,
+    )?;
 
     println!();
     show_sanity_meter(sanity)?;
@@ -73,7 +104,8 @@ pub fn show_level_transition(level: usize, sanity: i32) -> io::Result<()> {
     println!();
     ui::pause()?;
     Ok(())
-}pub fn show_sanity_meter(sanity: i32) -> io::Result<()> {
+}
+pub fn show_sanity_meter(sanity: i32) -> io::Result<()> {
     let color = if sanity > 70 {
         Color::Green
     } else if sanity > 40 {
@@ -86,7 +118,10 @@ pub fn show_level_transition(level: usize, sanity: i32) -> io::Result<()> {
     let meter = "█".repeat(bars.max(0) as usize);
     let empty = "░".repeat((10 - bars).max(0) as usize);
 
-    ui::print_colored(&format!("\nSanity: [{}{}] {}%\n", meter, empty, sanity), color)?;
+    ui::print_colored(
+        &format!("\nSanity: [{}{}] {}%\n", meter, empty, sanity),
+        color,
+    )?;
 
     if sanity < 30 {
         ui::print_warning("Your grip on reality is slipping...")?;
@@ -104,7 +139,8 @@ pub fn show_challenge_intro(title: &str, description: &str) -> io::Result<()> {
         Color::Magenta,
     )?;
     ui::print_colored(
-        &format!("║{} � CHALLENGE INITIATED {}║\n",
+        &format!(
+            "║{} � CHALLENGE INITIATED {}║\n",
             " ".repeat(24),
             " ".repeat(24)
         ),
@@ -136,21 +172,40 @@ pub fn show_challenge_intro(title: &str, description: &str) -> io::Result<()> {
 }
 
 pub fn show_hint(hint: &str) -> io::Result<()> {
-    ui::print_colored("\n┌─────────────────────────────────────────────────────────────────────────┐\n", Color::Yellow)?;
-    ui::print_colored("│ 💡 HINT                                                                 │\n", Color::Yellow)?;
-    ui::print_colored("└─────────────────────────────────────────────────────────────────────────┘\n", Color::Yellow)?;
+    ui::print_colored(
+        "\n┌─────────────────────────────────────────────────────────────────────────┐\n",
+        Color::Yellow,
+    )?;
+    ui::print_colored(
+        "│ 💡 HINT                                                                 │\n",
+        Color::Yellow,
+    )?;
+    ui::print_colored(
+        "└─────────────────────────────────────────────────────────────────────────┘\n",
+        Color::Yellow,
+    )?;
     ui::print_colored(&format!("\n{}\n", hint), Color::White)?;
     Ok(())
 }
 
 pub fn show_completion_message(xp_earned: i32) -> io::Result<()> {
     println!();
-    ui::print_colored("╔═══════════════════════════════════════════════════════════════════════════╗\n", Color::Green)?;
-    ui::print_colored(&format!("║{} ✓ CHALLENGE COMPLETE! {}║\n",
-        " ".repeat(26),
-        " ".repeat(26)
-    ), Color::Green)?;
-    ui::print_colored("╚═══════════════════════════════════════════════════════════════════════════╝\n", Color::Green)?;
+    ui::print_colored(
+        "╔═══════════════════════════════════════════════════════════════════════════╗\n",
+        Color::Green,
+    )?;
+    ui::print_colored(
+        &format!(
+            "║{} ✓ CHALLENGE COMPLETE! {}║\n",
+            " ".repeat(26),
+            " ".repeat(26)
+        ),
+        Color::Green,
+    )?;
+    ui::print_colored(
+        "╚═══════════════════════════════════════════════════════════════════════════╝\n",
+        Color::Green,
+    )?;
 
     ui::print_colored(&format!("\n🌟 Reward: +{} XP\n", xp_earned), Color::Yellow)?;
 
@@ -207,11 +262,23 @@ And you've just become the next ghost in the machine.
     )?;
 
     if secrets_found > 0 {
-        ui::print_colored(&format!("\n\nYou discovered {} hidden secret(s) along the way.\n", secrets_found), Color::Yellow)?;
-        ui::print_colored("The secrets reveal the true nature of the Ghost Protocol...\n", Color::White)?;
+        ui::print_colored(
+            &format!(
+                "\n\nYou discovered {} hidden secret(s) along the way.\n",
+                secrets_found
+            ),
+            Color::Yellow,
+        )?;
+        ui::print_colored(
+            "The secrets reveal the true nature of the Ghost Protocol...\n",
+            Color::White,
+        )?;
     }
 
-    ui::print_colored("\n\nThank you for playing THE HACK: Ghost Protocol\n", Color::Green)?;
+    ui::print_colored(
+        "\n\nThank you for playing THE HACK: Ghost Protocol\n",
+        Color::Green,
+    )?;
     ui::pause()?;
     Ok(())
 }

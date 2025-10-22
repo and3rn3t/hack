@@ -127,6 +127,46 @@
         "panel": "shared"
       },
       "problemMatcher": []
+    },
+    {
+      "label": "cargo audit",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["audit"],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "cargo deny check",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["deny", "check"],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Full Check (CI Locally)",
+      "dependsOn": [
+        "cargo fmt",
+        "cargo clippy",
+        "cargo test",
+        "cargo audit",
+        "cargo deny check"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
   ]
 }
