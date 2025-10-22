@@ -147,6 +147,67 @@ What is the unusual port number?"#,
                 "Port 6666 is often called the 'devil's port' - 666 times 10.".to_string(),
             ],
         ),
+        Challenge::new(
+            "rot13_ghost",
+            "Rotational Spirits",
+            r#"A spectral message rotates before your eyes:
+
+    "Gur nafjre vf: EBGNGVBA"
+
+This appears to be ROT13 encoding - a simple letter substitution where
+A↔N, B↔O, C↔P, etc. Each letter is rotated 13 positions in the alphabet.
+
+Decode the message and enter the revealed answer."#,
+            0,
+            50,
+            5,
+            |answer| answer.to_uppercase() == "ROTATION",
+            vec![
+                "ROT13 shifts each letter by 13 positions (A→N, B→O, etc.).".to_string(),
+                "ROT13 is its own inverse - applying it twice gives the original.".to_string(),
+                "The answer is: ROTATION".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "binary_basics",
+            "The Binary Whisper",
+            r#"A ghost communicates in the language of machines:
+
+    01000111 01001000 01001111 01010011 01010100
+
+Each group of 8 bits represents one ASCII character.
+Decode this binary message to reveal the answer."#,
+            0,
+            50,
+            5,
+            |answer| answer.to_uppercase() == "GHOST",
+            vec![
+                "Binary to text: each 8-bit byte is one ASCII character.".to_string(),
+                "You can use online binary-to-text converters.".to_string(),
+                "The answer is: GHOST".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "url_decode",
+            "Encoded Pathway",
+            r#"You intercept a URL being transmitted:
+
+    https://ghost.corp/login?redirect=%2Fadmin%2Fsecrets%3Fkey%3DUNLOCK
+
+The URL parameters are encoded. The 'key' parameter contains the answer.
+URL encoding uses %XX where XX is the hexadecimal ASCII value.
+
+What is the decoded value of the 'key' parameter?"#,
+            0,
+            50,
+            5,
+            |answer| answer.to_uppercase() == "UNLOCK",
+            vec![
+                "URL encoding: %2F = /, %3F = ?, %3D = =".to_string(),
+                "The key parameter is after 'key%3D' which means 'key='".to_string(),
+                "The answer is: UNLOCK".to_string(),
+            ],
+        ),
         // Level 1: Intermediate challenges
         Challenge::new(
             "caesar_cipher",
@@ -208,6 +269,107 @@ Convert this hex to ASCII to reveal the answer."#,
                 "The answer is: HEXADECIMAL".to_string(),
             ],
         ),
+        Challenge::new(
+            "jwt_token",
+            "Token of Trust",
+            r#"You intercept a JWT (JSON Web Token) used for authentication:
+
+    eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiZ3Vlc3QiLCJhZG1pbiI6ZmFsc2V9.
+
+The header shows "alg":"none" - the algorithm is set to 'none'!
+This is a critical vulnerability. JWTs have three parts separated by dots:
+    HEADER.PAYLOAD.SIGNATURE
+
+The payload (middle part) is Base64-encoded JSON. Decode it to see:
+    {"user":"guest","admin":false}
+
+What security vulnerability allows you to modify the token without a signature?
+(Answer: the name of this attack, two words)"#,
+            1,
+            75,
+            10,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "algorithm confusion" || a == "none algorithm" || a == "alg none"
+            },
+            vec![
+                "The 'alg' field is set to 'none', bypassing signature verification.".to_string(),
+                "This vulnerability is called 'Algorithm Confusion' or 'None Algorithm'.".to_string(),
+                "Answer: algorithm confusion (or 'none algorithm')".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "path_traversal",
+            "Directory Descent",
+            r#"A web application shows files from a directory:
+
+    https://ghost.corp/files?file=report.pdf
+    https://ghost.corp/files?file=data.txt
+
+You suspect the 'file' parameter is vulnerable. By using special characters,
+you could access files outside the intended directory.
+
+What is the common character sequence used in path traversal attacks?
+(Answer: the characters used to go up one directory level)"#,
+            1,
+            75,
+            8,
+            |answer| {
+                let a = answer.replace(" ", "");
+                a == "../" || a == ".." || a == "../" || a == "..\\"
+            },
+            vec![
+                "Path traversal attacks navigate up directory levels.".to_string(),
+                "Use '../' to move up one directory (or '..\\ on Windows').".to_string(),
+                "The answer is: ../".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "md5_collision",
+            "Hash Breakdown",
+            r#"You discover an old authentication system using MD5 hashing:
+
+    Password hash: 5f4dcc3b5aa765d61d8327deb882cf99
+
+The system compares MD5 hashes of passwords. You know MD5 is cryptographically
+broken and can be cracked easily with rainbow tables or online databases.
+
+This specific hash is extremely common. What password does it represent?"#,
+            1,
+            75,
+            10,
+            |answer| answer.to_lowercase() == "password",
+            vec![
+                "This is one of the most common password hashes.".to_string(),
+                "Try searching for this MD5 hash in an online database.".to_string(),
+                "The answer is: password".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "command_injection",
+            "Shell Escape",
+            r#"A web app accepts user input to ping hosts:
+
+    Command: ping -c 1 [USER_INPUT]
+
+The app doesn't sanitize input properly. You could inject additional commands
+using shell metacharacters like ; & | to execute arbitrary commands.
+
+What single character allows you to chain multiple commands in a shell?
+(Answer: the semicolon or one of the pipe/ampersand operators)"#,
+            1,
+            75,
+            10,
+            |answer| {
+                let a = answer.trim();
+                a == ";" || a == "semicolon" || a == "&" || a == "|" || a == "&&" || a == "||"
+            },
+            vec![
+                "Shell metacharacters allow command chaining.".to_string(),
+                "The semicolon (;) allows you to run multiple commands.".to_string(),
+                "Common answers: ; or & or |".to_string(),
+            ],
+        ),
         // Level 2: Mobile/Web challenges
         Challenge::new(
             "http_header",
@@ -246,6 +408,141 @@ What parameter value unlocks the secret feature?"#,
             vec![
                 "Look at the URL structure carefully.".to_string(),
                 "The answer is in the last deep link path.".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "dns_tunneling",
+            "Subdomain Secrets",
+            r#"Network monitoring reveals suspicious DNS queries:
+
+    6461746131.ghost-protocol.com
+    6461746132.ghost-protocol.com
+    6461746133.ghost-protocol.com
+
+The subdomains look like encoded data. Each subdomain is hexadecimal ASCII.
+Decode the first subdomain (6461746131) to discover what's being tunneled.
+
+What word do these hex bytes spell out?"#,
+            2,
+            100,
+            12,
+            |answer| answer.to_lowercase() == "data1" || answer.to_lowercase() == "data",
+            vec![
+                "DNS tunneling hides data in subdomain names.".to_string(),
+                "Convert the hex subdomain to ASCII characters.".to_string(),
+                "6461746131 in hex = 'data1' in ASCII".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "xss_attack",
+            "Script Injection",
+            r#"A vulnerable web form doesn't sanitize user input:
+
+    <div class="comment">
+        [USER_INPUT_HERE]
+    </div>
+
+An attacker could inject JavaScript that executes in other users' browsers.
+
+What HTML tag is commonly used for Cross-Site Scripting (XSS) attacks?
+(Answer: just the tag name without < or >, e.g., 'div')"#,
+            2,
+            100,
+            10,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "script" || a == "<script>" || a == "script>"
+            },
+            vec![
+                "XSS attacks inject code that runs in the browser.".to_string(),
+                "The most common tag for XSS is used to include JavaScript.".to_string(),
+                "The answer is: script".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "api_key_leak",
+            "Exposed Secrets",
+            r#"You find a public GitHub repository with a commit history:
+
+    commit 1: "Add API key for testing"
+    commit 2: "Remove API key" (deleted from current code)
+
+The developer removed the API key in commit 2, but it's still in commit 1's history!
+Anyone can view the Git history to find it. The leaked key format is:
+
+    GHOST_API_KEY_2024_DEMO
+
+What type of security issue is this called?
+(Answer: two words, the practice of accidentally committing secrets)"#,
+            2,
+            100,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a.contains("secret") && a.contains("leak")
+                    || a == "credential leak"
+                    || a == "secrets leak"
+                    || a == "key leak"
+                    || a == "secret exposure"
+            },
+            vec![
+                "Secrets accidentally committed to Git repos are a major security risk.".to_string(),
+                "Even if deleted, they remain in Git history forever.".to_string(),
+                "This is called a 'secret leak' or 'credential leak'.".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "session_hijack",
+            "Cookie Monster",
+            r#"You intercept HTTP traffic and find a session cookie:
+
+    Set-Cookie: sessionid=abc123def456; Path=/
+
+The cookie has no HttpOnly or Secure flags set. This means:
+- JavaScript can access it (vulnerable to XSS)
+- It can be sent over HTTP (vulnerable to interception)
+
+What is the attack called when someone steals and uses your session cookie?
+(Answer: two words, _____ hijacking)"#,
+            2,
+            100,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "session hijacking" || a == "session hijack" || a == "cookie hijacking"
+            },
+            vec![
+                "This attack steals active user sessions.".to_string(),
+                "An attacker uses your cookie to impersonate you.".to_string(),
+                "The answer is: session hijacking".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "cors_bypass",
+            "Origin Stories",
+            r#"A web API has incorrect CORS (Cross-Origin Resource Sharing) headers:
+
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Credentials: true
+
+The wildcard (*) allows ANY website to make requests with credentials.
+This is a critical misconfiguration!
+
+What does CORS stand for?
+(Answer: four words, or just 'CORS')"#,
+            2,
+            100,
+            10,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "cors"
+                    || a == "cross origin resource sharing"
+                    || a.contains("cross") && a.contains("origin") && a.contains("resource")
+            },
+            vec![
+                "CORS is a browser security feature.".to_string(),
+                "It controls cross-domain requests.".to_string(),
+                "CORS = Cross-Origin Resource Sharing".to_string(),
             ],
         ),
         // Level 3+: Advanced challenges
@@ -296,6 +593,88 @@ What single character input would grant access?
             ],
         ),
         Challenge::new(
+            "format_string",
+            "String Exploitation",
+            r#"You analyze a vulnerable C program:
+
+    printf(user_input);  // DANGEROUS!
+
+Instead of: printf("%s", user_input);
+
+The program directly passes user input to printf without a format specifier.
+An attacker can use format specifiers like %x, %s, or %n to read/write memory.
+
+What is this classic vulnerability called?
+(Answer: two or three words)"#,
+            3,
+            125,
+            15,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a.contains("format string") || a == "format string vulnerability"
+            },
+            vec![
+                "This vulnerability involves printf and format specifiers.".to_string(),
+                "User-controlled format strings can read/write arbitrary memory.".to_string(),
+                "The answer is: format string vulnerability".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "race_condition",
+            "Time Paradox",
+            r#"A program checks permissions then opens a file:
+
+    1. if (can_access(file)) {
+    2.     // Small time window here!
+    3.     open_file(file);
+    4. }
+
+Between steps 1 and 3, an attacker could swap the file with a symbolic link
+to a privileged file. The check passes, but a different file is opened!
+
+What is this time-based vulnerability called?
+(Answer: two words, _____ condition)"#,
+            3,
+            125,
+            15,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "race condition" || a == "toctou" || a == "time of check time of use"
+            },
+            vec![
+                "This exploits the time gap between operations.".to_string(),
+                "Also known as TOCTOU (Time Of Check, Time Of Use).".to_string(),
+                "The answer is: race condition".to_string(),
+            ],
+        ),
+        Challenge::new(
+            "integer_overflow",
+            "Number Nightmare",
+            r#"A C program allocates memory based on user input:
+
+    unsigned char size = user_input;  // Max value: 255
+    char* buffer = malloc(size + 10);
+
+If user_input = 250, then size + 10 = 260... but wait!
+An unsigned char can only hold 0-255, so 260 wraps around to 4!
+This allocates only 4 bytes instead of 260.
+
+What is this vulnerability called?
+(Answer: two words, _____ overflow)"#,
+            3,
+            125,
+            15,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "integer overflow" || a == "integer wraparound" || a == "arithmetic overflow"
+            },
+            vec![
+                "This happens when numbers exceed their maximum value.".to_string(),
+                "Values 'wrap around' back to zero.".to_string(),
+                "The answer is: integer overflow".to_string(),
+            ],
+        ),
+        Challenge::new(
             "final_protocol",
             "The Ghost's True Name",
             r#"You've reached the core of the system. A final riddle appears:
@@ -330,4 +709,395 @@ pub fn get_challenges_for_level(level: usize) -> Vec<Challenge> {
         .into_iter()
         .filter(|c| c.level == level)
         .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_all_challenges_have_valid_ids() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(!challenge.id.is_empty(), "Challenge '{}' has empty ID", challenge.title);
+            assert!(challenge.id.chars().all(|c| c.is_alphanumeric() || c == '_'),
+                "Challenge '{}' has invalid ID characters", challenge.title);
+        }
+    }
+
+    #[test]
+    fn test_all_challenges_have_unique_ids() {
+        let challenges = get_all_challenges();
+        let mut ids = std::collections::HashSet::new();
+        for challenge in &challenges {
+            assert!(ids.insert(challenge.id.clone()),
+                "Duplicate challenge ID found: {}", challenge.id);
+        }
+    }
+
+    #[test]
+    fn test_all_challenges_have_titles() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(!challenge.title.is_empty(), "Challenge '{}' has empty title", challenge.id);
+        }
+    }
+
+    #[test]
+    fn test_all_challenges_have_descriptions() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(!challenge.description.is_empty(),
+                "Challenge '{}' has empty description", challenge.id);
+            assert!(challenge.description.len() > 20,
+                "Challenge '{}' has too short description", challenge.id);
+        }
+    }
+
+    #[test]
+    fn test_all_challenges_have_hints() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(!challenge.hints.is_empty(),
+                "Challenge '{}' has no hints", challenge.id);
+            assert!(challenge.hints.len() >= 2,
+                "Challenge '{}' should have at least 2 hints", challenge.id);
+        }
+    }
+
+    #[test]
+    fn test_challenge_rewards_are_positive() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(challenge.xp_reward > 0,
+                "Challenge '{}' has non-positive XP reward", challenge.id);
+            assert!(challenge.sanity_cost > 0,
+                "Challenge '{}' has non-positive sanity cost", challenge.id);
+        }
+    }
+
+    #[test]
+    fn test_challenge_levels_are_valid() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(challenge.level <= 4,
+                "Challenge '{}' has invalid level {}", challenge.id, challenge.level);
+        }
+    }
+
+    #[test]
+    fn test_rewards_scale_with_difficulty() {
+        let challenges = get_all_challenges();
+
+        // Level 0 should have lower rewards than Level 3
+        let level_0: Vec<_> = challenges.iter().filter(|c| c.level == 0).collect();
+        let level_3: Vec<_> = challenges.iter().filter(|c| c.level == 3).collect();
+
+        if !level_0.is_empty() && !level_3.is_empty() {
+            let avg_xp_0: i32 = level_0.iter().map(|c| c.xp_reward).sum::<i32>() / level_0.len() as i32;
+            let avg_xp_3: i32 = level_3.iter().map(|c| c.xp_reward).sum::<i32>() / level_3.len() as i32;
+            assert!(avg_xp_0 < avg_xp_3,
+                "Level 0 average XP ({}) should be less than Level 3 average XP ({})", avg_xp_0, avg_xp_3);
+        }
+    }
+
+    #[test]
+    fn test_get_challenges_for_level() {
+        let level_0 = get_challenges_for_level(0);
+        let level_1 = get_challenges_for_level(1);
+
+        assert!(!level_0.is_empty(), "Level 0 should have challenges");
+        assert!(!level_1.is_empty(), "Level 1 should have challenges");
+
+        for challenge in &level_0 {
+            assert_eq!(challenge.level, 0, "Level 0 filter returned wrong level");
+        }
+    }
+
+    // Test specific challenge answers
+    #[test]
+    fn test_welcome_challenge() {
+        let challenges = get_all_challenges();
+        let welcome = challenges.iter().find(|c| c.id == "welcome").expect("Welcome challenge not found");
+
+        // Test correct answer
+        assert!((welcome.check_answer)("welcome to the ghost protocol"));
+        assert!((welcome.check_answer)("Welcome to the Ghost Protocol"));
+        assert!((welcome.check_answer)("WELCOME TO THE GHOST PROTOCOL"));
+
+        // Test incorrect answers
+        assert!(!(welcome.check_answer)("welcome"));
+        assert!(!(welcome.check_answer)("ghost protocol"));
+        assert!(!(welcome.check_answer)(""));
+    }
+
+    #[test]
+    fn test_file_discovery_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "file_discovery").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("ghost_admin_2024"));
+        assert!(!(challenge.check_answer)("ghost_admin"));
+        assert!(!(challenge.check_answer)("2024"));
+    }
+
+    #[test]
+    fn test_port_scan_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "port_scan").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("6666"));
+        assert!(!(challenge.check_answer)("666"));
+        assert!(!(challenge.check_answer)("80"));
+    }
+
+    #[test]
+    fn test_rot13_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "rot13_ghost").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("ROTATION"));
+        assert!((challenge.check_answer)("rotation"));
+        assert!((challenge.check_answer)("Rotation"));
+        assert!(!(challenge.check_answer)("rotate"));
+    }
+
+    #[test]
+    fn test_binary_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "binary_basics").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("GHOST"));
+        assert!((challenge.check_answer)("ghost"));
+        assert!(!(challenge.check_answer)("Ghost Protocol"));
+    }
+
+    #[test]
+    fn test_url_decode_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "url_decode").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("UNLOCK"));
+        assert!((challenge.check_answer)("unlock"));
+        assert!(!(challenge.check_answer)("lock"));
+    }
+
+    #[test]
+    fn test_caesar_cipher_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "caesar_cipher").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("cryptography"));
+        assert!((challenge.check_answer)("CRYPTOGRAPHY"));
+        assert!((challenge.check_answer)("Cryptography"));
+        assert!(!(challenge.check_answer)("crypto"));
+    }
+
+    #[test]
+    fn test_sql_injection_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "sql_injection_basics").expect("Challenge not found");
+
+        // Test various SQL injection payloads
+        assert!((challenge.check_answer)("' OR '1'='1' --"));
+        assert!((challenge.check_answer)("'or'1'='1'--"));
+        assert!((challenge.check_answer)("' OR 1=1 --"));
+        assert!((challenge.check_answer)("'or1=1--"));
+        assert!((challenge.check_answer)("admin'--"));
+
+        assert!(!(challenge.check_answer)("admin"));
+        assert!(!(challenge.check_answer)("password"));
+    }
+
+    #[test]
+    fn test_hex_decode_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "hex_decode").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("HEXADECIMAL"));
+        assert!((challenge.check_answer)("hexadecimal"));
+        assert!(!(challenge.check_answer)("hex"));
+    }
+
+    #[test]
+    fn test_jwt_token_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "jwt_token").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("algorithm confusion"));
+        assert!((challenge.check_answer)("Algorithm Confusion"));
+        assert!((challenge.check_answer)("none algorithm"));
+        assert!((challenge.check_answer)("alg none"));
+        assert!(!(challenge.check_answer)("jwt"));
+    }
+
+    #[test]
+    fn test_path_traversal_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "path_traversal").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("../"));
+        assert!((challenge.check_answer)(".."));
+        assert!((challenge.check_answer)("..\\"));
+        assert!(!(challenge.check_answer)("/"));
+    }
+
+    #[test]
+    fn test_md5_collision_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "md5_collision").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("password"));
+        assert!((challenge.check_answer)("PASSWORD"));
+        assert!(!(challenge.check_answer)("admin"));
+    }
+
+    #[test]
+    fn test_command_injection_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "command_injection").expect("Challenge not found");
+
+        assert!((challenge.check_answer)(";"));
+        assert!((challenge.check_answer)("&"));
+        assert!((challenge.check_answer)("|"));
+        assert!((challenge.check_answer)("&&"));
+        assert!((challenge.check_answer)("||"));
+        assert!((challenge.check_answer)("semicolon"));
+        assert!(!(challenge.check_answer)("bash"));
+    }
+
+    #[test]
+    fn test_xss_attack_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "xss_attack").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("script"));
+        assert!((challenge.check_answer)("SCRIPT"));
+        assert!((challenge.check_answer)("<script>"));
+        assert!(!(challenge.check_answer)("javascript"));
+    }
+
+    #[test]
+    fn test_session_hijack_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "session_hijack").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("session hijacking"));
+        assert!((challenge.check_answer)("Session Hijacking"));
+        assert!((challenge.check_answer)("session hijack"));
+        assert!((challenge.check_answer)("cookie hijacking"));
+        assert!(!(challenge.check_answer)("cookie"));
+    }
+
+    #[test]
+    fn test_cors_bypass_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "cors_bypass").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("cors"));
+        assert!((challenge.check_answer)("CORS"));
+        assert!((challenge.check_answer)("cross origin resource sharing"));
+        assert!((challenge.check_answer)("Cross-Origin Resource Sharing"));
+        assert!(!(challenge.check_answer)("origin"));
+    }
+
+    #[test]
+    fn test_buffer_overflow_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "binary_exploit").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("BUFFER OVERFLOW"));
+        assert!((challenge.check_answer)("buffer overflow"));
+        assert!((challenge.check_answer)("BUFFEROVERFLOW"));
+        assert!((challenge.check_answer)("OVERFLOW"));
+        assert!(!(challenge.check_answer)("buffer"));
+    }
+
+    #[test]
+    fn test_reverse_engineering_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "reverse_engineering").expect("Challenge not found");
+
+        // 0x2D XOR 0x42 = 0x6F = 111 = 'o'
+        assert!((challenge.check_answer)("o"));
+        assert!((challenge.check_answer)("111"));
+        assert!((challenge.check_answer)("0x6F"));
+        assert!(!(challenge.check_answer)("B"));
+    }
+
+    #[test]
+    fn test_format_string_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "format_string").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("format string"));
+        assert!((challenge.check_answer)("Format String Vulnerability"));
+        assert!((challenge.check_answer)("format_string"));
+        assert!(!(challenge.check_answer)("printf"));
+    }
+
+    #[test]
+    fn test_race_condition_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "race_condition").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("race condition"));
+        assert!((challenge.check_answer)("Race Condition"));
+        assert!((challenge.check_answer)("toctou"));
+        assert!((challenge.check_answer)("time of check time of use"));
+        assert!(!(challenge.check_answer)("race"));
+    }
+
+    #[test]
+    fn test_integer_overflow_challenge() {
+        let challenges = get_all_challenges();
+        let challenge = challenges.iter().find(|c| c.id == "integer_overflow").expect("Challenge not found");
+
+        assert!((challenge.check_answer)("integer overflow"));
+        assert!((challenge.check_answer)("Integer Overflow"));
+        assert!((challenge.check_answer)("integer wraparound"));
+        assert!((challenge.check_answer)("arithmetic overflow"));
+        assert!(!(challenge.check_answer)("overflow"));
+    }
+
+    #[test]
+    fn test_total_challenge_count() {
+        let challenges = get_all_challenges();
+        assert_eq!(challenges.len(), 26, "Expected 26 total challenges");
+    }
+
+    #[test]
+    fn test_level_distribution() {
+        let level_0 = get_challenges_for_level(0);
+        let level_1 = get_challenges_for_level(1);
+        let level_2 = get_challenges_for_level(2);
+        let level_3 = get_challenges_for_level(3);
+        let level_4 = get_challenges_for_level(4);
+
+        assert_eq!(level_0.len(), 6, "Expected 6 challenges in Level 0");
+        assert_eq!(level_1.len(), 7, "Expected 7 challenges in Level 1");
+        assert_eq!(level_2.len(), 7, "Expected 7 challenges in Level 2");
+        assert_eq!(level_3.len(), 5, "Expected 5 challenges in Level 3");
+        assert_eq!(level_4.len(), 1, "Expected 1 challenge in Level 4");
+    }
+
+    #[test]
+    fn test_no_empty_hints() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            for (i, hint) in challenge.hints.iter().enumerate() {
+                assert!(!hint.is_empty(),
+                    "Challenge '{}' has empty hint at index {}", challenge.id, i);
+            }
+        }
+    }
+
+    #[test]
+    fn test_challenge_ids_follow_naming_convention() {
+        let challenges = get_all_challenges();
+        for challenge in &challenges {
+            assert!(challenge.id.chars().all(|c| c.is_lowercase() || c.is_numeric() || c == '_'),
+                "Challenge '{}' ID should be lowercase with underscores", challenge.id);
+        }
+    }
 }

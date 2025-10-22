@@ -116,11 +116,12 @@ and encoded data patterns in DNS requests.
 
 1. **Fork the repository** and create your branch from `main`
 2. **Follow the coding standards** (see `.github/copilot-instructions.md`)
-3. **Add tests** if applicable
+3. **Add tests** if applicable - all new challenges must have test coverage
 4. **Update documentation** to reflect changes
 5. **Ensure the game compiles** with `cargo build`
-6. **Test on multiple platforms** if possible
-7. **Keep commits atomic** and well-described
+6. **Run the test suite** with `cargo test` and ensure all tests pass
+7. **Test on multiple platforms** if possible
+8. **Keep commits atomic** and well-described
 
 #### Pull Request Template
 
@@ -145,6 +146,7 @@ and encoded data patterns in DNS requests.
 -   [ ] Save/load compatibility verified
 -   [ ] All challenges still solvable
 -   [ ] Game balance maintained
+-   [ ] All automated tests pass (`cargo test`)
 
 ## Checklist
 
@@ -185,19 +187,106 @@ Closes #[issue_number]
     cargo build
     ```
 
-3. **Run tests** (when available)
-
-    ```bash
-    cargo test
-    ```
-
-4. **Run the game**
+3. **Run the game**
 
     ```bash
     cargo run
     ```
 
-5. **Build release version**
+4. **Run the test suite**
+
+    ```bash
+    cargo test
+    ```
+
+## Testing
+
+### Running Tests
+
+The project includes a comprehensive test suite that validates all challenges:
+
+```bash
+# Run all tests
+cargo test
+
+# Run tests with output
+cargo test -- --nocapture
+
+# Run specific test
+cargo test test_welcome_challenge
+
+# Run tests for a specific module
+cargo test challenges::tests
+```
+
+### Test Coverage
+
+Our test suite includes:
+
+-   **Challenge Validation Tests**: Verify correct answers are accepted
+-   **Answer Variation Tests**: Test case-insensitive inputs and alternative valid answers
+-   **Metadata Tests**: Validate challenge IDs, titles, descriptions, hints
+-   **Balance Tests**: Ensure XP and sanity costs scale with difficulty
+-   **Level Distribution Tests**: Verify proper challenge distribution across levels
+-   **Edge Case Tests**: Test empty inputs, whitespace, special characters
+
+### Writing Tests for New Challenges
+
+When adding a new challenge, always include tests in the `#[cfg(test)]` module in `src/challenges.rs`:
+
+```rust
+#[test]
+fn test_your_new_challenge() {
+    let challenges = get_all_challenges();
+    let challenge = challenges.iter()
+        .find(|c| c.id == "your_challenge_id")
+        .expect("Challenge not found");
+
+    // Test correct answers
+    assert!((challenge.check_answer)("correct_answer"));
+    assert!((challenge.check_answer)("CORRECT_ANSWER")); // case variations
+
+    // Test incorrect answers
+    assert!(!(challenge.check_answer)("wrong_answer"));
+    assert!(!(challenge.check_answer)(""));
+}
+```
+
+### Test Requirements for Pull Requests
+
+All PRs must:
+
+1. **Pass all existing tests** - `cargo test` must succeed
+2. **Include new tests** for new challenges or features
+3. **Maintain test coverage** - don't reduce existing coverage
+4. **Test edge cases** - empty inputs, whitespace, special characters
+5. **Document test rationale** if testing complex logic
+
+    cd hack
+
+    ```
+
+    ```
+
+6. **Build the project**
+
+    ```bash
+    cargo build
+    ```
+
+7. **Run tests** (when available)
+
+    ```bash
+    cargo test
+    ```
+
+8. **Run the game**
+
+    ```bash
+    cargo run
+    ```
+
+9. **Build release version**
 
     ```bash
     cargo build --release

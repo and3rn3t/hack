@@ -32,18 +32,17 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
 
 **Terminal Setup:** For optimal experience, see [Terminal Setup Guide](docs/TERMINAL_SETUP.md)
 
-### Installation
+## Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/and3rn3t/hack.git
-cd hack
-
 # Build the project
 cargo build --release
 
 # Run the game
 cargo run --release
+
+# Run tests
+cargo test
 ```
 
 ## 🎯 How to Play
@@ -72,22 +71,37 @@ cargo run --release
 -   Base64 encoding/decoding
 -   Hidden file discovery
 -   Basic network port analysis
+-   ROT13 cipher decoding
+-   Binary to ASCII conversion
+-   URL encoding/decoding
 
 ### Level 1: Whispers in the Code (Intermediate)
 
 -   Caesar cipher cryptography
 -   SQL injection basics
 -   Hexadecimal decoding
+-   JWT token vulnerabilities
+-   Path traversal attacks
+-   MD5 hash cracking
+-   Command injection
 
 ### Level 2: The Forgotten Server (Web/Mobile)
 
 -   HTTP header analysis
 -   Mobile deep link exploitation
+-   DNS tunneling detection
+-   Cross-Site Scripting (XSS)
+-   API key leakage and secret exposure
+-   Session hijacking
+-   CORS misconfigurations
 
 ### Level 3+: Advanced Territories
 
 -   Buffer overflow concepts
--   Reverse engineering
+-   Reverse engineering and XOR operations
+-   Format string vulnerabilities
+-   Race conditions
+-   Integer overflow exploits
 -   Advanced cryptography
 -   Final protocol challenges
 
