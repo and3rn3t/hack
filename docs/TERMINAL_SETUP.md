@@ -1,9 +1,11 @@
 # Terminal Configuration for The Hack: Ghost Protocol
 
 ## Overview
+
 This game requires a terminal with ANSI color support and Unicode character rendering. This guide helps you configure your terminal for the best experience.
 
 ## Minimum Requirements
+
 - **ANSI Color Support**: 256-color or TrueColor support
 - **Unicode Support**: UTF-8 encoding
 - **Minimum Size**: 80 columns × 24 rows (recommended: 100 × 30)
@@ -14,9 +16,11 @@ This game requires a terminal with ANSI color support and Unicode character rend
 ### Windows
 
 #### Windows Terminal (Recommended ⭐)
+
 Windows Terminal provides the best experience with full Unicode and color support.
 
 **Installation:**
+
 ```powershell
 # Via winget
 winget install Microsoft.WindowsTerminal
@@ -26,6 +30,7 @@ winget install Microsoft.WindowsTerminal
 ```
 
 **Recommended Settings (settings.json):**
+
 ```json
 {
   "profiles": {
@@ -69,6 +74,7 @@ winget install Microsoft.WindowsTerminal
 
 **PowerShell Profile Configuration:**
 Add to `$PROFILE` (create with `notepad $PROFILE`):
+
 ```powershell
 # Set UTF-8 encoding
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -87,6 +93,7 @@ $pswindow.WindowSize = $newsize
 ```
 
 **Quick Setup Script (PowerShell):**
+
 ```powershell
 # Save as setup-terminal.ps1
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -97,6 +104,7 @@ Write-Host "Ready to hack! Run: cargo run" -ForegroundColor Cyan
 ```
 
 #### PowerShell 7+ (Alternative)
+
 ```powershell
 # Install PowerShell 7
 winget install Microsoft.PowerShell
@@ -106,6 +114,7 @@ Add-Content $PROFILE "`n[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 ```
 
 #### Command Prompt (Not Recommended)
+
 - Limited color support
 - Poor Unicode rendering
 - Use Windows Terminal or PowerShell instead
@@ -113,13 +122,16 @@ Add-Content $PROFILE "`n[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 ### Linux
 
 #### GNOME Terminal (Recommended ⭐)
+
 **Installation:**
+
 ```bash
 sudo apt install gnome-terminal  # Debian/Ubuntu
 sudo dnf install gnome-terminal  # Fedora
 ```
 
 **Configuration:**
+
 1. Open Preferences (Ctrl+,)
 2. Create new profile: "Hack Horror"
 3. Set colors:
@@ -130,6 +142,7 @@ sudo dnf install gnome-terminal  # Fedora
 5. Set initial terminal size: 100 × 30
 
 **Profile Script (.bashrc or .zshrc):**
+
 ```bash
 # Add to ~/.bashrc or ~/.zshrc
 
@@ -148,12 +161,15 @@ function hack() {
 ```
 
 #### Alacritty (High Performance, Recommended for Advanced Users)
+
 **Installation:**
+
 ```bash
 sudo apt install alacritty  # Debian/Ubuntu
 ```
 
 **Configuration (~/.config/alacritty/alacritty.yml):**
+
 ```yaml
 # Optimized for The Hack: Ghost Protocol
 
@@ -207,7 +223,9 @@ keyboard:
 ```
 
 #### Kitty (GPU-Accelerated)
+
 **Configuration (~/.config/kitty/kitty.conf):**
+
 ```conf
 # The Hack: Ghost Protocol Theme
 
@@ -249,12 +267,15 @@ sync_to_monitor yes
 ### macOS
 
 #### iTerm2 (Recommended ⭐)
+
 **Installation:**
+
 ```bash
 brew install --cask iterm2
 ```
 
 **Configuration:**
+
 1. Preferences → Profiles → Create new profile "Hack Horror"
 2. Colors:
    - Background: RGB(12, 12, 12)
@@ -271,6 +292,7 @@ brew install --cask iterm2
    - Character encoding: Unicode (UTF-8)
 
 **iTerm2 Profile JSON (Import):**
+
 ```json
 {
   "Name": "Hack Horror",
@@ -294,6 +316,7 @@ brew install --cask iterm2
 ```
 
 **Shell Configuration (.zshrc):**
+
 ```bash
 # Add to ~/.zshrc
 
@@ -309,6 +332,7 @@ alias hack='cd ~/projects/hack && cargo run'
 ```
 
 #### Terminal.app (Built-in, Adequate)
+
 1. Preferences → Profiles
 2. Duplicate "Basic" profile → Rename to "Hack Horror"
 3. Text:
@@ -321,22 +345,27 @@ alias hack='cd ~/projects/hack && cargo run'
 ## Font Recommendations
 
 ### Windows
+
 1. **Cascadia Code** (Best for Windows Terminal)
+
    ```powershell
    # Pre-installed with Windows Terminal
    ```
 
 2. **JetBrains Mono**
+
    ```powershell
    choco install jetbrainsmono
    ```
 
 3. **Fira Code**
+
    ```powershell
    choco install firacode
    ```
 
 ### Linux
+
 ```bash
 # Ubuntu/Debian
 sudo apt install fonts-firacode fonts-jetbrains-mono
@@ -349,6 +378,7 @@ sudo pacman -S ttf-fira-code ttf-jetbrains-mono
 ```
 
 ### macOS
+
 ```bash
 # Via Homebrew
 brew tap homebrew/cask-fonts
@@ -358,6 +388,7 @@ brew install --cask font-fira-code font-jetbrains-mono font-cascadia-code
 ## Verification Script
 
 Create `scripts/verify-terminal.sh`:
+
 ```bash
 #!/bin/bash
 # Verify terminal capabilities for The Hack: Ghost Protocol
@@ -413,6 +444,7 @@ echo "=== Verification Complete ==="
 ```
 
 Create `scripts/verify-terminal.ps1`:
+
 ```powershell
 # Verify terminal capabilities for The Hack: Ghost Protocol
 
@@ -463,6 +495,7 @@ Write-Host "=== Verification Complete ===" -ForegroundColor Cyan
 ## Performance Optimization
 
 ### General Tips
+
 1. **Disable transparency/blur** - Improves rendering performance
 2. **Use GPU acceleration** - If available (Alacritty, Kitty, iTerm2)
 3. **Increase scrollback** - To 10,000+ lines for better debugging
@@ -470,6 +503,7 @@ Write-Host "=== Verification Complete ===" -ForegroundColor Cyan
 5. **Use native fonts** - Better rendering performance
 
 ### For Development
+
 ```bash
 # Enable fast terminal output
 export TERM=xterm-256color
@@ -480,7 +514,9 @@ set bell-style none  # Bash
 ```
 
 ### For the Game
+
 The game uses:
+
 - Alternate screen buffer (no scrollback pollution)
 - Direct cursor positioning (fast)
 - Minimal ANSI escape sequences
@@ -489,9 +525,11 @@ The game uses:
 ## Troubleshooting
 
 ### Colors Not Displaying
+
 **Problem**: Colors appear wrong or as plain text
 
 **Solution**:
+
 ```bash
 # Linux/macOS
 export TERM=xterm-256color
@@ -501,21 +539,27 @@ export TERM=xterm-256color
 ```
 
 ### Box Characters Broken
+
 **Problem**: Unicode box-drawing characters appear as `?` or broken
 
 **Solution**:
+
 1. Install a proper monospace font (see recommendations)
 2. Set UTF-8 encoding:
+
    ```bash
    export LANG=en_US.UTF-8
    export LC_ALL=en_US.UTF-8
    ```
+
 3. Use Windows Terminal on Windows
 
 ### Terminal Too Small
+
 **Problem**: Game UI is cut off
 
 **Solution**:
+
 ```bash
 # Check size
 tput cols  # Should be 80+
@@ -525,18 +569,22 @@ tput lines # Should be 24+
 ```
 
 ### Slow Rendering
+
 **Problem**: Screen updates are laggy
 
 **Solution**:
+
 1. Use GPU-accelerated terminal (Alacritty, Kitty)
 2. Disable transparency/effects
 3. Close other terminal tabs/windows
 4. Update terminal emulator
 
 ### Input Lag
+
 **Problem**: Keypresses delayed
 
 **Solution**:
+
 1. Reduce input delay in terminal settings
 2. Disable terminal multiplexers (tmux/screen) for gaming
 3. Use native terminal instead of IDE embedded terminal
@@ -544,17 +592,20 @@ tput lines # Should be 24+
 ## Best Practices
 
 ### During Development
+
 - Use integrated terminal in VS Code for quick testing
 - Use native terminal for full gameplay experience
 - Keep terminal at least 100×30 for best layout
 
 ### For Players
+
 - Maximize terminal window
 - Use dark theme for horror atmosphere
 - Disable distractions (notifications, other windows)
 - Good lighting to avoid eye strain
 
 ### For Streamers/Recording
+
 - Use 120×40 or larger for better visibility
 - Increase font size (13-14pt)
 - Use high-contrast color scheme
@@ -563,12 +614,14 @@ tput lines # Should be 24+
 ## Quick Setup Commands
 
 ### Windows (PowerShell)
+
 ```powershell
 # One-line setup
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; cd path\to\hack; cargo run
 ```
 
 ### Linux/macOS (Bash/Zsh)
+
 ```bash
 # One-line setup
 export LANG=en_US.UTF-8 && cd ~/projects/hack && cargo run
@@ -598,6 +651,7 @@ $env:TERM = "xterm-256color"
 ## Testing Your Configuration
 
 Run the verification script:
+
 ```bash
 # Linux/macOS
 bash scripts/verify-terminal.sh
@@ -607,11 +661,13 @@ pwsh scripts/verify-terminal.ps1
 ```
 
 Then test with the game:
+
 ```bash
 cargo run
 ```
 
 Look for:
+
 - ✅ Colors display correctly
 - ✅ Box-drawing characters render properly
 - ✅ No flickering or tearing
