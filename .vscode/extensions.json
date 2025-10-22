@@ -1,0 +1,46 @@
+{
+  // VS Code Extension Recommendations for The Hack: Ghost Protocol
+  "recommendations": [
+    // Essential Rust Development
+    "rust-lang.rust-analyzer", // Rust language server
+    "serayuzgur.crates", // Cargo.toml dependency management
+    "vadimcn.vscode-lldb", // Debugger for Rust
+
+    // Code Quality
+    "tamasfe.even-better-toml", // TOML language support
+    "streetsidesoftware.code-spell-checker", // Spell checking
+
+    // Git Integration
+    "eamodio.gitlens", // Enhanced Git integration
+    "mhutchie.git-graph", // Git graph visualization
+
+    // GitHub Integration
+    "github.vscode-pull-request-github", // GitHub PR management
+    "github.copilot", // AI pair programmer
+    "github.copilot-chat", // Copilot chat interface
+
+    // Productivity
+    "gruntfuggly.todo-tree", // TODO highlighting
+    "aaron-bond.better-comments", // Better comment highlighting
+    "usernamehw.errorlens", // Inline error display
+
+    // Markdown
+    "yzhang.markdown-all-in-one", // Markdown editing
+    "davidanson.vscode-markdownlint", // Markdown linting
+
+    // Testing & Quality
+    "swellaby.vscode-rust-test-adapter", // Test explorer
+    "hbenl.vscode-test-explorer", // Test explorer UI
+
+    // Optional but Useful
+    "editorconfig.editorconfig", // EditorConfig support
+    "wayou.vscode-todo-highlight", // TODO/FIXME highlighting
+    "pflannery.vscode-versionlens" // Dependency version info
+  ],
+
+  "unwantedRecommendations": [
+    // Extensions that may conflict
+    "ms-vscode.cpptools",
+    "ms-vscode.cmake-tools"
+  ]
+}

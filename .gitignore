@@ -1,2 +1,37 @@
+# Rust build artifacts
 /target
+debug/
+target/
+Cargo.lock
+
+# Game save files
 game_save.json
+*.backup.json
+
+# IDE files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Test artifacts
+*.profraw
+*.gcda
+*.gcno
+
+# Documentation build
+/target/doc
+
+# Temporary files
+*.tmp
+*.log

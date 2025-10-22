@@ -4,28 +4,28 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
 
 ## 🎮 Features
 
-- **Horror Theme**: A chilling narrative that unfolds as you progress through the challenges
-- **Progressive Difficulty**: Start with basic challenges and advance to complex hacking scenarios
-- **Beginner-Friendly**: Designed for non-techies with hints and educational content
-- **CTF Challenges**: Multiple categories including:
-  - Basic encoding (Base64, Hex, Caesar cipher)
-  - File system exploration
-  - Network analysis
-  - SQL injection
-  - Cryptography
-  - Web/Mobile security
-  - Buffer overflow concepts
-  - Reverse engineering
-- **Sanity System**: A unique horror twist - lose sanity as you delve deeper
-- **Save/Load System**: Progress is automatically saved
-- **Terminal UI**: Full terminal interface with colored output and ASCII art
+-   **Horror Theme**: A chilling narrative that unfolds as you progress through the challenges
+-   **Progressive Difficulty**: Start with basic challenges and advance to complex hacking scenarios
+-   **Beginner-Friendly**: Designed for non-techies with hints and educational content
+-   **CTF Challenges**: Multiple categories including:
+    -   Basic encoding (Base64, Hex, Caesar cipher)
+    -   File system exploration
+    -   Network analysis
+    -   SQL injection
+    -   Cryptography
+    -   Web/Mobile security
+    -   Buffer overflow concepts
+    -   Reverse engineering
+-   **Sanity System**: A unique horror twist - lose sanity as you delve deeper
+-   **Save/Load System**: Progress is automatically saved
+-   **Terminal UI**: Full terminal interface with colored output and ASCII art
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- [Rust](https://www.rust-lang.org/tools/install) (2021 edition or later)
-- Terminal that supports ANSI color codes
+-   [Rust](https://www.rust-lang.org/tools/install) (2021 edition or later)
+-   Terminal that supports ANSI color codes
 
 ### Installation
 
@@ -53,55 +53,62 @@ cargo run --release
 
 ### Game Commands
 
-- **[1-N]**: Select a challenge by number
-- **stats**: View your detailed statistics
-- **save**: Manually save your game (auto-saves after each challenge)
-- **quit**: Exit the game (progress is saved)
-- **hint**: Get a hint during a challenge (can be used multiple times)
-- **skip**: Skip a challenge and try it later
+-   **[1-N]**: Select a challenge by number
+-   **stats**: View your detailed statistics
+-   **save**: Manually save your game (auto-saves after each challenge)
+-   **quit**: Exit the game (progress is saved)
+-   **hint**: Get a hint during a challenge (can be used multiple times)
+-   **skip**: Skip a challenge and try it later
 
 ## 📚 Challenge Categories
 
 ### Level 0: The Awakening (Beginner)
-- Base64 encoding/decoding
-- Hidden file discovery
-- Basic network port analysis
+
+-   Base64 encoding/decoding
+-   Hidden file discovery
+-   Basic network port analysis
 
 ### Level 1: Whispers in the Code (Intermediate)
-- Caesar cipher cryptography
-- SQL injection basics
-- Hexadecimal decoding
+
+-   Caesar cipher cryptography
+-   SQL injection basics
+-   Hexadecimal decoding
 
 ### Level 2: The Forgotten Server (Web/Mobile)
-- HTTP header analysis
-- Mobile deep link exploitation
+
+-   HTTP header analysis
+-   Mobile deep link exploitation
 
 ### Level 3+: Advanced Territories
-- Buffer overflow concepts
-- Reverse engineering
-- Advanced cryptography
-- Final protocol challenges
+
+-   Buffer overflow concepts
+-   Reverse engineering
+-   Advanced cryptography
+-   Final protocol challenges
 
 ## 🎓 Educational Value
 
 This simulator teaches:
-- **Encoding schemes**: Base64, Hexadecimal, ASCII
-- **Cryptography**: Caesar cipher, XOR operations
-- **Web security**: HTTP headers, SQL injection
-- **Mobile security**: Deep linking, app analysis
-- **Network basics**: Port scanning, service identification
-- **Binary exploitation**: Buffer overflows (conceptual)
-- **Reverse engineering**: XOR logic, decompilation basics
+
+-   **Encoding schemes**: Base64, Hexadecimal, ASCII
+-   **Cryptography**: Caesar cipher, XOR operations
+-   **Web security**: HTTP headers, SQL injection
+-   **Mobile security**: Deep linking, app analysis
+-   **Network basics**: Port scanning, service identification
+-   **Binary exploitation**: Buffer overflows (conceptual)
+-   **Reverse engineering**: XOR logic, decompilation basics
 
 ## 🔧 Technical Details
 
 ### Built With
-- **Rust** - A modern, safe systems programming language
-- **crossterm** - Cross-platform terminal manipulation
-- **serde** - Serialization/deserialization for save system
-- **rand** - Random number generation for game elements
+
+-   **Rust** - A modern, safe systems programming language
+-   **crossterm** - Cross-platform terminal manipulation
+-   **serde** - Serialization/deserialization for save system
+-   **rand** - Random number generation for game elements
 
 ### Architecture
+
 ```
 src/
 ├── main.rs          # Entry point
@@ -114,41 +121,101 @@ src/
 
 ## 🎨 Horror Theme Elements
 
-- **ASCII art banners**: Atmospheric visual design
-- **Glitch effects**: Corrupted text for immersion
-- **Sanity meter**: Psychological horror mechanic
-- **Dark narrative**: Unfolding ghost story
-- **Ominous messages**: Environmental storytelling
-- **Twist ending**: Satisfying horror conclusion
+-   **ASCII art banners**: Atmospheric visual design
+-   **Glitch effects**: Corrupted text for immersion
+-   **Sanity meter**: Psychological horror mechanic
+-   **Dark narrative**: Unfolding ghost story
+-   **Ominous messages**: Environmental storytelling
+-   **Twist ending**: Satisfying horror conclusion
 
 ## 🛠️ Development
 
+### For New Developers
+
+Get started quickly with our comprehensive setup guide:
+
+-   📖 **[Setup Guide](docs/SETUP.md)** - Complete development environment setup
+-   ⚙️ **[Configuration Guide](docs/CONFIGURATION.md)** - All configuration options explained
+-   📋 **[Configuration Summary](docs/CONFIG_SUMMARY.md)** - Quick reference for all config files
+-   ✅ **[Setup Checklist](.github/CHECKLIST.md)** - Verify your environment is ready
+
+### For Contributors
+
+-   🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+-   🗺️ **[Roadmap](docs/ROADMAP.md)** - Future plans and innovations
+-   🔒 **[Security Policy](SECURITY.md)** - Reporting security issues
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/and3rn3t/hack.git
+cd hack
+
+# Build and run
+cargo build
+cargo run
+
+# Development workflow
+cargo fmt              # Format code
+cargo clippy          # Lint code
+cargo test            # Run tests
+```
+
 ### Running in Development Mode
+
 ```bash
 cargo run
 ```
 
 ### Building for Release
+
 ```bash
 cargo build --release
 ./target/release/hack_simulator
 ```
 
+### Project Structure
+
+```
+src/
+├── main.rs          # Entry point
+├── game.rs          # Main game loop
+├── challenges.rs    # Challenge definitions and logic
+├── narrative.rs     # Story and horror elements
+├── state.rs         # Game state management
+└── ui.rs           # Terminal UI and rendering
+```
+
+### Configuration Files
+
+The project includes comprehensive configuration for:
+
+-   **Rust/Cargo**: `Cargo.toml`, `rustfmt.toml`, `clippy.toml`, `.cargo/config.toml`
+-   **Editor**: `.editorconfig`, `.vscode/` settings
+-   **CI/CD**: `.github/workflows/ci.yml`
+-   **Git**: `.gitignore`
+
+See [Configuration Guide](docs/CONFIGURATION.md) for details.
+
 ### Testing
+
 The game includes educational hints and progressive difficulty to ensure accessibility while maintaining depth for experienced players.
 
 ## 📱 Mobile Challenges
 
 The game includes mobile security challenges that teach:
-- Deep link vulnerabilities
-- Mobile app security concepts
-- Cross-platform security considerations
+
+-   Deep link vulnerabilities
+-   Mobile app security concepts
+-   Cross-platform security considerations
 
 These challenges are accessible through the terminal interface and don't require actual mobile devices.
 
 ## 🎯 Unique Twist
 
 Unlike traditional CTF challenges, **The Hack: Ghost Protocol** combines:
+
 1. **Horror narrative**: Every challenge is part of a larger, unsettling story
 2. **Sanity mechanic**: Your mental state affects gameplay
 3. **Progressive revelation**: The truth unfolds as you advance
@@ -181,5 +248,4 @@ This is a learning tool. The hacking techniques discussed are for educational pu
 
 **Remember**: In the Ghost Protocol, every hack has a cost. How far will you go to free the trapped souls?
 
-*"THE PROTOCOL NEVER ENDS... IT ONLY WAITS FOR THE NEXT HACKER..."*
-
+_"THE PROTOCOL NEVER ENDS... IT ONLY WAITS FOR THE NEXT HACKER..."_

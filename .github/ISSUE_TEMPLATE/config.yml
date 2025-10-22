@@ -1,0 +1,9 @@
+# Issue Templates Configuration
+blank_issues_enabled: true
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/and3rn3t/hack/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: Security Issues
+    url: https://github.com/and3rn3t/hack/security/advisories/new
+    about: Report security vulnerabilities privately

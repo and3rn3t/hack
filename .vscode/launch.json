@@ -1,0 +1,59 @@
+{
+  // VS Code Launch Configuration for The Hack: Ghost Protocol
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'hack_simulator'",
+      "cargo": {
+        "args": ["build", "--bin=hack_simulator", "--package=hack_simulator"],
+        "filter": {
+          "name": "hack_simulator",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "sourceLanguages": ["rust"]
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests",
+      "cargo": {
+        "args": ["test", "--no-run", "--lib", "--package=hack_simulator"],
+        "filter": {
+          "name": "hack_simulator",
+          "kind": "lib"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "sourceLanguages": ["rust"]
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug release build",
+      "cargo": {
+        "args": [
+          "build",
+          "--release",
+          "--bin=hack_simulator",
+          "--package=hack_simulator"
+        ],
+        "filter": {
+          "name": "hack_simulator",
+          "kind": "bin"
+        }
+      },
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "sourceLanguages": ["rust"]
+    }
+  ]
+}
