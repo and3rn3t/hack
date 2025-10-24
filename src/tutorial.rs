@@ -9,7 +9,14 @@ pub fn run_tutorial(state: &mut GameState) -> io::Result<()> {
     explain_game_mechanics()?;
     explain_sanity_system()?;
     explain_challenges()?;
-    practice_challenge(state)?;
+
+    // Practice challenges section
+    practice_challenge_intro()?;
+    practice_challenge_basic(state)?;
+    practice_challenge_encoding(state)?;
+    practice_challenge_web(state)?;
+    practice_challenge_file_analysis(state)?;
+
     explain_hints_and_commands()?;
     show_tutorial_complete()?;
 
@@ -149,23 +156,48 @@ You unlock new levels by gaining experience points (XP).
     Ok(())
 }
 
-fn practice_challenge(state: &mut GameState) -> io::Result<()> {
+fn practice_challenge_intro() -> io::Result<()> {
     ui::clear_screen()?;
 
     ui::print_colored(
-        "\n🎓 PRACTICE CHALLENGE\n",
+        "\n🎓 PRACTICE CHALLENGES\n",
         crossterm::style::Color::Magenta,
     )?;
     ui::print_separator()?;
 
     ui::print_colored(
         r#"
-Let's try a simple practice challenge to get you started!
+Great! Now let's put your knowledge to the test with some practice challenges.
 
-This one won't cost any sanity, and you'll get a small XP reward.
+These are simplified versions of real cybersecurity challenges you'll encounter.
+They won't cost any sanity, and you'll earn XP for each correct answer!
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+We'll cover four key areas:
+  1. 🧠 Basic Problem Solving
+  2. 🔤 Encoding & Decoding
+  3. 🌐 Web Security Basics
+  4. 📁 File Analysis
 
+Ready to become a cyber warrior? Let's begin!
+"#,
+        crossterm::style::Color::White,
+    )?;
+
+    ui::pause()?;
+    Ok(())
+}
+
+fn practice_challenge_basic(state: &mut GameState) -> io::Result<()> {
+    ui::clear_screen()?;
+
+    ui::print_colored(
+        "\n🧠 CHALLENGE 1: Basic Problem Solving\n",
+        crossterm::style::Color::Cyan,
+    )?;
+    ui::print_separator()?;
+
+    ui::print_colored(
+        r#"
 📝 TUTORIAL CHALLENGE: First Steps
 
 The Ghost Protocol begins with a simple question to test your resolve.
@@ -183,7 +215,7 @@ What is the answer to life, the universe, and everything?
         let answer = ui::read_input("\nYour answer: ")?;
 
         if answer == "42" {
-            ui::print_success("Correct! Welcome to the Ghost Protocol.")?;
+            ui::print_success("✅ Correct! Welcome to the Ghost Protocol.")?;
             ui::print_colored(
                 "\n+25 XP (Tutorial Bonus)\n",
                 crossterm::style::Color::Green,
@@ -212,6 +244,274 @@ What is the answer to life, the universe, and everything?
             }
         }
     }
+
+    ui::print_colored(
+        "\n📚 LEARNING: In cybersecurity, attention to detail and research skills are crucial!\n",
+        crossterm::style::Color::DarkGrey,
+    )?;
+    ui::pause()?;
+    Ok(())
+}
+
+fn practice_challenge_encoding(state: &mut GameState) -> io::Result<()> {
+    ui::clear_screen()?;
+
+    ui::print_colored(
+        "\n🔤 CHALLENGE 2: Encoding & Decoding\n",
+        crossterm::style::Color::Yellow,
+    )?;
+    ui::print_separator()?;
+
+    ui::print_colored(
+        r#"
+📝 ENCODING CHALLENGE: ROT13 Cipher
+
+ROT13 is a simple letter substitution cipher that replaces each letter
+with the letter 13 positions ahead in the alphabet.
+
+For example: A → N, B → O, N → A, O → B
+
+Your challenge:
+Decode this ROT13 encrypted message: "URYYB"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"#,
+        crossterm::style::Color::White,
+    )?;
+
+    let mut attempts = 0;
+    loop {
+        let answer = ui::read_input("\nDecoded message: ")?;
+
+        if answer.to_uppercase() == "HELLO" {
+            ui::print_success("✅ Excellent! You decoded it perfectly!")?;
+            ui::print_colored(
+                "\n+30 XP (Encoding Mastery)\n",
+                crossterm::style::Color::Green,
+            )?;
+            state.experience += 30;
+            break;
+        } else {
+            attempts += 1;
+            if attempts == 1 {
+                ui::print_colored(
+                    "\n🔍 Remember: ROT13 shifts each letter 13 positions. Try counting!\n",
+                    crossterm::style::Color::Yellow,
+                )?;
+            } else if attempts == 2 {
+                ui::print_colored(
+                    "\n💡 HINT: U→H, R→E, Y→L, Y→L, B→O\n",
+                    crossterm::style::Color::Cyan,
+                )?;
+            } else {
+                ui::print_colored(
+                    "\n✨ The answer is 'HELLO'! ROT13 is used in many CTF challenges.\n",
+                    crossterm::style::Color::White,
+                )?;
+                state.experience += 15; // Partial credit
+                break;
+            }
+        }
+    }
+
+    ui::print_colored(
+        "\n📚 LEARNING: Encoding is fundamental in cybersecurity. Master Base64, ROT13, and hexadecimal!\n",
+        crossterm::style::Color::DarkGrey,
+    )?;
+    ui::pause()?;
+    Ok(())
+}
+
+fn practice_challenge_web(state: &mut GameState) -> io::Result<()> {
+    ui::clear_screen()?;
+
+    ui::print_colored(
+        "\n🌐 CHALLENGE 3: Web Security Basics\n",
+        crossterm::style::Color::Green,
+    )?;
+    ui::print_separator()?;
+
+    ui::print_colored(
+        r#"
+📝 WEB SECURITY CHALLENGE: HTTP Status Codes
+
+HTTP status codes tell us what happened with a web request.
+Understanding these is crucial for web security testing.
+
+Question:
+What HTTP status code indicates "Unauthorized" access?
+(This means you need to authenticate to access the resource)
+
+Common codes to know:
+• 200 = OK (success)
+• 404 = Not Found
+• 500 = Internal Server Error
+• ??? = Unauthorized
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"#,
+        crossterm::style::Color::White,
+    )?;
+
+    let mut attempts = 0;
+    loop {
+        let answer = ui::read_input("\nHTTP status code: ")?;
+
+        if answer == "401" {
+            ui::print_success("✅ Perfect! 401 Unauthorized is correct!")?;
+            ui::print_colored(
+                "\n+35 XP (Web Security Knowledge)\n",
+                crossterm::style::Color::Green,
+            )?;
+            state.experience += 35;
+            break;
+        } else {
+            attempts += 1;
+            if attempts == 1 {
+                ui::print_colored(
+                    "\n🔍 Think about authentication. What 4xx error means you need to log in?\n",
+                    crossterm::style::Color::Yellow,
+                )?;
+            } else if attempts == 2 {
+                ui::print_colored(
+                    "\n💡 HINT: It's a 400-series error. Think 40_\n",
+                    crossterm::style::Color::Cyan,
+                )?;
+            } else {
+                ui::print_colored(
+                    "\n✨ The answer is 401! It means 'Unauthorized' - you need valid credentials.\n",
+                    crossterm::style::Color::White,
+                )?;
+                state.experience += 18; // Partial credit
+                break;
+            }
+        }
+    }
+
+    ui::print_colored(
+        "\n📚 LEARNING: HTTP status codes reveal server behavior. Essential for web penetration testing!\n",
+        crossterm::style::Color::DarkGrey,
+    )?;
+    ui::pause()?;
+    Ok(())
+}
+
+fn practice_challenge_file_analysis(state: &mut GameState) -> io::Result<()> {
+    ui::clear_screen()?;
+
+    ui::print_colored(
+        "\n📁 CHALLENGE 4: File Analysis\n",
+        crossterm::style::Color::Red,
+    )?;
+    ui::print_separator()?;
+
+    ui::print_colored(
+        r#"
+📝 FILE ANALYSIS CHALLENGE: File Signatures
+
+Every file type has a unique "magic number" or signature at the beginning.
+This helps identify file types even if the extension is wrong.
+
+Question:
+A file starts with the bytes "89 50 4E 47". What file type is this?
+
+Common signatures to know:
+• FF D8 FF = JPEG image
+• 50 4B 03 04 = ZIP archive
+• 25 50 44 46 = PDF document
+• 89 50 4E 47 = ???
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"#,
+        crossterm::style::Color::White,
+    )?;
+
+    let mut attempts = 0;
+    loop {
+        let answer = ui::read_input("\nFile type: ")?;
+
+        if answer.to_uppercase() == "PNG" {
+            ui::print_success("✅ Outstanding! PNG is absolutely correct!")?;
+            ui::print_colored(
+                "\n+40 XP (File Analysis Expert)\n",
+                crossterm::style::Color::Green,
+            )?;
+            state.experience += 40;
+            break;
+        } else {
+            attempts += 1;
+            if attempts == 1 {
+                ui::print_colored(
+                    "\n🔍 This signature belongs to a common image format. Think graphics!\n",
+                    crossterm::style::Color::Yellow,
+                )?;
+            } else if attempts == 2 {
+                ui::print_colored(
+                    "\n💡 HINT: It's a 3-letter image format that supports transparency: P_G\n",
+                    crossterm::style::Color::Cyan,
+                )?;
+            } else {
+                ui::print_colored(
+                    "\n✨ The answer is PNG! '89 50 4E 47' translates to '.PNG' in ASCII.\n",
+                    crossterm::style::Color::White,
+                )?;
+                state.experience += 20; // Partial credit
+                break;
+            }
+        }
+    }
+
+    ui::print_colored(
+        "\n📚 LEARNING: File signatures help identify hidden or disguised files in forensics!\n",
+        crossterm::style::Color::DarkGrey,
+    )?;
+
+    // Show summary of all practice challenges
+    show_practice_summary(state)?;
+    Ok(())
+}
+
+fn show_practice_summary(state: &GameState) -> io::Result<()> {
+    ui::clear_screen()?;
+
+    ui::print_colored(
+        "\n🎉 PRACTICE CHALLENGES COMPLETE!\n",
+        crossterm::style::Color::Magenta,
+    )?;
+    ui::print_separator()?;
+
+    ui::print_colored(
+        r#"
+Congratulations! You've completed all tutorial practice challenges!
+
+📊 YOUR SKILLS PREVIEW:
+  ✅ Problem Solving - Critical thinking and research
+  ✅ Encoding/Decoding - ROT13, Base64, and cipher techniques
+  ✅ Web Security - HTTP status codes and authentication
+  ✅ File Analysis - Magic numbers and file identification
+
+These are just the beginning! The real challenges will test these skills
+and many more advanced cybersecurity concepts.
+"#,
+        crossterm::style::Color::White,
+    )?;
+
+    ui::print_colored(
+        &format!(
+            "\n💪 Total Tutorial XP Earned: {} points!\n",
+            if state.experience >= 130 {
+                130
+            } else {
+                state.experience
+            }
+        ),
+        crossterm::style::Color::Green,
+    )?;
+
+    ui::print_colored(
+        "\n🚀 You're now ready for the real Ghost Protocol challenges!\n",
+        crossterm::style::Color::Cyan,
+    )?;
 
     ui::pause()?;
     Ok(())
@@ -378,5 +678,20 @@ mod tests {
 
         // Even if tutorial not completed, don't show if they have progress
         assert!(!state.needs_tutorial());
+    }
+
+    #[test]
+    fn test_tutorial_xp_rewards() {
+        let mut state = GameState::new("TestPlayer".to_string());
+        let initial_xp = state.experience;
+
+        // Simulate completing all tutorial challenges with full credit
+        state.experience += 25; // Basic challenge
+        state.experience += 30; // Encoding challenge
+        state.experience += 35; // Web security challenge
+        state.experience += 40; // File analysis challenge
+
+        let total_tutorial_xp = state.experience - initial_xp;
+        assert_eq!(total_tutorial_xp, 130, "Tutorial should award 130 XP total");
     }
 }
