@@ -1,5 +1,5 @@
-use crate::{challenges, narrative, state::GameState, tutorial, ui};
 use crate::ui::CompletionContext;
+use crate::{challenges, narrative, state::GameState, tutorial, ui};
 use std::io;
 
 pub fn run_game() -> io::Result<()> {
@@ -162,7 +162,8 @@ pub fn run_game() -> io::Result<()> {
         let completion_context = CompletionContext::MainMenu {
             challenge_count: level_challenges.len(),
         };
-        let choice = ui::read_input_with_completion("\n> Enter your choice: ", completion_context, true)?;
+        let choice =
+            ui::read_input_with_completion("\n> Enter your choice: ", completion_context, true)?;
 
         match choice.to_lowercase().as_str() {
             "stats" => show_stats(&state)?,

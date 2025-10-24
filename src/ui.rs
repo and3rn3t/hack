@@ -31,7 +31,7 @@ impl CompletionContext {
             CompletionContext::MainMenu { challenge_count } => {
                 let mut commands = vec![
                     "stats".to_string(),
-                    "help".to_string(), 
+                    "help".to_string(),
                     "tutorial".to_string(),
                     "save".to_string(),
                     "quit".to_string(),
@@ -48,7 +48,7 @@ impl CompletionContext {
             CompletionContext::HelpMenu => {
                 vec![
                     "1".to_string(),
-                    "2".to_string(), 
+                    "2".to_string(),
                     "3".to_string(),
                     "4".to_string(),
                     "5".to_string(),
@@ -132,9 +132,9 @@ pub fn read_input_with_history(prompt: &str, save_to_history: bool) -> io::Resul
 
 /// Read input with tab completion support
 pub fn read_input_with_completion(
-    prompt: &str, 
+    prompt: &str,
     context: CompletionContext,
-    save_to_history: bool
+    save_to_history: bool,
 ) -> io::Result<String> {
     // For now, fall back to simple input until we implement full tab completion
     // This maintains compatibility while we build the feature
@@ -144,41 +144,92 @@ pub fn read_input_with_completion(
 /// Simple tab completion implementation using stdin.read_line()
 fn read_input_simple_with_completion(
     prompt: &str,
-    context: CompletionContext, 
-    save_to_history: bool
+    context: CompletionContext,
+    save_to_history: bool,
 ) -> io::Result<String> {
-    print!("\n{}", prompt);
+    // Show available commands as helpful context
+    let all_completions = context.get_completions("");
+    if !all_completions.is_empty() && all_completions.len() <= 8 {
+        print_colored(
+            &format!("  💡 Available: {}\n", all_completions.join(", ")),
+            Color::DarkGrey,
+        )?;
+    }
+
+    print!("{}", prompt);
     io::stdout().flush()?;
 
     let stdin = io::stdin();
     let mut input = String::new();
-    
-    // Show completion hint if there are available completions
-    let completions = context.get_completions("");
-    if !completions.is_empty() {
-        print_colored(
-            &format!(" (Tab: {})", completions.join(", ")),
-            Color::DarkGrey
-        )?;
-        print!("\r{}", prompt); // Return cursor to start of prompt
-        io::stdout().flush()?;
-    }
-    
     stdin.read_line(&mut input)?;
-    let input = input.trim().to_string();
+    let mut input = input.trim().to_string();
 
-    // Check if input can be completed and suggest if it's partial
+    // Smart completion and correction logic
     let matching_completions = context.get_completions(&input);
-    if matching_completions.len() == 1 && matching_completions[0] != input {
-        print_colored(
-            &format!("→ Did you mean '{}'? ", matching_completions[0]),
-            Color::Yellow
-        )?;
-    } else if matching_completions.len() > 1 && !input.is_empty() {
-        print_colored(
-            &format!("→ Matches: {}", matching_completions.join(", ")),
-            Color::Cyan
-        )?;
+
+    match matching_completions.len() {
+        0 => {
+            // No matches - check if it's a typo we can fix
+            if !input.is_empty() {
+                let close_matches = find_close_matches(&input, &all_completions);
+                if !close_matches.is_empty() {
+                    print_colored(
+                        &format!("❓ Did you mean: {}? [Y/n] ", close_matches.join(", ")),
+                        Color::Yellow,
+                    )?;
+                    io::stdout().flush()?;
+
+                    let mut correction = String::new();
+                    stdin.read_line(&mut correction)?;
+                    let correction = correction.trim().to_lowercase();
+
+                    if correction.is_empty() || correction.starts_with('y') {
+                        if close_matches.len() == 1 {
+                            input = close_matches[0].clone();
+                            print_colored(&format!("→ Using: {}", input), Color::Green)?;
+                        } else {
+                            // Multiple close matches, let user choose
+                            print_colored("Choose:", Color::Cyan)?;
+                            for (i, option) in close_matches.iter().enumerate() {
+                                print!(" [{}] {}", i + 1, option);
+                            }
+                            print!(" : ");
+                            io::stdout().flush()?;
+
+                            let mut choice = String::new();
+                            stdin.read_line(&mut choice)?;
+                            if let Ok(idx) = choice.trim().parse::<usize>() {
+                                if idx > 0 && idx <= close_matches.len() {
+                                    input = close_matches[idx - 1].clone();
+                                    print_colored(&format!("→ Using: {}", input), Color::Green)?;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        1 => {
+            // Single match - auto-complete if it's clearly what they want
+            let completion = &matching_completions[0];
+            if completion.len() > input.len() {
+                print_colored(&format!("→ Auto-completed: {}", completion), Color::Cyan)?;
+                input = completion.clone();
+            }
+        }
+        _ => {
+            // Multiple matches - show them
+            if !input.is_empty() {
+                print_colored(
+                    &format!(
+                        "→ {} matches: {}",
+                        matching_completions.len(),
+                        matching_completions.join(", ")
+                    ),
+                    Color::Cyan,
+                )?;
+            }
+        }
     }
 
     // Save to history if requested and not empty
@@ -197,6 +248,69 @@ fn read_input_simple_with_completion(
     }
 
     Ok(input)
+}
+
+/// Find close matches using simple edit distance for typo correction
+fn find_close_matches(input: &str, candidates: &[String]) -> Vec<String> {
+    let mut matches = Vec::new();
+    let input_lower = input.to_lowercase();
+
+    for candidate in candidates {
+        let candidate_lower = candidate.to_lowercase();
+
+        // Check for substring matches
+        if candidate_lower.contains(&input_lower) || input_lower.contains(&candidate_lower) {
+            matches.push(candidate.clone());
+            continue;
+        }
+
+        // Simple typo detection: single character difference
+        if (input_lower.len() as i32 - candidate_lower.len() as i32).abs() <= 1 {
+            let distance = simple_edit_distance(&input_lower, &candidate_lower);
+            if distance <= 1 {
+                matches.push(candidate.clone());
+            }
+        }
+    }
+
+    matches
+}
+
+/// Simple edit distance calculation for typo correction
+fn simple_edit_distance(a: &str, b: &str) -> usize {
+    let a_chars: Vec<char> = a.chars().collect();
+    let b_chars: Vec<char> = b.chars().collect();
+    let a_len = a_chars.len();
+    let b_len = b_chars.len();
+
+    if a_len == 0 {
+        return b_len;
+    }
+    if b_len == 0 {
+        return a_len;
+    }
+
+    let mut prev_row: Vec<usize> = (0..=b_len).collect();
+    let mut curr_row = vec![0; b_len + 1];
+
+    for i in 1..=a_len {
+        curr_row[0] = i;
+
+        for j in 1..=b_len {
+            let cost = if a_chars[i - 1] == b_chars[j - 1] {
+                0
+            } else {
+                1
+            };
+            curr_row[j] = (prev_row[j] + 1) // deletion
+                .min(curr_row[j - 1] + 1) // insertion
+                .min(prev_row[j - 1] + cost); // substitution
+        }
+
+        prev_row.clone_from(&curr_row);
+    }
+
+    curr_row[b_len]
 }
 
 /// Windows-specific function to disable echo input
@@ -975,14 +1089,141 @@ mod tests {
 
     #[test]
     fn test_clear_command_history() {
+        // Start with clean state
+        clear_command_history();
+
+        // Add some test data
         if let Ok(mut history) = COMMAND_HISTORY.lock() {
             history.push("test1".to_string());
             history.push("test2".to_string());
         }
 
-        assert!(get_history_size() >= 2);
+        // Verify data was added
+        assert_eq!(get_history_size(), 2);
 
+        // Clear and verify empty
         clear_command_history();
         assert_eq!(get_history_size(), 0);
+    }
+
+    // Tab completion tests
+    #[test]
+    fn test_completion_context_main_menu() {
+        let context = CompletionContext::MainMenu { challenge_count: 3 };
+
+        // Test basic commands
+        let completions = context.get_completions("");
+        assert!(completions.contains(&"stats".to_string()));
+        assert!(completions.contains(&"help".to_string()));
+        assert!(completions.contains(&"quit".to_string()));
+        assert!(completions.contains(&"1".to_string()));
+        assert!(completions.contains(&"3".to_string()));
+
+        // Test partial matching
+        let partial_completions = context.get_completions("st");
+        assert!(partial_completions.contains(&"stats".to_string()));
+        assert!(!partial_completions.contains(&"help".to_string()));
+
+        // Test case insensitive matching
+        let case_completions = context.get_completions("HELP");
+        assert!(case_completions.contains(&"help".to_string()));
+    }
+
+    #[test]
+    fn test_completion_context_challenge() {
+        let context = CompletionContext::Challenge;
+
+        let completions = context.get_completions("");
+        assert_eq!(completions.len(), 2);
+        assert!(completions.contains(&"hint".to_string()));
+        assert!(completions.contains(&"skip".to_string()));
+
+        let partial = context.get_completions("h");
+        assert_eq!(partial.len(), 1);
+        assert!(partial.contains(&"hint".to_string()));
+    }
+
+    #[test]
+    fn test_completion_context_help_menu() {
+        let context = CompletionContext::HelpMenu;
+
+        let completions = context.get_completions("");
+        assert!(completions.contains(&"1".to_string()));
+        assert!(completions.contains(&"5".to_string()));
+        assert!(completions.contains(&"back".to_string()));
+
+        let back_completion = context.get_completions("ba");
+        assert_eq!(back_completion.len(), 1);
+        assert!(back_completion.contains(&"back".to_string()));
+    }
+
+    #[test]
+    fn test_completion_context_none() {
+        let context = CompletionContext::None;
+
+        let completions = context.get_completions("");
+        assert!(completions.is_empty());
+
+        let partial_completions = context.get_completions("test");
+        assert!(partial_completions.is_empty());
+    }
+
+    #[test]
+    fn test_find_close_matches() {
+        let candidates = vec!["stats".to_string(), "help".to_string(), "quit".to_string()];
+
+        // Test exact substring match
+        let matches = find_close_matches("stat", &candidates);
+        assert!(matches.contains(&"stats".to_string()));
+
+        // Test typo correction
+        let typo_matches = find_close_matches("halp", &candidates);
+        assert!(typo_matches.contains(&"help".to_string()));
+
+        // Test single character difference
+        let char_diff = find_close_matches("qui", &candidates);
+        assert!(char_diff.contains(&"quit".to_string()));
+
+        // Test no matches for completely different input
+        let no_matches = find_close_matches("xyz", &candidates);
+        assert!(no_matches.is_empty());
+    }
+
+    #[test]
+    fn test_simple_edit_distance() {
+        // Identical strings
+        assert_eq!(simple_edit_distance("hello", "hello"), 0);
+
+        // Single substitution
+        assert_eq!(simple_edit_distance("hello", "hallo"), 1);
+
+        // Single insertion
+        assert_eq!(simple_edit_distance("hello", "helloo"), 1);
+
+        // Single deletion
+        assert_eq!(simple_edit_distance("hello", "hell"), 1);
+
+        // Multiple operations
+        assert_eq!(simple_edit_distance("hello", "world"), 4);
+
+        // Empty strings
+        assert_eq!(simple_edit_distance("", "hello"), 5);
+        assert_eq!(simple_edit_distance("hello", ""), 5);
+    }
+
+    #[test]
+    fn test_challenge_count_affects_completions() {
+        let context1 = CompletionContext::MainMenu { challenge_count: 2 };
+        let context2 = CompletionContext::MainMenu { challenge_count: 5 };
+
+        let completions1 = context1.get_completions("");
+        let completions2 = context2.get_completions("");
+
+        // Should have different numbers of challenge options
+        assert!(completions1.contains(&"2".to_string()));
+        assert!(!completions1.contains(&"3".to_string()));
+
+        assert!(completions2.contains(&"5".to_string()));
+        assert!(!completions2.contains(&"6".to_string()));
     }
 }

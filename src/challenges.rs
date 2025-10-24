@@ -1,5 +1,5 @@
-use crate::{narrative, state::GameState, ui};
 use crate::ui::CompletionContext;
+use crate::{narrative, state::GameState, ui};
 use std::io;
 
 #[derive(Clone)]
@@ -52,7 +52,7 @@ impl Challenge {
                     max_attempts
                 ),
                 CompletionContext::Challenge,
-                true
+                true,
             )?;
 
             if input.to_lowercase() == "hint" {
