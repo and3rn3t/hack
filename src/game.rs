@@ -26,7 +26,7 @@ pub fn run_game() -> io::Result<()> {
             )?;
             let name = ui::read_input("Enter your name: ")?;
             let mut state = GameState::new(name);
-            
+
             // Offer tutorial for new players
             if state.needs_tutorial() {
                 ui::print_colored(
@@ -37,7 +37,7 @@ pub fn run_game() -> io::Result<()> {
                     "(Recommended for first-time players)\n",
                     crossterm::style::Color::DarkGrey,
                 )?;
-                
+
                 let choice = ui::read_input("[Y/n]: ")?;
                 if choice.is_empty() || choice.to_lowercase().starts_with('y') {
                     tutorial::run_tutorial(&mut state)?;
@@ -51,7 +51,7 @@ pub fn run_game() -> io::Result<()> {
                     ui::pause()?;
                 }
             }
-            
+
             narrative::show_intro(&state.player_name)?;
             state
         }
@@ -59,6 +59,10 @@ pub fn run_game() -> io::Result<()> {
 
     // Main game loop
     loop {
+        // Random jumpscare based on sanity level (lower sanity = more likely)
+        let jumpscare_probability = (100.0 - state.sanity as f64) / 500.0; // 0-20% chance
+        ui::random_jumpscare(jumpscare_probability)?;
+
         // Show current level
         narrative::show_level_transition(state.current_level, state.sanity)?;
 
@@ -84,6 +88,9 @@ pub fn run_game() -> io::Result<()> {
 
         // Show available challenges
         ui::clear_screen()?;
+
+        // Occasional subtle scare when viewing menu
+        ui::subtle_jumpscare()?;
 
         // Main header
         ui::print_colored(
@@ -195,6 +202,10 @@ pub fn run_game() -> io::Result<()> {
 
         // Check if player's sanity is too low
         if state.sanity <= 0 {
+            // Final jumpscare before game over
+            ui::random_jumpscare(1.0)?;
+            std::thread::sleep(std::time::Duration::from_millis(500));
+
             ui::clear_screen()?;
             ui::print_colored(
                 r#"
@@ -344,7 +355,7 @@ fn show_stats(state: &GameState) -> io::Result<()> {
 
 fn show_help() -> io::Result<()> {
     ui::clear_screen()?;
-    
+
     ui::print_colored(
         "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
         crossterm::style::Color::Cyan,
@@ -357,7 +368,7 @@ fn show_help() -> io::Result<()> {
         "╚═══════════════════════════════════════════════════════════════════════════╝\n",
         crossterm::style::Color::Cyan,
     )?;
-    
+
     println!("\nSelect a topic to learn more:\n");
     ui::print_menu_option("1", "Sanity System", None)?;
     ui::print_menu_option("2", "Experience & Levels", None)?;
@@ -365,9 +376,9 @@ fn show_help() -> io::Result<()> {
     ui::print_menu_option("4", "Challenge Levels", None)?;
     ui::print_menu_option("5", "All Commands", None)?;
     ui::print_menu_option("back", "Return to game", None)?;
-    
+
     let choice = ui::read_input("\n> Topic: ")?;
-    
+
     match choice.as_str() {
         "1" => {
             tutorial::show_tooltip("sanity")?;
@@ -396,7 +407,7 @@ fn show_help() -> io::Result<()> {
         }
         _ => {} // Return to game
     }
-    
+
     Ok(())
 }
 
@@ -406,7 +417,7 @@ fn show_all_commands() -> io::Result<()> {
         crossterm::style::Color::Cyan,
     )?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 MAIN MENU:
@@ -425,7 +436,7 @@ NAVIGATION (Input):
   ←/→    → Move cursor within input
   Home   → Jump to start of line
   End    → Jump to end of line
-  
+
 TIPS:
   • Use hints liberally - learning is the goal!
   • Watch your sanity meter carefully
@@ -434,6 +445,6 @@ TIPS:
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     Ok(())
 }

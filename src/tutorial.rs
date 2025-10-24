@@ -4,7 +4,7 @@ use std::io;
 /// Run the interactive tutorial for new players
 pub fn run_tutorial(state: &mut GameState) -> io::Result<()> {
     ui::clear_screen()?;
-    
+
     show_welcome()?;
     explain_game_mechanics()?;
     explain_sanity_system()?;
@@ -12,10 +12,10 @@ pub fn run_tutorial(state: &mut GameState) -> io::Result<()> {
     practice_challenge(state)?;
     explain_hints_and_commands()?;
     show_tutorial_complete()?;
-    
+
     state.mark_tutorial_completed();
     state.save()?;
-    
+
     Ok(())
 }
 
@@ -32,7 +32,7 @@ fn show_welcome() -> io::Result<()> {
 "#,
         crossterm::style::Color::Cyan,
     )?;
-    
+
     ui::print_colored(
         "\nWelcome, new recruit! This tutorial will guide you through the basics\n",
         crossterm::style::Color::White,
@@ -41,20 +41,17 @@ fn show_welcome() -> io::Result<()> {
         "of the Ghost Protocol challenge system.\n",
         crossterm::style::Color::White,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn explain_game_mechanics() -> io::Result<()> {
     ui::clear_screen()?;
-    
-    ui::print_colored(
-        "\n📖 GAME MECHANICS\n",
-        crossterm::style::Color::Yellow,
-    )?;
+
+    ui::print_colored("\n📖 GAME MECHANICS\n", crossterm::style::Color::Yellow)?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 The Ghost Protocol is a horror-themed hacking simulator where you'll:
@@ -69,25 +66,22 @@ Capture The Flag (CTF) competitions and real-world security.
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     ui::print_colored(
         "\n💡 TIP: Don't worry if you're new to hacking - we start with basics!\n",
         crossterm::style::Color::Cyan,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn explain_sanity_system() -> io::Result<()> {
     ui::clear_screen()?;
-    
-    ui::print_colored(
-        "\n🧠 THE SANITY SYSTEM\n",
-        crossterm::style::Color::Red,
-    )?;
+
+    ui::print_colored("\n🧠 THE SANITY SYSTEM\n", crossterm::style::Color::Red)?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 This is a HORROR game. Each challenge you attempt drains your sanity:
@@ -95,10 +89,10 @@ This is a HORROR game. Each challenge you attempt drains your sanity:
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     // Show a sample sanity bar
     ui::print_progress_bar(75, 100, "Sanity")?;
-    
+
     ui::print_colored(
         r#"
   • You start with 100 sanity
@@ -110,25 +104,22 @@ Strategy: Choose challenges wisely and use hints when stuck!
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     ui::print_colored(
         "\n⚠️  WARNING: The deeper you go, the more disturbing it gets...\n",
         crossterm::style::Color::Red,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn explain_challenges() -> io::Result<()> {
     ui::clear_screen()?;
-    
-    ui::print_colored(
-        "\n🎯 CHALLENGE SYSTEM\n",
-        crossterm::style::Color::Green,
-    )?;
+
+    ui::print_colored("\n🎯 CHALLENGE SYSTEM\n", crossterm::style::Color::Green)?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 Challenges are organized by DIFFICULTY LEVEL (0-4):
@@ -153,20 +144,20 @@ You unlock new levels by gaining experience points (XP).
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn practice_challenge(state: &mut GameState) -> io::Result<()> {
     ui::clear_screen()?;
-    
+
     ui::print_colored(
         "\n🎓 PRACTICE CHALLENGE\n",
         crossterm::style::Color::Magenta,
     )?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 Let's try a simple practice challenge to get you started!
@@ -186,11 +177,11 @@ What is the answer to life, the universe, and everything?
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     let mut attempts = 0;
     loop {
         let answer = ui::read_input("\nYour answer: ")?;
-        
+
         if answer == "42" {
             ui::print_success("Correct! Welcome to the Ghost Protocol.")?;
             ui::print_colored(
@@ -221,20 +212,17 @@ What is the answer to life, the universe, and everything?
             }
         }
     }
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn explain_hints_and_commands() -> io::Result<()> {
     ui::clear_screen()?;
-    
-    ui::print_colored(
-        "\n⚙️  COMMANDS & HINTS\n",
-        crossterm::style::Color::Cyan,
-    )?;
+
+    ui::print_colored("\n⚙️  COMMANDS & HINTS\n", crossterm::style::Color::Cyan)?;
     ui::print_separator()?;
-    
+
     ui::print_colored(
         r#"
 AVAILABLE COMMANDS:
@@ -265,19 +253,19 @@ Don't be afraid to use hints - learning is the goal! 🎓
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     ui::print_colored(
         "\n💡 TIP: After wrong answers, you'll get intelligent feedback!\n",
         crossterm::style::Color::Green,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
 
 fn show_tutorial_complete() -> io::Result<()> {
     ui::clear_screen()?;
-    
+
     ui::print_colored(
         r#"
 ╔═══════════════════════════════════════════════════════════════════════════╗
@@ -288,7 +276,7 @@ fn show_tutorial_complete() -> io::Result<()> {
 "#,
         crossterm::style::Color::Green,
     )?;
-    
+
     ui::print_colored(
         r#"
 You're now ready to face the Ghost Protocol!
@@ -303,12 +291,12 @@ The game will now begin. May you survive the protocol...
 "#,
         crossterm::style::Color::White,
     )?;
-    
+
     ui::print_colored(
         "\n                    Good luck, recruit.\n",
         crossterm::style::Color::DarkGrey,
     )?;
-    
+
     ui::pause()?;
     Ok(())
 }
@@ -373,12 +361,12 @@ mod tests {
     #[test]
     fn test_tutorial_state_tracking() {
         let mut state = GameState::new("TestPlayer".to_string());
-        
+
         assert!(state.needs_tutorial());
         assert!(!state.tutorial_completed);
-        
+
         state.mark_tutorial_completed();
-        
+
         assert!(!state.needs_tutorial());
         assert!(state.tutorial_completed);
     }
@@ -387,7 +375,7 @@ mod tests {
     fn test_tutorial_not_needed_if_challenges_completed() {
         let mut state = GameState::new("TestPlayer".to_string());
         state.complete_challenge("welcome", 50);
-        
+
         // Even if tutorial not completed, don't show if they have progress
         assert!(!state.needs_tutorial());
     }

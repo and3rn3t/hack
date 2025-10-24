@@ -39,6 +39,11 @@ The Ghost Protocol has begun.
 pub fn show_level_transition(level: usize, sanity: i32) -> io::Result<()> {
     ui::clear_screen()?;
 
+    // Chance of jumpscare during level transition
+    if sanity < 50 {
+        ui::random_jumpscare(0.25)?;
+    }
+
     let level_info = [
         (
             "Level 0: The Awakening",
@@ -190,6 +195,10 @@ pub fn show_hint(hint: &str) -> io::Result<()> {
 
 pub fn show_completion_message(xp_earned: i32) -> io::Result<()> {
     println!();
+
+    // Small chance of jumpscare even on success
+    ui::random_jumpscare(0.05)?;
+
     ui::print_colored(
         "╔═══════════════════════════════════════════════════════════════════════════╗\n",
         Color::Green,
@@ -230,6 +239,12 @@ pub fn show_completion_message(xp_earned: i32) -> io::Result<()> {
 
 pub fn show_ending(secrets_found: usize) -> io::Result<()> {
     ui::clear_screen()?;
+
+    // Epic jumpscare sequence for the ending
+    ui::random_jumpscare(0.8)?;
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    ui::random_jumpscare(0.8)?;
+    std::thread::sleep(std::time::Duration::from_millis(300));
 
     ui::print_colored(
         r#"

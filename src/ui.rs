@@ -439,6 +439,317 @@ pub fn typewriter_effect(text: &str, delay_ms: u64) -> io::Result<()> {
     Ok(())
 }
 
+// ============================================================================
+// JUMPSCARE SYSTEM
+// ============================================================================
+
+/// Trigger a random jumpscare with configurable probability
+pub fn random_jumpscare(probability: f64) -> io::Result<()> {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    if rng.gen_bool(probability) {
+        let jumpscare_type = rng.gen_range(0..8);
+        match jumpscare_type {
+            0 => jumpscare_ghost_face()?,
+            1 => jumpscare_screen_shake()?,
+            2 => jumpscare_glitch_text()?,
+            3 => jumpscare_sudden_message()?,
+            4 => jumpscare_red_eyes()?,
+            5 => jumpscare_static()?,
+            6 => jumpscare_whisper()?,
+            _ => jumpscare_flash()?,
+        }
+    }
+    Ok(())
+}
+
+/// Ghost face ASCII art jumpscare
+fn jumpscare_ghost_face() -> io::Result<()> {
+    clear_screen()?;
+
+    // Flash effect
+    for _ in 0..3 {
+        execute!(io::stdout(), SetForegroundColor(Color::White))?;
+        print!("\n\n\n");
+        execute!(io::stdout(), SetForegroundColor(Color::Red))?;
+
+        print!(
+            r#"
+                    ░░░░░░░░░░░░░░░░░░░░░░░░░░
+                    ░░░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░
+                    ░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░
+                    ░░▓▓░░░░░░░░░░░░░░░░▓▓░░
+                    ░░▓▓░░██░░░░░░██░░░░▓▓░░
+                    ░░▓▓░░██░░░░░░██░░░░▓▓░░
+                    ░░▓▓░░░░░░░░░░░░░░░░▓▓░░
+                    ░░▓▓░░░░░██████░░░░░▓▓░░
+                    ░░▓▓░░░██░░░░░░██░░░▓▓░░
+                    ░░▓▓░░░░░░░░░░░░░░░░▓▓░░
+                    ░░░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░
+                    ░░░░░░░░░░░░░░░░░░░░░░░░
+
+                    I   S E E   Y O U . . .
+        "#
+        );
+
+        execute!(io::stdout(), ResetColor)?;
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(150));
+        clear_screen()?;
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+
+    std::thread::sleep(std::time::Duration::from_millis(800));
+    Ok(())
+}
+
+/// Screen shake effect with distorted text
+fn jumpscare_screen_shake() -> io::Result<()> {
+    let messages = [
+        "ERROR ERROR ERROR ERROR",
+        "THEY ARE COMING",
+        "YOU CANNOT ESCAPE",
+        "HELP US",
+        "IT'S TOO LATE",
+    ];
+
+    use rand::{seq::SliceRandom, Rng};
+    let mut rng = rand::thread_rng();
+    let message = messages.choose(&mut rng).unwrap();
+
+    for _ in 0..10 {
+        clear_screen()?;
+        let offset = rng.gen_range(0..5);
+        println!("{}", "\n".repeat(offset));
+
+        for _ in 0..rng.gen_range(0..3) {
+            print!("{}", " ".repeat(rng.gen_range(0..20)));
+        }
+
+        print_colored(message, Color::Red)?;
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(80));
+    }
+
+    clear_screen()?;
+    std::thread::sleep(std::time::Duration::from_millis(300));
+    Ok(())
+}
+
+/// Glitch text effect with corrupted characters
+fn jumpscare_glitch_text() -> io::Result<()> {
+    let text = "SYSTEM COMPROMISED - ENTITY DETECTED - RUN";
+
+    clear_screen()?;
+    println!("\n\n\n");
+
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    for _ in 0..5 {
+        print!("        ");
+        for ch in text.chars() {
+            if rng.gen_bool(0.3) {
+                let glitch_char = rng.gen_range('!'..='~');
+                print_colored(&glitch_char.to_string(), Color::Red)?;
+            } else {
+                print_colored(&ch.to_string(), Color::White)?;
+            }
+        }
+        println!();
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(100));
+
+        // Move cursor back up
+        execute!(io::stdout(), cursor::MoveToPreviousLine(1))?;
+    }
+
+    println!();
+    std::thread::sleep(std::time::Duration::from_millis(500));
+    Ok(())
+}
+
+/// Sudden message popup
+fn jumpscare_sudden_message() -> io::Result<()> {
+    clear_screen()?;
+
+    std::thread::sleep(std::time::Duration::from_millis(100));
+
+    execute!(io::stdout(), SetForegroundColor(Color::Red))?;
+    println!("\n\n\n");
+    println!("        ╔════════════════════════════════════════════╗");
+    println!("        ║                                            ║");
+    println!("        ║     W H Y   A R E   Y O U   H E R E ?     ║");
+    println!("        ║                                            ║");
+    println!("        ╚════════════════════════════════════════════╝");
+    execute!(io::stdout(), ResetColor)?;
+
+    io::stdout().flush()?;
+    std::thread::sleep(std::time::Duration::from_millis(1500));
+
+    clear_screen()?;
+    Ok(())
+}
+
+/// Red eyes appearing in the darkness
+fn jumpscare_red_eyes() -> io::Result<()> {
+    clear_screen()?;
+
+    println!("\n\n\n\n\n\n\n");
+
+    // Slowly reveal the eyes
+    for i in 0..3 {
+        if i > 0 {
+            execute!(io::stdout(), cursor::MoveToPreviousLine(1))?;
+        }
+
+        let eyes = match i {
+            0 => "                         ●           ●",
+            1 => "                        ●●          ●●",
+            _ => "                        ◉●          ●◉",
+        };
+
+        print_colored(eyes, Color::Red)?;
+        println!();
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(400));
+    }
+
+    std::thread::sleep(std::time::Duration::from_millis(800));
+
+    // Quick flash of text
+    println!();
+    print_colored(
+        "                    I ' M   W A T C H I N G",
+        Color::DarkRed,
+    )?;
+    io::stdout().flush()?;
+
+    std::thread::sleep(std::time::Duration::from_millis(1000));
+    clear_screen()?;
+    Ok(())
+}
+
+/// Static interference effect
+fn jumpscare_static() -> io::Result<()> {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    clear_screen()?;
+
+    for _ in 0..15 {
+        for _ in 0..20 {
+            let chars = ['░', '▒', '▓', '█', ' ', '·', '∴'];
+            let ch = chars[rng.gen_range(0..chars.len())];
+
+            let color = if rng.gen_bool(0.1) {
+                Color::Red
+            } else {
+                Color::DarkGrey
+            };
+
+            print_colored(&ch.to_string(), color)?;
+        }
+        println!();
+    }
+
+    io::stdout().flush()?;
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    clear_screen()?;
+    Ok(())
+}
+
+/// Whisper effect with fading text
+fn jumpscare_whisper() -> io::Result<()> {
+    let whispers = [
+        "help me...",
+        "you're next...",
+        "don't look behind you...",
+        "they know...",
+        "it's watching...",
+        "join us...",
+    ];
+
+    use rand::seq::SliceRandom;
+    let mut rng = rand::thread_rng();
+    let whisper = whispers.choose(&mut rng).unwrap();
+
+    clear_screen()?;
+    println!("\n\n\n\n\n");
+
+    // Fade in
+    for _ in 0..3 {
+        print!("                    ");
+        print_colored(whisper, Color::DarkGrey)?;
+        println!();
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(200));
+        execute!(io::stdout(), cursor::MoveToPreviousLine(1))?;
+    }
+
+    print!("                    ");
+    print_colored(whisper, Color::Red)?;
+    println!();
+    io::stdout().flush()?;
+
+    std::thread::sleep(std::time::Duration::from_millis(1200));
+    clear_screen()?;
+    Ok(())
+}
+
+/// Flash effect with color burst
+fn jumpscare_flash() -> io::Result<()> {
+    for _ in 0..4 {
+        clear_screen()?;
+
+        // Full screen red
+        execute!(io::stdout(), SetForegroundColor(Color::Red))?;
+        for _ in 0..30 {
+            println!("{}", "█".repeat(80));
+        }
+        execute!(io::stdout(), ResetColor)?;
+
+        io::stdout().flush()?;
+        std::thread::sleep(std::time::Duration::from_millis(50));
+
+        clear_screen()?;
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+
+    Ok(())
+}
+
+/// Subtle jumpscare - just a brief distortion (lower intensity)
+pub fn subtle_jumpscare() -> io::Result<()> {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    if rng.gen_bool(0.15) {
+        match rng.gen_range(0..3) {
+            0 => {
+                // Brief text corruption
+                print_colored("█", Color::Red)?;
+                io::stdout().flush()?;
+                std::thread::sleep(std::time::Duration::from_millis(50));
+            }
+            1 => {
+                // Whispered word
+                print_colored(" [̲̅w̲̅a̲̅t̲̅c̲̅h̲̅i̲̅n̲̅g̲̅] ", Color::DarkGrey)?;
+                std::thread::sleep(std::time::Duration::from_millis(300));
+            }
+            _ => {
+                // Brief screen flicker
+                execute!(io::stdout(), SetForegroundColor(Color::DarkRed))?;
+                std::thread::sleep(std::time::Duration::from_millis(30));
+                execute!(io::stdout(), ResetColor)?;
+            }
+        }
+    }
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
