@@ -116,8 +116,8 @@ jobs:
             target
           key: ${{ runner.os }}-${{ matrix.rust }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Run unit tests
-        run: cargo test --lib --all-features --verbose
+      - name: Run unit tests (sequential to avoid shared state issues)
+        run: cargo test --lib --all-features --verbose -- --test-threads=1
 
       - name: Run integration tests
         run: cargo test --test '*' --all-features --verbose
