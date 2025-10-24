@@ -1,4 +1,5 @@
 use crate::{narrative, state::GameState, ui};
+use crate::ui::CompletionContext;
 use std::io;
 
 #[derive(Clone)]
@@ -44,11 +45,15 @@ impl Challenge {
 
         loop {
             println!("\n");
-            let input = ui::read_input(&format!(
-                "Enter your answer (attempt {}/{}) or 'hint' for help or 'skip': ",
-                attempts + 1,
-                max_attempts
-            ))?;
+            let input = ui::read_input_with_completion(
+                &format!(
+                    "Enter your answer (attempt {}/{}) or 'hint' for help or 'skip': ",
+                    attempts + 1,
+                    max_attempts
+                ),
+                CompletionContext::Challenge,
+                true
+            )?;
 
             if input.to_lowercase() == "hint" {
                 if !self.hints.is_empty() {

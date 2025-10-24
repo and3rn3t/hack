@@ -1,4 +1,5 @@
 use crate::{challenges, narrative, state::GameState, tutorial, ui};
+use crate::ui::CompletionContext;
 use std::io;
 
 pub fn run_game() -> io::Result<()> {
@@ -157,7 +158,11 @@ pub fn run_game() -> io::Result<()> {
         ui::print_menu_option("save", "Save your progress", None)?;
         ui::print_menu_option("quit", "Exit the Ghost Protocol", None)?;
 
-        let choice = ui::read_input("\n> Enter your choice: ")?;
+        // Create completion context with available challenges
+        let completion_context = CompletionContext::MainMenu {
+            challenge_count: level_challenges.len(),
+        };
+        let choice = ui::read_input_with_completion("\n> Enter your choice: ", completion_context, true)?;
 
         match choice.to_lowercase().as_str() {
             "stats" => show_stats(&state)?,
@@ -377,7 +382,7 @@ fn show_help() -> io::Result<()> {
     ui::print_menu_option("5", "All Commands", None)?;
     ui::print_menu_option("back", "Return to game", None)?;
 
-    let choice = ui::read_input("\n> Topic: ")?;
+    let choice = ui::read_input_with_completion("\n> Topic: ", CompletionContext::HelpMenu, true)?;
 
     match choice.as_str() {
         "1" => {

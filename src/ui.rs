@@ -3,16 +3,69 @@
 
 use crossterm::{
     cursor,
-    event::{self, poll, Event, KeyCode, KeyEvent},
+    event::{self, Event, KeyCode, KeyEvent},
     execute,
     style::{Color, Print, ResetColor, SetForegroundColor},
-    terminal::{
-        self, disable_raw_mode, enable_raw_mode, Clear, ClearType, EnterAlternateScreen,
-        LeaveAlternateScreen,
-    },
+    terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType},
 };
 use std::io::{self, Write};
-use std::time::Duration;
+use std::sync::Mutex;
+
+/// Context for tab completion - determines what commands are available
+#[derive(Debug, Clone)]
+pub enum CompletionContext {
+    /// Main menu context (stats, help, save, quit, challenge numbers)
+    MainMenu { challenge_count: usize },
+    /// During a challenge (hint, skip)
+    Challenge,
+    /// Help menu context (1-5, back)
+    HelpMenu,
+    /// No completion available
+    None,
+}
+
+impl CompletionContext {
+    /// Get all valid completions for this context
+    pub fn get_completions(&self, partial: &str) -> Vec<String> {
+        let candidates = match self {
+            CompletionContext::MainMenu { challenge_count } => {
+                let mut commands = vec![
+                    "stats".to_string(),
+                    "help".to_string(), 
+                    "tutorial".to_string(),
+                    "save".to_string(),
+                    "quit".to_string(),
+                ];
+                // Add challenge numbers
+                for i in 1..=*challenge_count {
+                    commands.push(i.to_string());
+                }
+                commands
+            }
+            CompletionContext::Challenge => {
+                vec!["hint".to_string(), "skip".to_string()]
+            }
+            CompletionContext::HelpMenu => {
+                vec![
+                    "1".to_string(),
+                    "2".to_string(), 
+                    "3".to_string(),
+                    "4".to_string(),
+                    "5".to_string(),
+                    "back".to_string(),
+                ]
+            }
+            CompletionContext::None => vec![],
+        };
+
+        // Filter candidates that start with the partial input (case insensitive)
+        let partial_lower = partial.to_lowercase();
+        candidates
+            .into_iter()
+            .filter(|cmd| cmd.to_lowercase().starts_with(&partial_lower))
+            .collect()
+    }
+}
 
 pub fn clear_screen() -> io::Result<()> {
     execute!(io::stdout(), Clear(ClearType::All), cursor::MoveTo(0, 0))
@@ -59,7 +112,7 @@ pub fn print_separator() -> io::Result<()> {
 }
 
 /// Command history buffer for input recall
-static mut COMMAND_HISTORY: Vec<String> = Vec::new();
+static COMMAND_HISTORY: Mutex<Vec<String>> = Mutex::new(Vec::new());
 const MAX_HISTORY_SIZE: usize = 50;
 
 /// Read input with command history support (up/down arrows)
@@ -70,44 +123,74 @@ pub fn read_input(prompt: &str) -> io::Result<String> {
 /// Read input with command history support using reliable standard input
 pub fn read_input_with_history(prompt: &str, save_to_history: bool) -> io::Result<String> {
     // Using simple, reliable stdin.read_line() for consistent cross-platform behavior
-    // 
+    //
     // ✅ Features: Normal typing, no character doubling, command history saving
     // ✅ Reliable: Works consistently across all terminal types and platforms
     // ✅ Simple: Standard library input - no complex terminal state management
     read_input_simple(prompt, save_to_history)
+}
 
-    enable_raw_mode()?;
+/// Read input with tab completion support
+pub fn read_input_with_completion(
+    prompt: &str, 
+    context: CompletionContext,
+    save_to_history: bool
+) -> io::Result<String> {
+    // For now, fall back to simple input until we implement full tab completion
+    // This maintains compatibility while we build the feature
+    read_input_simple_with_completion(prompt, context, save_to_history)
+}
 
-    // On Windows, explicitly disable echo input
-    #[cfg(windows)]
-    {
-        disable_echo_input()?;
+/// Simple tab completion implementation using stdin.read_line()
+fn read_input_simple_with_completion(
+    prompt: &str,
+    context: CompletionContext, 
+    save_to_history: bool
+) -> io::Result<String> {
+    print!("\n{}", prompt);
+    io::stdout().flush()?;
+
+    let stdin = io::stdin();
+    let mut input = String::new();
+    
+    // Show completion hint if there are available completions
+    let completions = context.get_completions("");
+    if !completions.is_empty() {
+        print_colored(
+            &format!(" (Tab: {})", completions.join(", ")),
+            Color::DarkGrey
+        )?;
+        print!("\r{}", prompt); // Return cursor to start of prompt
+        io::stdout().flush()?;
+    }
+    
+    stdin.read_line(&mut input)?;
+    let input = input.trim().to_string();
+
+    // Check if input can be completed and suggest if it's partial
+    let matching_completions = context.get_completions(&input);
+    if matching_completions.len() == 1 && matching_completions[0] != input {
+        print_colored(
+            &format!("→ Did you mean '{}'? ", matching_completions[0]),
+            Color::Yellow
+        )?;
+    } else if matching_completions.len() > 1 && !input.is_empty() {
+        print_colored(
+            &format!("→ Matches: {}", matching_completions.join(", ")),
+            Color::Cyan
+        )?;
     }
 
-    let result = read_line_with_history_no_echo(prompt);
-
-    #[cfg(windows)]
-    {
-        enable_echo_input()?;
-    }
-
-    disable_raw_mode()?;
-    let input = match result {
-        Ok(input) => {
-            println!(); // Move to next line after input
-            input.trim().to_string()
-        }
-        Err(e) => return Err(e),
-    }; // Save to history if requested and not empty
+    // Save to history if requested and not empty
     if save_to_history && !input.trim().is_empty() {
-        unsafe {
+        if let Ok(mut history) = COMMAND_HISTORY.lock() {
             // Don't add duplicate of last command
-            if COMMAND_HISTORY.is_empty() || COMMAND_HISTORY.last() != Some(&input) {
-                COMMAND_HISTORY.push(input.clone());
+            if history.is_empty() || history.last() != Some(&input) {
+                history.push(input.clone());
 
                 // Keep history size manageable
-                if COMMAND_HISTORY.len() > MAX_HISTORY_SIZE {
-                    COMMAND_HISTORY.remove(0);
+                if history.len() > MAX_HISTORY_SIZE {
+                    history.remove(0);
                 }
             }
         }
@@ -174,8 +257,6 @@ fn enable_echo_input() -> io::Result<()> {
 
 /// Simple input fallback for terminals that don't support advanced features
 fn read_input_simple(prompt: &str, save_to_history: bool) -> io::Result<String> {
-    use std::io::BufRead;
-
     print!("\n{}", prompt);
     io::stdout().flush()?;
 
@@ -187,14 +268,14 @@ fn read_input_simple(prompt: &str, save_to_history: bool) -> io::Result<String> 
 
     // Save to history if requested and not empty
     if save_to_history && !input.trim().is_empty() {
-        unsafe {
+        if let Ok(mut history) = COMMAND_HISTORY.lock() {
             // Don't add duplicate of last command
-            if COMMAND_HISTORY.is_empty() || COMMAND_HISTORY.last() != Some(&input) {
-                COMMAND_HISTORY.push(input.clone());
+            if history.is_empty() || history.last() != Some(&input) {
+                history.push(input.clone());
 
                 // Keep history size manageable
-                if COMMAND_HISTORY.len() > MAX_HISTORY_SIZE {
-                    COMMAND_HISTORY.remove(0);
+                if history.len() > MAX_HISTORY_SIZE {
+                    history.remove(0);
                 }
             }
         }
@@ -305,21 +386,21 @@ fn read_line_with_history_no_echo(prompt: &str) -> io::Result<String> {
                         execute!(io::stdout(), cursor::MoveToColumn(total_pos as u16))?;
                     }
                     KeyCode::Up => {
-                        unsafe {
-                            if !COMMAND_HISTORY.is_empty() {
+                        if let Ok(history) = COMMAND_HISTORY.lock() {
+                            if !history.is_empty() {
                                 // Save current input when starting history navigation
                                 if history_index.is_none() {
                                     temp_input = input.clone();
                                 }
 
                                 let new_index = match history_index {
-                                    None => COMMAND_HISTORY.len() - 1,
+                                    None => history.len() - 1,
                                     Some(idx) if idx > 0 => idx - 1,
                                     Some(idx) => idx,
                                 };
 
                                 history_index = Some(new_index);
-                                input = COMMAND_HISTORY[new_index].clone();
+                                input = history[new_index].clone();
                                 cursor_pos = input.len();
 
                                 // Clear and reprint
@@ -335,13 +416,13 @@ fn read_line_with_history_no_echo(prompt: &str) -> io::Result<String> {
                         }
                     }
                     KeyCode::Down => {
-                        unsafe {
+                        if let Ok(history) = COMMAND_HISTORY.lock() {
                             if let Some(idx) = history_index {
-                                if idx < COMMAND_HISTORY.len() - 1 {
+                                if idx < history.len() - 1 {
                                     // Move forward in history
                                     let new_index = idx + 1;
                                     history_index = Some(new_index);
-                                    input = COMMAND_HISTORY[new_index].clone();
+                                    input = history[new_index].clone();
                                 } else {
                                     // Reached most recent, restore temp input
                                     history_index = None;
@@ -383,14 +464,14 @@ fn read_line_with_history_no_echo(prompt: &str) -> io::Result<String> {
 
 /// Clear command history
 pub fn clear_command_history() {
-    unsafe {
-        COMMAND_HISTORY.clear();
+    if let Ok(mut history) = COMMAND_HISTORY.lock() {
+        history.clear();
     }
 }
 
 /// Get command history size
 pub fn get_history_size() -> usize {
-    unsafe { COMMAND_HISTORY.len() }
+    COMMAND_HISTORY.lock().map(|h| h.len()).unwrap_or(0)
 }
 
 pub fn pause() -> io::Result<()> {
@@ -880,9 +961,9 @@ mod tests {
         clear_command_history();
 
         // Add more than MAX_HISTORY_SIZE commands
-        unsafe {
+        if let Ok(mut history) = COMMAND_HISTORY.lock() {
             for i in 0..(MAX_HISTORY_SIZE + 10) {
-                COMMAND_HISTORY.push(format!("command_{}", i));
+                history.push(format!("command_{}", i));
             }
         }
 
@@ -894,9 +975,9 @@ mod tests {
 
     #[test]
     fn test_clear_command_history() {
-        unsafe {
-            COMMAND_HISTORY.push("test1".to_string());
-            COMMAND_HISTORY.push("test2".to_string());
+        if let Ok(mut history) = COMMAND_HISTORY.lock() {
+            history.push("test1".to_string());
+            history.push("test2".to_string());
         }
 
         assert!(get_history_size() >= 2);
