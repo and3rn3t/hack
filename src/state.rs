@@ -67,6 +67,128 @@ impl Achievement {
     }
 }
 
+/// User preferences for customization (v1.2.0 feature)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UserPreferences {
+    #[serde(default = "default_difficulty_scaling")]
+    pub difficulty_scaling: DifficultyScaling,
+    #[serde(default = "default_hint_verbosity")]
+    pub hint_verbosity: HintVerbosity,
+    #[serde(default = "default_color_theme")]
+    pub color_theme: String,
+    #[serde(default = "default_font_size")]
+    pub font_size: FontSize,
+    #[serde(default = "default_audio_enabled")]
+    pub audio_enabled: bool,
+    #[serde(default = "default_animation_speed")]
+    pub animation_speed: AnimationSpeed,
+    #[serde(default)]
+    pub user_aliases: HashMap<String, String>,
+    #[serde(default = "default_save_slot")]
+    pub current_save_slot: u8,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum DifficultyScaling {
+    Adaptive, // Adjusts based on performance
+    Static,   // Fixed difficulty
+    Custom,   // User-defined scaling
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum HintVerbosity {
+    Minimal,  // Brief hints
+    Moderate, // Standard hints
+    Detailed, // Comprehensive hints
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum FontSize {
+    Small,
+    Medium,
+    Large,
+    ExtraLarge,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum AnimationSpeed {
+    None,   // No animations
+    Slow,   // Reduced speed for accessibility
+    Normal, // Standard speed
+    Fast,   // Quick animations
+}
+
+// Default functions for user preferences
+fn default_difficulty_scaling() -> DifficultyScaling {
+    DifficultyScaling::Adaptive
+}
+fn default_hint_verbosity() -> HintVerbosity {
+    HintVerbosity::Moderate
+}
+fn default_color_theme() -> String {
+    "Horror".to_string()
+}
+fn default_font_size() -> FontSize {
+    FontSize::Medium
+}
+fn default_audio_enabled() -> bool {
+    true
+}
+fn default_animation_speed() -> AnimationSpeed {
+    AnimationSpeed::Normal
+}
+fn default_save_slot() -> u8 {
+    0
+}
+
+impl Default for UserPreferences {
+    fn default() -> Self {
+        Self {
+            difficulty_scaling: default_difficulty_scaling(),
+            hint_verbosity: default_hint_verbosity(),
+            color_theme: default_color_theme(),
+            font_size: default_font_size(),
+            audio_enabled: default_audio_enabled(),
+            animation_speed: default_animation_speed(),
+            user_aliases: HashMap::new(),
+            current_save_slot: default_save_slot(),
+        }
+    }
+}
+
+/// Enhanced progress analytics for v1.2.0
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProgressAnalytics {
+    #[serde(default)]
+    pub total_playtime_minutes: u64,
+    #[serde(default)]
+    pub challenges_attempted: HashMap<String, u32>,
+    #[serde(default)]
+    pub hints_used_per_challenge: HashMap<String, u32>,
+    #[serde(default)]
+    pub completion_times: HashMap<String, u64>, // in seconds
+    #[serde(default)]
+    pub difficulty_preferences: HashMap<String, String>, // challenge_id -> difficulty_level
+    #[serde(default)]
+    pub learning_streaks: u32,
+    #[serde(default = "chrono::Utc::now")]
+    pub last_session: chrono::DateTime<chrono::Utc>,
+}
+
+impl Default for ProgressAnalytics {
+    fn default() -> Self {
+        Self {
+            total_playtime_minutes: 0,
+            challenges_attempted: HashMap::new(),
+            hints_used_per_challenge: HashMap::new(),
+            completion_times: HashMap::new(),
+            difficulty_preferences: HashMap::new(),
+            learning_streaks: 0,
+            last_session: chrono::Utc::now(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameState {
     pub current_level: usize,
@@ -87,6 +209,12 @@ pub struct GameState {
     pub created_at: chrono::DateTime<chrono::Utc>,
     #[serde(default)]
     pub challenge_start_times: std::collections::HashMap<String, chrono::DateTime<chrono::Utc>>,
+
+    // v1.2.0 new features
+    #[serde(default)]
+    pub user_preferences: UserPreferences,
+    #[serde(default)]
+    pub progress_analytics: ProgressAnalytics,
 }
 
 impl GameState {
@@ -104,6 +232,8 @@ impl GameState {
             themes_tried: HashSet::new(),
             created_at: chrono::Utc::now(),
             challenge_start_times: std::collections::HashMap::new(),
+            user_preferences: UserPreferences::default(),
+            progress_analytics: ProgressAnalytics::default(),
         }
     }
 
@@ -620,6 +750,267 @@ impl GameState {
     pub fn add_theme_tried(&mut self, theme_name: &str) {
         self.themes_tried.insert(theme_name.to_string());
     }
+
+    // ===== v1.2.0 Advanced Command System Methods =====
+
+    /// Add or update a user alias
+    pub fn add_alias(&mut self, alias: &str, command: &str) {
+        self.user_preferences
+            .user_aliases
+            .insert(alias.to_string(), command.to_string());
+    }
+
+    /// Remove a user alias
+    pub fn remove_alias(&mut self, alias: &str) -> bool {
+        self.user_preferences.user_aliases.remove(alias).is_some()
+    }
+
+    /// Get command for alias, or None if not found
+    pub fn get_alias(&self, alias: &str) -> Option<&String> {
+        self.user_preferences.user_aliases.get(alias)
+    }
+
+    /// List all user aliases
+    pub fn list_aliases(&self) -> &HashMap<String, String> {
+        &self.user_preferences.user_aliases
+    }
+
+    /// Resolve command through aliases (supports chaining)
+    pub fn resolve_command(&self, input: &str) -> String {
+        let mut resolved = input.to_string();
+        let mut seen_aliases = HashSet::new();
+
+        // Prevent infinite loops by tracking seen aliases
+        while let Some(command) = self.get_alias(&resolved) {
+            if seen_aliases.contains(&resolved) {
+                break; // Circular alias detected
+            }
+            seen_aliases.insert(resolved.clone());
+            resolved = command.clone();
+        }
+
+        resolved
+    }
+
+    // ===== v1.2.0 User Preferences Methods =====
+
+    /// Update difficulty scaling preference
+    pub fn set_difficulty_scaling(&mut self, scaling: DifficultyScaling) {
+        self.user_preferences.difficulty_scaling = scaling;
+    }
+
+    /// Get current difficulty scaling
+    pub fn get_difficulty_scaling(&self) -> &DifficultyScaling {
+        &self.user_preferences.difficulty_scaling
+    }
+
+    /// Update hint verbosity preference
+    pub fn set_hint_verbosity(&mut self, verbosity: HintVerbosity) {
+        self.user_preferences.hint_verbosity = verbosity;
+    }
+
+    /// Get current hint verbosity
+    pub fn get_hint_verbosity(&self) -> &HintVerbosity {
+        &self.user_preferences.hint_verbosity
+    }
+
+    /// Set preferred color theme
+    pub fn set_color_theme(&mut self, theme: &str) {
+        self.user_preferences.color_theme = theme.to_string();
+    }
+
+    /// Get current color theme preference
+    pub fn get_color_theme(&self) -> &String {
+        &self.user_preferences.color_theme
+    }
+
+    /// Set font size preference
+    pub fn set_font_size(&mut self, size: FontSize) {
+        self.user_preferences.font_size = size;
+    }
+
+    /// Get current font size
+    pub fn get_font_size(&self) -> &FontSize {
+        &self.user_preferences.font_size
+    }
+
+    /// Toggle audio preference
+    pub fn set_audio_enabled(&mut self, enabled: bool) {
+        self.user_preferences.audio_enabled = enabled;
+    }
+
+    /// Get audio enabled status
+    pub fn is_audio_enabled(&self) -> bool {
+        self.user_preferences.audio_enabled
+    }
+
+    /// Set animation speed preference
+    pub fn set_animation_speed(&mut self, speed: AnimationSpeed) {
+        self.user_preferences.animation_speed = speed;
+    }
+
+    /// Get current animation speed
+    pub fn get_animation_speed(&self) -> &AnimationSpeed {
+        &self.user_preferences.animation_speed
+    }
+
+    // ===== v1.2.0 Progress Analytics Methods =====
+
+    /// Record challenge attempt
+    pub fn record_challenge_attempt(&mut self, challenge_id: &str) {
+        *self
+            .progress_analytics
+            .challenges_attempted
+            .entry(challenge_id.to_string())
+            .or_insert(0) += 1;
+    }
+
+    /// Record hint usage
+    pub fn record_hint_used(&mut self, challenge_id: &str) {
+        *self
+            .progress_analytics
+            .hints_used_per_challenge
+            .entry(challenge_id.to_string())
+            .or_insert(0) += 1;
+    }
+
+    /// Record challenge completion time
+    pub fn record_completion_time(&mut self, challenge_id: &str, seconds: u64) {
+        self.progress_analytics
+            .completion_times
+            .insert(challenge_id.to_string(), seconds);
+    }
+
+    /// Set difficulty preference for a challenge
+    pub fn set_challenge_difficulty_preference(&mut self, challenge_id: &str, difficulty: &str) {
+        self.progress_analytics
+            .difficulty_preferences
+            .insert(challenge_id.to_string(), difficulty.to_string());
+    }
+
+    /// Get completion rate percentage
+    pub fn get_completion_rate(&self) -> f32 {
+        if self.progress_analytics.challenges_attempted.is_empty() {
+            return 0.0;
+        }
+
+        let total_attempts: u32 = self.progress_analytics.challenges_attempted.values().sum();
+        let unique_completions = self.completed_challenges.len() as u32;
+
+        if total_attempts > 0 {
+            (unique_completions as f32 / total_attempts as f32) * 100.0
+        } else {
+            0.0
+        }
+    }
+
+    /// Get average completion time for completed challenges
+    pub fn get_average_completion_time(&self) -> Option<u64> {
+        if self.progress_analytics.completion_times.is_empty() {
+            return None;
+        }
+
+        let total: u64 = self.progress_analytics.completion_times.values().sum();
+        Some(total / self.progress_analytics.completion_times.len() as u64)
+    }
+
+    /// Increment learning streak
+    pub fn increment_learning_streak(&mut self) {
+        self.progress_analytics.learning_streaks += 1;
+    }
+
+    /// Reset learning streak (called on failed attempt)
+    pub fn reset_learning_streak(&mut self) {
+        self.progress_analytics.learning_streaks = 0;
+    }
+
+    /// Update session analytics
+    pub fn update_session_analytics(&mut self, minutes_played: u64) {
+        self.progress_analytics.total_playtime_minutes += minutes_played;
+        self.progress_analytics.last_session = chrono::Utc::now();
+    }
+
+    // ===== v1.2.0 Enhanced Save System Methods =====
+
+    /// Save to specific slot (0-4)
+    pub fn save_to_slot(&self, slot: u8) -> std::io::Result<()> {
+        if slot > 4 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Save slot must be 0-4",
+            ));
+        }
+
+        let filename = format!("save_slot_{}.json", slot);
+        self.save_to(&filename)
+    }
+
+    /// Load from specific slot
+    pub fn load_from_slot(slot: u8) -> std::io::Result<GameState> {
+        if slot > 4 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Save slot must be 0-4",
+            ));
+        }
+
+        let filename = format!("save_slot_{}.json", slot);
+        Self::load_from(&filename)
+    }
+
+    /// Export game state as compressed JSON
+    pub fn export_to_string(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(self)
+    }
+
+    /// Import game state from JSON string
+    pub fn import_from_string(json: &str) -> Result<GameState, serde_json::Error> {
+        serde_json::from_str(json)
+    }
+
+    /// Check if save slot exists
+    pub fn slot_exists(slot: u8) -> bool {
+        if slot > 4 {
+            return false;
+        }
+
+        let filename = format!("save_slot_{}.json", slot);
+        std::path::Path::new(&filename).exists()
+    }
+
+    /// Get save slot metadata (size, last modified, etc.)
+    pub fn get_slot_metadata(slot: u8) -> Option<SaveSlotMetadata> {
+        if slot > 4 || !Self::slot_exists(slot) {
+            return None;
+        }
+
+        let filename = format!("save_slot_{}.json", slot);
+        if let Ok(metadata) = std::fs::metadata(&filename) {
+            if let Ok(state) = Self::load_from_slot(slot) {
+                return Some(SaveSlotMetadata {
+                    slot,
+                    player_name: state.player_name,
+                    level: state.current_level,
+                    completed_challenges: state.completed_challenges.len(),
+                    file_size: metadata.len(),
+                    last_modified: metadata.modified().ok(),
+                });
+            }
+        }
+
+        None
+    }
+}
+
+/// Metadata for save slot information (v1.2.0)
+#[derive(Debug, Clone)]
+pub struct SaveSlotMetadata {
+    pub slot: u8,
+    pub player_name: String,
+    pub level: usize,
+    pub completed_challenges: usize,
+    pub file_size: u64,
+    pub last_modified: Option<std::time::SystemTime>,
 }
 
 #[cfg(test)]

@@ -9,6 +9,17 @@ fn default_check_answer() -> fn(&str) -> bool {
     |_| false
 }
 
+/// Challenge difficulty variant (v1.2.0)
+#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "web", derive(serde::Serialize, serde::Deserialize))]
+pub enum ChallengeDifficulty {
+    Beginner, // Extra hints, simplified concepts
+    Standard, // Default difficulty (current)
+    Advanced, // Fewer hints, time pressure
+    Expert,   // Minimal hints, real-world complexity
+    Dynamic,  // Randomly generated content
+}
+
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "web", derive(serde::Serialize, serde::Deserialize))]
 pub struct Challenge {
@@ -24,6 +35,26 @@ pub struct Challenge {
     pub check_answer: fn(&str) -> bool,
     pub solution: String,
     pub hints: Vec<String>,
+    // v1.2.0: Challenge variant support
+    pub difficulty: ChallengeDifficulty,
+    pub variants: Vec<ChallengeVariant>,
+}
+
+/// Challenge variant with different difficulty levels (v1.2.0)
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "web", derive(serde::Serialize, serde::Deserialize))]
+pub struct ChallengeVariant {
+    pub difficulty: ChallengeDifficulty,
+    pub title_suffix: String, // e.g., " (Expert Mode)"
+    pub description_override: Option<String>,
+    pub prompt_override: Option<String>,
+    pub xp_multiplier: f32, // 0.5 for easy, 1.0 for standard, 2.0 for expert
+    pub sanity_multiplier: f32,
+    pub hints_override: Option<Vec<String>>,
+    pub time_limit: Option<u64>, // in seconds, for advanced/expert modes
+    #[cfg_attr(feature = "web", serde(skip, default = "default_check_answer"))]
+    pub check_answer_override: Option<fn(&str) -> bool>,
+    pub solution_override: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -65,7 +96,97 @@ impl Challenge {
             check_answer,
             solution: solution.to_string(),
             hints,
+            difficulty: ChallengeDifficulty::Standard, // Default to standard
+            variants: Vec::new(),                      // No variants by default
         }
+    }
+
+    /// Create a challenge with variants (v1.2.0)
+    pub fn with_variants(
+        id: &str,
+        title: &str,
+        description: &str,
+        prompt: &str,
+        category: ChallengeCategory,
+        level: usize,
+        xp_reward: i32,
+        sanity_cost: i32,
+        check_answer: fn(&str) -> bool,
+        solution: &str,
+        hints: Vec<String>,
+        variants: Vec<ChallengeVariant>,
+    ) -> Self {
+        Challenge {
+            id: id.to_string(),
+            title: title.to_string(),
+            description: description.to_string(),
+            prompt: prompt.to_string(),
+            category,
+            level,
+            xp_reward,
+            sanity_cost,
+            check_answer,
+            solution: solution.to_string(),
+            hints,
+            difficulty: ChallengeDifficulty::Standard,
+            variants,
+        }
+    }
+
+    /// Get challenge variant for specific difficulty (v1.2.0)
+    pub fn get_variant(&self, difficulty: &ChallengeDifficulty) -> Option<&ChallengeVariant> {
+        self.variants.iter().find(|v| &v.difficulty == difficulty)
+    }
+
+    /// Create a new challenge instance with applied variant (v1.2.0)
+    pub fn with_difficulty(&self, difficulty: ChallengeDifficulty) -> Self {
+        let mut challenge = self.clone();
+        challenge.difficulty = difficulty.clone();
+
+        if let Some(variant) = self.get_variant(&difficulty) {
+            // Apply variant modifications
+            if let Some(ref desc) = variant.description_override {
+                challenge.description = desc.clone();
+            }
+            if let Some(ref prompt) = variant.prompt_override {
+                challenge.prompt = prompt.clone();
+            }
+            if let Some(ref hints) = variant.hints_override {
+                challenge.hints = hints.clone();
+            }
+            if let Some(ref solution) = variant.solution_override {
+                challenge.solution = solution.clone();
+            }
+            if let Some(check_fn) = variant.check_answer_override {
+                challenge.check_answer = check_fn;
+            }
+
+            // Apply multipliers
+            challenge.xp_reward = (challenge.xp_reward as f32 * variant.xp_multiplier) as i32;
+            challenge.sanity_cost =
+                (challenge.sanity_cost as f32 * variant.sanity_multiplier) as i32;
+
+            // Update title with suffix
+            if !variant.title_suffix.is_empty() {
+                challenge.title = format!("{}{}", challenge.title, variant.title_suffix);
+            }
+        }
+
+        challenge
+    }
+
+    /// Check if challenge has variants available (v1.2.0)
+    pub fn has_variants(&self) -> bool {
+        !self.variants.is_empty()
+    }
+
+    /// Get all available difficulty options for this challenge (v1.2.0)
+    pub fn get_available_difficulties(&self) -> Vec<ChallengeDifficulty> {
+        let mut difficulties = vec![ChallengeDifficulty::Standard]; // Always available
+        for variant in &self.variants {
+            difficulties.push(variant.difficulty.clone());
+        }
+        difficulties
     }
 
     // Legacy constructor for compatibility during migration
@@ -97,6 +218,8 @@ impl Challenge {
             check_answer,
             solution: "".to_string(), // Will be populated later
             hints,
+            difficulty: ChallengeDifficulty::Standard, // v1.2.0: Default difficulty
+            variants: Vec::new(),                      // v1.2.0: No variants by default
         }
     }
 
@@ -259,7 +382,10 @@ impl Challenge {
 static CHALLENGE_CACHE: OnceLock<Vec<Challenge>> = OnceLock::new();
 
 pub fn get_all_challenges() -> &'static Vec<Challenge> {
-    CHALLENGE_CACHE.get_or_init(create_all_challenges)
+    CHALLENGE_CACHE.get_or_init(|| {
+        let base_challenges = create_all_challenges();
+        add_challenge_variants(base_challenges)
+    })
 }
 
 /// Create all challenges - called only once and cached
@@ -1041,11 +1167,343 @@ What is the Ghost Protocol's true name?
     ]
 }
 
+/// Create challenge variants for v1.2.0 (add variants to existing challenges)
+fn add_challenge_variants(mut challenges: Vec<Challenge>) -> Vec<Challenge> {
+    for challenge in &mut challenges {
+        // Add variants based on challenge type
+        match challenge.id.as_str() {
+            "welcome" => {
+                challenge.variants = vec![
+                    ChallengeVariant {
+                        difficulty: ChallengeDifficulty::Beginner,
+                        title_suffix: " (Tutorial Mode)".to_string(),
+                        description_override: Some(format!("{}\n\n📚 TUTORIAL MODE: This is Base64 encoding. Base64 converts binary data to text using 64 characters (A-Z, a-z, 0-9, +, /). The '=' at the end is padding.", challenge.description)),
+                        prompt_override: None,
+                        xp_multiplier: 0.5,
+                        sanity_multiplier: 0.5,
+                        hints_override: Some(vec![
+                            "Base64 uses 64 characters: A-Z, a-z, 0-9, +, and /.".to_string(),
+                            "You can decode this online at base64decode.org".to_string(),
+                            "Or use: echo 'encoded_text' | base64 -d".to_string(),
+                        ]),
+                        time_limit: None,
+                        check_answer_override: None,
+                        solution_override: None,
+                    },
+                    ChallengeVariant {
+                        difficulty: ChallengeDifficulty::Advanced,
+                        title_suffix: " (Speed Mode)".to_string(),
+                        description_override: None,
+                        prompt_override: Some("Decode quickly: V2VsY29tZSB0byB0aGUgR2hvc3QgUHJvdG9jb2w=".to_string()),
+                        xp_multiplier: 1.5,
+                        sanity_multiplier: 1.2,
+                        hints_override: Some(vec![
+                            "Base64 encoding - decode it.".to_string(),
+                        ]),
+                        time_limit: Some(30), // 30 seconds
+                        check_answer_override: None,
+                        solution_override: None,
+                    },
+                ];
+            }
+            "caesar_shift" => {
+                challenge.variants = vec![
+                    ChallengeVariant {
+                        difficulty: ChallengeDifficulty::Beginner,
+                        title_suffix: " (Guided)".to_string(),
+                        description_override: Some(format!("{}\n\n📚 TUTORIAL: Caesar cipher shifts each letter by a fixed number. A=1, B=2, etc. ROT13 shifts by 13.", challenge.description)),
+                        prompt_override: None,
+                        xp_multiplier: 0.6,
+                        sanity_multiplier: 0.5,
+                        hints_override: Some(vec![
+                            "This is ROT13: each letter is shifted 13 positions.".to_string(),
+                            "A becomes N, B becomes O, etc.".to_string(),
+                            "Online tool: rot13.com or just shift each letter by 13.".to_string(),
+                        ]),
+                        time_limit: None,
+                        check_answer_override: None,
+                        solution_override: None,
+                    },
+                    ChallengeVariant {
+                        difficulty: ChallengeDifficulty::Expert,
+                        title_suffix: " (Unknown Shift)".to_string(),
+                        description_override: Some("The terminal displays: 'OLSSV DVYSK' - Figure out the shift value and decode the message.".to_string()),
+                        prompt_override: Some("Decode: OLSSV DVYSK".to_string()),
+                        xp_multiplier: 2.0,
+                        sanity_multiplier: 1.5,
+                        hints_override: Some(vec![
+                            "Try different shift values from 1-25.".to_string(),
+                        ]),
+                        time_limit: Some(120), // 2 minutes
+                        check_answer_override: Some(|answer| {
+                            let a = answer.to_uppercase();
+                            a.contains("HELLO WORLD") || a.contains("HELLOWORLD")
+                        }),
+                        solution_override: Some("HELLO WORLD".to_string()),
+                    },
+                ];
+            }
+            "hex_decode" => {
+                challenge.variants = vec![ChallengeVariant {
+                    difficulty: ChallengeDifficulty::Dynamic,
+                    title_suffix: " (Random)".to_string(),
+                    description_override: Some(
+                        "A randomly generated hex string appears. Decode it to ASCII.".to_string(),
+                    ),
+                    prompt_override: Some(generate_random_hex_challenge()),
+                    xp_multiplier: 1.3,
+                    sanity_multiplier: 1.0,
+                    hints_override: Some(vec![
+                        "Hexadecimal uses base 16 (0-9, A-F).".to_string(),
+                        "Each pair represents one ASCII character.".to_string(),
+                    ]),
+                    time_limit: None,
+                    check_answer_override: Some(|answer| {
+                        // For dynamic challenges, we'll implement a flexible validator later
+                        answer.len() > 3 && answer.chars().all(|c| c.is_ascii())
+                    }),
+                    solution_override: Some("VARIES".to_string()),
+                }];
+            }
+            _ => {} // No variants for other challenges yet
+        }
+    }
+    challenges
+}
+
+/// Generate a random hex challenge for dynamic difficulty (v1.2.0)
+fn generate_random_hex_challenge() -> String {
+    use rand::Rng;
+    let words = [
+        "HACK", "CODE", "BYTE", "DATA", "LINK", "NODE", "CORE", "GHOST", "CYBER", "SECURE",
+    ];
+    let mut rng = rand::thread_rng();
+    let word = words[rng.gen_range(0..words.len())];
+
+    // Convert to hex
+    word.bytes()
+        .map(|b| format!("{:02X}", b))
+        .collect::<String>()
+}
+
+/// Generate a random Base64 challenge (v1.2.0)
+fn generate_random_base64_challenge() -> (String, String) {
+    use rand::Rng;
+    let messages = [
+        "PROTOCOL ACTIVE",
+        "SYSTEM BREACH",
+        "ACCESS GRANTED",
+        "GHOST MODE ON",
+        "SECURE CHANNEL",
+        "DATA ENCRYPTED",
+        "STEALTH ENABLED",
+        "PROXY CONNECTED",
+    ];
+    let mut rng = rand::thread_rng();
+    let message = messages[rng.gen_range(0..messages.len())];
+
+    // Simple base64 encoding (we'll use precomputed values for now)
+    let encoded = match message {
+        "PROTOCOL ACTIVE" => "UFJPVE9DT0wgQUNUSVZF",
+        "SYSTEM BREACH" => "U1lTVEVNIEJSRUFDSA==",
+        "ACCESS GRANTED" => "QUNDRVNTIEJSQU5URUQ=",
+        "GHOST MODE ON" => "R0hPU1QgTU9ERSBPTg==",
+        "SECURE CHANNEL" => "U0VDVVJFIENIQUFOTEVS",
+        "DATA ENCRYPTED" => "REFUQSBFTUNSRVBURUQ=",
+        "STEALTH ENABLED" => "U1RFQUxUSCBFTkFCTEVE",
+        "PROXY CONNECTED" => "UFJPWFKGQ09OTkVDVEVE",
+        _ => "VU5LTk9XTg==", // "UNKNOWN"
+    };
+
+    (encoded.to_string(), message.to_string())
+}
+
+/// Generate a random ROT cipher challenge (v1.2.0)
+fn generate_random_rot_challenge() -> (String, String, u8) {
+    use rand::Rng;
+    let messages = [
+        "HELLO WORLD",
+        "SECRET CODE",
+        "GHOST HACK",
+        "CYBER PUNK",
+        "DATA MINE",
+        "NETWORK",
+    ];
+    let mut rng = rand::thread_rng();
+    let message = messages[rng.gen_range(0..messages.len())];
+    let shift = rng.gen_range(1..=25);
+
+    // Apply ROT cipher
+    let encoded = message
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphabetic() {
+                let base = if c.is_ascii_uppercase() { b'A' } else { b'a' };
+                ((c as u8 - base + shift) % 26 + base) as char
+            } else {
+                c
+            }
+        })
+        .collect::<String>();
+
+    (encoded, message.to_string(), shift)
+}
+
+/// Generate a random simple SQL injection challenge (v1.2.0)
+fn generate_random_sql_challenge() -> (String, String) {
+    use rand::Rng;
+    let scenarios = [
+        (
+            "admin",
+            "SELECT * FROM users WHERE username = 'admin' AND password = 'PASSWORD'",
+        ),
+        (
+            "root",
+            "SELECT * FROM accounts WHERE user = 'root' AND pass = 'PASSWORD'",
+        ),
+        (
+            "guest",
+            "SELECT id FROM login WHERE name = 'guest' AND pwd = 'PASSWORD'",
+        ),
+    ];
+    let payloads = ["' OR 1=1--", "' OR 'x'='x", "' UNION SELECT 1--"];
+
+    let mut rng = rand::thread_rng();
+    let (user, query_template) = scenarios[rng.gen_range(0..scenarios.len())];
+    let payload = payloads[rng.gen_range(0..payloads.len())];
+
+    let vulnerable_query = query_template.replace("PASSWORD", &format!("{}{}", "secret", payload));
+    (vulnerable_query, payload.to_string())
+}
+
+/// Create dynamic challenges that are randomly generated (v1.2.0)
+pub fn create_dynamic_challenges() -> Vec<Challenge> {
+    vec![
+        Challenge {
+            id: "dynamic_base64".to_string(),
+            title: "Dynamic Base64 Decoder".to_string(),
+            description: "A new Base64 encoded message appears each time you attempt this challenge.".to_string(),
+            prompt: {
+                let (encoded, _) = generate_random_base64_challenge();
+                format!("Decode this Base64 string: {}", encoded)
+            },
+            category: ChallengeCategory::Encoding,
+            level: 0,
+            xp_reward: 35,
+            sanity_cost: 3,
+            check_answer: |answer| {
+                // For dynamic challenges, we need a more flexible validator
+                let a = answer.to_uppercase();
+                a.contains("PROTOCOL") || a.contains("SYSTEM") || a.contains("ACCESS") || 
+                a.contains("GHOST") || a.contains("SECURE") || a.contains("DATA") ||
+                a.contains("STEALTH") || a.contains("PROXY") || a.contains("ACTIVE") ||
+                a.contains("BREACH") || a.contains("GRANTED") || a.contains("MODE") ||
+                a.contains("CHANNEL") || a.contains("ENCRYPTED") || a.contains("ENABLED") ||
+                a.contains("CONNECTED")
+            },
+            solution: "VARIES".to_string(),
+            hints: vec![
+                "This is Base64 encoding - each time it's different!".to_string(),
+                "Use online Base64 decoder or command line tools.".to_string(),
+                "Look for common words like PROTOCOL, SYSTEM, ACCESS, etc.".to_string(),
+            ],
+            difficulty: ChallengeDifficulty::Dynamic,
+            variants: vec![],
+        },
+        Challenge {
+            id: "dynamic_rot".to_string(),
+            title: "Mystery ROT Cipher".to_string(),
+            description: "Figure out the ROT shift value and decode the message. The shift changes each attempt!".to_string(),
+            prompt: {
+                let (encoded, _, _) = generate_random_rot_challenge();
+                format!("Decode this ROT cipher: {}", encoded)
+            },
+            category: ChallengeCategory::Cryptography,
+            level: 1,
+            xp_reward: 60,
+            sanity_cost: 8,
+            check_answer: |answer| {
+                let a = answer.to_uppercase();
+                a.contains("HELLO") || a.contains("SECRET") || a.contains("GHOST") ||
+                a.contains("CYBER") || a.contains("DATA") || a.contains("NETWORK") ||
+                a.contains("WORLD") || a.contains("CODE") || a.contains("HACK") ||
+                a.contains("PUNK") || a.contains("MINE")
+            },
+            solution: "VARIES".to_string(),
+            hints: vec![
+                "Try different ROT values from 1 to 25.".to_string(),
+                "ROT13 is common, but this could be any shift value.".to_string(),
+                "Look for recognizable English words in the result.".to_string(),
+            ],
+            difficulty: ChallengeDifficulty::Dynamic,
+            variants: vec![],
+        },
+        Challenge {
+            id: "dynamic_hex".to_string(),
+            title: "Random Hex Decoder".to_string(),
+            description: "New hex-encoded data appears each time. Decode it to ASCII text.".to_string(),
+            prompt: {
+                let hex = generate_random_hex_challenge();
+                format!("Decode this hex to ASCII: {}", hex)
+            },
+            category: ChallengeCategory::Encoding,
+            level: 0,
+            xp_reward: 40,
+            sanity_cost: 4,
+            check_answer: |answer| {
+                let a = answer.to_uppercase();
+                a.contains("HACK") || a.contains("CODE") || a.contains("BYTE") ||
+                a.contains("DATA") || a.contains("LINK") || a.contains("NODE") ||
+                a.contains("CORE") || a.contains("GHOST") || a.contains("CYBER") ||
+                a.contains("SECURE")
+            },
+            solution: "VARIES".to_string(),
+            hints: vec![
+                "Hexadecimal uses base 16 (0-9, A-F).".to_string(),
+                "Each pair of hex digits represents one ASCII character.".to_string(),
+                "Convert each hex pair to decimal, then to ASCII.".to_string(),
+            ],
+            difficulty: ChallengeDifficulty::Dynamic,
+            variants: vec![],
+        },
+    ]
+}
+
+/// Get challenges with variants applied based on user preference (v1.2.0)
+pub fn get_challenges_with_variants() -> Vec<Challenge> {
+    get_all_challenges().clone()
+}
+
+/// Get dynamic challenges for practice mode (v1.2.0)
+pub fn get_dynamic_challenges() -> Vec<Challenge> {
+    create_dynamic_challenges()
+}
+
+/// Get challenge for specific difficulty level (v1.2.0)
+pub fn get_challenge_with_difficulty(
+    challenge_id: &str,
+    difficulty: ChallengeDifficulty,
+) -> Option<Challenge> {
+    let challenges = get_challenges_with_variants();
+    let base_challenge = challenges.iter().find(|c| c.id == challenge_id)?;
+    Some(base_challenge.with_difficulty(difficulty))
+}
+
+/// Get all available difficulties for a challenge (v1.2.0)
+pub fn get_challenge_difficulties(challenge_id: &str) -> Vec<ChallengeDifficulty> {
+    let challenges = get_challenges_with_variants();
+    if let Some(challenge) = challenges.iter().find(|c| c.id == challenge_id) {
+        challenge.get_available_difficulties()
+    } else {
+        vec![]
+    }
+}
+
 pub fn get_challenges_for_level(level: usize) -> Vec<Challenge> {
-    get_all_challenges()
-        .iter()
+    // v1.2.0: Now uses variants system
+    get_challenges_with_variants()
+        .into_iter()
         .filter(|c| c.level == level)
-        .cloned()
         .collect()
 }
 

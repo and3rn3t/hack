@@ -9,10 +9,16 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
 
 ## 🎮 Features
 
+### Core Experience
+
 - **Horror Theme**: A chilling narrative that unfolds as you progress through the challenges
 - **Progressive Difficulty**: Start with basic challenges and advance to complex hacking scenarios
 - **Beginner-Friendly**: Designed for non-techies with hints and educational content
-- **CTF Challenges**: Multiple categories including:
+- **Sanity System**: A unique horror twist - lose sanity as you delve deeper
+
+### Challenge System
+
+- **26+ CTF Challenges**: Multiple categories including:
   - Basic encoding (Base64, Hex, Caesar cipher)
   - File system exploration
   - Network analysis
@@ -21,9 +27,24 @@ A horror-themed hacking simulator and Capture The Flag (CTF) challenge game desi
   - Web/Mobile security
   - Buffer overflow concepts
   - Reverse engineering
-- **Sanity System**: A unique horror twist - lose sanity as you delve deeper
-- **Save/Load System**: Progress is automatically saved
+
+### v1.2.0 Enhanced Features ✨
+
+- **Challenge Difficulty Variants**: Beginner, Standard, Advanced, and Expert modes for existing challenges
+- **Adaptive Difficulty**: Smart difficulty selection based on your performance
+- **Dynamic Practice Mode**: Randomly generated challenges for skill building
+- **Advanced Settings**: Comprehensive customization (difficulty scaling, hint verbosity, themes, accessibility)
+- **User Command Aliases**: Create shortcuts for frequently used commands
+- **Multiple Save Slots**: 5 save slots with export/import functionality
+- **Progress Analytics**: Detailed performance tracking and learning insights
+- **Enhanced UI**: Improved menus, settings, and user experience
+
+### Technical Features
+
+- **Cross-Platform**: Works on Windows, Linux, macOS, and Web browsers
+- **Save/Load System**: Multiple save slots with cloud export/import
 - **Terminal UI**: Full terminal interface with colored output and ASCII art
+- **Advanced Command System**: Tab completion, command history, and custom aliases
 
 ## 🎮 Play Online
 

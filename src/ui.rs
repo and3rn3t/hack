@@ -167,6 +167,14 @@ pub enum CompletionContext {
     Challenge,
     /// Help menu context (1-5, back)
     HelpMenu,
+    /// v1.2.0: Settings/preferences menu
+    SettingsMenu,
+    /// v1.2.0: Alias management commands
+    AliasMenu,
+    /// v1.2.0: Save slot selection
+    SaveSlotMenu,
+    /// v1.2.0: Difficulty selection
+    DifficultyMenu,
     /// No completion available
     None,
 }
@@ -182,6 +190,9 @@ impl CompletionContext {
                     "tutorial".to_string(),
                     "theme".to_string(),
                     "themes".to_string(),
+                    "settings".to_string(),    // v1.2.0: New settings command
+                    "alias".to_string(),       // v1.2.0: New alias command
+                    "preferences".to_string(), // v1.2.0: Alternative to settings
                     "save".to_string(),
                     "quit".to_string(),
                 ];
@@ -201,6 +212,50 @@ impl CompletionContext {
                     "3".to_string(),
                     "4".to_string(),
                     "5".to_string(),
+                    "back".to_string(),
+                ]
+            }
+            CompletionContext::SettingsMenu => {
+                vec![
+                    "difficulty".to_string(),
+                    "hints".to_string(),
+                    "theme".to_string(),
+                    "font".to_string(),
+                    "audio".to_string(),
+                    "animations".to_string(),
+                    "reset".to_string(),
+                    "back".to_string(),
+                ]
+            }
+            CompletionContext::AliasMenu => {
+                vec![
+                    "add".to_string(),
+                    "remove".to_string(),
+                    "list".to_string(),
+                    "clear".to_string(),
+                    "back".to_string(),
+                ]
+            }
+            CompletionContext::SaveSlotMenu => {
+                vec![
+                    "0".to_string(),
+                    "1".to_string(),
+                    "2".to_string(),
+                    "3".to_string(),
+                    "4".to_string(),
+                    "auto".to_string(),
+                    "back".to_string(),
+                ]
+            }
+            CompletionContext::DifficultyMenu => {
+                vec![
+                    "adaptive".to_string(),
+                    "static".to_string(),
+                    "custom".to_string(),
+                    "beginner".to_string(),
+                    "standard".to_string(),
+                    "advanced".to_string(),
+                    "expert".to_string(),
                     "back".to_string(),
                 ]
             }
@@ -1289,6 +1344,744 @@ mod native_ui_impl {
                 _ => {
                     print_warning("Please enter a number between 1-5 or 0 to return.")?;
                 }
+            }
+        }
+    }
+
+    // ===== v1.2.0 Enhanced UI Functions =====
+
+    /// Show comprehensive settings menu (v1.2.0)
+    pub fn show_settings_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        use crate::state::{AnimationSpeed, DifficultyScaling, FontSize, HintVerbosity};
+
+        loop {
+            clear_screen()?;
+
+            print_colored(
+                "╔═══════════════════════════════════════════════════════════════════╗\n",
+                theme_border(),
+            )?;
+            print_colored(
+                "║                          SETTINGS MENU                           ║\n",
+                theme_accent(),
+            )?;
+            print_colored(
+                "╚═══════════════════════════════════════════════════════════════════╝\n",
+                theme_border(),
+            )?;
+
+            println!();
+            print_menu_option(
+                "1",
+                "Difficulty Scaling",
+                Some(&format!("{:?}", state.get_difficulty_scaling())),
+            )?;
+            print_menu_option(
+                "2",
+                "Hint Verbosity",
+                Some(&format!("{:?}", state.get_hint_verbosity())),
+            )?;
+            print_menu_option("3", "Color Theme", Some(state.get_color_theme()))?;
+            print_menu_option(
+                "4",
+                "Font Size",
+                Some(&format!("{:?}", state.get_font_size())),
+            )?;
+            print_menu_option(
+                "5",
+                "Audio Enabled",
+                Some(&state.is_audio_enabled().to_string()),
+            )?;
+            print_menu_option(
+                "6",
+                "Animation Speed",
+                Some(&format!("{:?}", state.get_animation_speed())),
+            )?;
+            print_menu_option("7", "Reset to Defaults", None)?;
+            print_menu_option("0", "Return to Main Menu", None)?;
+
+            let choice = read_input_with_completion(
+                "\n> Select option: ",
+                CompletionContext::SettingsMenu,
+                true,
+            )?;
+
+            match choice.as_str() {
+                "0" | "back" => return Ok(()),
+                "1" | "difficulty" => {
+                    show_difficulty_menu(state)?;
+                }
+                "2" | "hints" => {
+                    show_hint_verbosity_menu(state)?;
+                }
+                "3" | "theme" => {
+                    show_theme_selection()?;
+                }
+                "4" | "font" => {
+                    show_font_size_menu(state)?;
+                }
+                "5" | "audio" => {
+                    state.set_audio_enabled(!state.is_audio_enabled());
+                    print_success(&format!(
+                        "Audio {}",
+                        if state.is_audio_enabled() {
+                            "enabled"
+                        } else {
+                            "disabled"
+                        }
+                    ))?;
+                    pause()?;
+                }
+                "6" | "animations" => {
+                    show_animation_menu(state)?;
+                }
+                "7" | "reset" => {
+                    print_warning("This will reset all settings to defaults. Continue? [y/N]: ")?;
+                    let confirm = read_input("")?;
+                    if confirm.to_lowercase().starts_with('y') {
+                        state.user_preferences = crate::state::UserPreferences::default();
+                        print_success("Settings reset to defaults!")?;
+                        pause()?;
+                    }
+                }
+                _ => {
+                    print_error("Invalid option. Please select 0-7.")?;
+                    pause()?;
+                }
+            }
+        }
+    }
+
+    /// Show difficulty scaling menu (v1.2.0)
+    pub fn show_difficulty_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        use crate::state::DifficultyScaling;
+
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                      DIFFICULTY SCALING                          ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_menu_option("1", "Adaptive", Some("Adjusts based on your performance"))?;
+        print_menu_option("2", "Static", Some("Fixed difficulty throughout"))?;
+        print_menu_option("3", "Custom", Some("User-defined scaling rules"))?;
+        print_menu_option("0", "Back", None)?;
+
+        let choice = read_input_with_completion(
+            "\n> Select difficulty scaling: ",
+            CompletionContext::DifficultyMenu,
+            true,
+        )?;
+
+        match choice.as_str() {
+            "0" | "back" => Ok(()),
+            "1" | "adaptive" => {
+                state.set_difficulty_scaling(DifficultyScaling::Adaptive);
+                print_success("Difficulty scaling set to Adaptive!")?;
+                pause()
+            }
+            "2" | "static" => {
+                state.set_difficulty_scaling(DifficultyScaling::Static);
+                print_success("Difficulty scaling set to Static!")?;
+                pause()
+            }
+            "3" | "custom" => {
+                state.set_difficulty_scaling(DifficultyScaling::Custom);
+                print_success("Difficulty scaling set to Custom!")?;
+                print_info("Custom scaling rules will be implemented in future versions.")?;
+                pause()
+            }
+            _ => {
+                print_error("Invalid option.")?;
+                pause()
+            }
+        }
+    }
+
+    /// Show hint verbosity menu (v1.2.0)
+    pub fn show_hint_verbosity_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        use crate::state::HintVerbosity;
+
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                        HINT VERBOSITY                            ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_menu_option("1", "Minimal", Some("Brief, concise hints"))?;
+        print_menu_option("2", "Moderate", Some("Standard detailed hints"))?;
+        print_menu_option("3", "Detailed", Some("Comprehensive explanations"))?;
+        print_menu_option("0", "Back", None)?;
+
+        let choice = read_input_with_completion(
+            "\n> Select hint verbosity: ",
+            CompletionContext::SettingsMenu,
+            true,
+        )?;
+
+        match choice.as_str() {
+            "0" | "back" => Ok(()),
+            "1" | "minimal" => {
+                state.set_hint_verbosity(HintVerbosity::Minimal);
+                print_success("Hint verbosity set to Minimal!")?;
+                pause()
+            }
+            "2" | "moderate" => {
+                state.set_hint_verbosity(HintVerbosity::Moderate);
+                print_success("Hint verbosity set to Moderate!")?;
+                pause()
+            }
+            "3" | "detailed" => {
+                state.set_hint_verbosity(HintVerbosity::Detailed);
+                print_success("Hint verbosity set to Detailed!")?;
+                pause()
+            }
+            _ => {
+                print_error("Invalid option.")?;
+                pause()
+            }
+        }
+    }
+
+    /// Show font size menu (v1.2.0)
+    pub fn show_font_size_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        use crate::state::FontSize;
+
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                          FONT SIZE                               ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_menu_option("1", "Small", Some("Compact display"))?;
+        print_menu_option("2", "Medium", Some("Standard size"))?;
+        print_menu_option("3", "Large", Some("Easier to read"))?;
+        print_menu_option("4", "Extra Large", Some("Maximum accessibility"))?;
+        print_menu_option("0", "Back", None)?;
+
+        let choice = read_input_with_completion(
+            "\n> Select font size: ",
+            CompletionContext::SettingsMenu,
+            true,
+        )?;
+
+        match choice.as_str() {
+            "0" | "back" => Ok(()),
+            "1" | "small" => {
+                state.set_font_size(FontSize::Small);
+                print_success("Font size set to Small!")?;
+                print_info(
+                    "Note: Font scaling is a visual preference for future terminal themes.",
+                )?;
+                pause()
+            }
+            "2" | "medium" => {
+                state.set_font_size(FontSize::Medium);
+                print_success("Font size set to Medium!")?;
+                pause()
+            }
+            "3" | "large" => {
+                state.set_font_size(FontSize::Large);
+                print_success("Font size set to Large!")?;
+                pause()
+            }
+            "4" | "extralarge" => {
+                state.set_font_size(FontSize::ExtraLarge);
+                print_success("Font size set to Extra Large!")?;
+                pause()
+            }
+            _ => {
+                print_error("Invalid option.")?;
+                pause()
+            }
+        }
+    }
+
+    /// Show animation speed menu (v1.2.0)
+    pub fn show_animation_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        use crate::state::AnimationSpeed;
+
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                      ANIMATION SPEED                             ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_menu_option("1", "None", Some("Disable all animations"))?;
+        print_menu_option("2", "Slow", Some("Reduced speed for accessibility"))?;
+        print_menu_option("3", "Normal", Some("Standard animation speed"))?;
+        print_menu_option("4", "Fast", Some("Quick animations"))?;
+        print_menu_option("0", "Back", None)?;
+
+        let choice = read_input_with_completion(
+            "\n> Select animation speed: ",
+            CompletionContext::SettingsMenu,
+            true,
+        )?;
+
+        match choice.as_str() {
+            "0" | "back" => Ok(()),
+            "1" | "none" => {
+                state.set_animation_speed(AnimationSpeed::None);
+                print_success("Animations disabled!")?;
+                pause()
+            }
+            "2" | "slow" => {
+                state.set_animation_speed(AnimationSpeed::Slow);
+                print_success("Animation speed set to Slow!")?;
+                pause()
+            }
+            "3" | "normal" => {
+                state.set_animation_speed(AnimationSpeed::Normal);
+                print_success("Animation speed set to Normal!")?;
+                pause()
+            }
+            "4" | "fast" => {
+                state.set_animation_speed(AnimationSpeed::Fast);
+                print_success("Animation speed set to Fast!")?;
+                pause()
+            }
+            _ => {
+                print_error("Invalid option.")?;
+                pause()
+            }
+        }
+    }
+
+    /// Show alias management menu (v1.2.0)
+    pub fn show_alias_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        loop {
+            clear_screen()?;
+
+            print_colored(
+                "╔═══════════════════════════════════════════════════════════════════╗\n",
+                theme_border(),
+            )?;
+            print_colored(
+                "║                        ALIAS MANAGEMENT                          ║\n",
+                theme_accent(),
+            )?;
+            print_colored(
+                "╚═══════════════════════════════════════════════════════════════════╝\n",
+                theme_border(),
+            )?;
+
+            println!();
+            print_menu_option("1", "List Aliases", None)?;
+            print_menu_option("2", "Add Alias", None)?;
+            print_menu_option("3", "Remove Alias", None)?;
+            print_menu_option("4", "Clear All Aliases", None)?;
+            print_menu_option("0", "Back to Main Menu", None)?;
+
+            let choice = read_input_with_completion(
+                "\n> Select option: ",
+                CompletionContext::AliasMenu,
+                true,
+            )?;
+
+            match choice.as_str() {
+                "0" | "back" => return Ok(()),
+                "1" | "list" => {
+                    show_alias_list(state)?;
+                }
+                "2" | "add" => {
+                    add_alias_interactive(state)?;
+                }
+                "3" | "remove" => {
+                    remove_alias_interactive(state)?;
+                }
+                "4" | "clear" => {
+                    print_warning("This will remove all aliases. Continue? [y/N]: ")?;
+                    let confirm = read_input("")?;
+                    if confirm.to_lowercase().starts_with('y') {
+                        state.user_preferences.user_aliases.clear();
+                        print_success("All aliases cleared!")?;
+                        pause()?;
+                    }
+                }
+                _ => {
+                    print_error("Invalid option. Please select 0-4.")?;
+                    pause()?;
+                }
+            }
+        }
+    }
+
+    /// Display list of current aliases
+    fn show_alias_list(state: &crate::state::GameState) -> io::Result<()> {
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                         CURRENT ALIASES                          ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        let aliases = state.list_aliases();
+        if aliases.is_empty() {
+            println!();
+            print_info("No aliases defined.")?;
+            print_colored(
+                "Use 'Add Alias' to create command shortcuts.\n",
+                theme_muted(),
+            )?;
+        } else {
+            println!();
+            for (alias, command) in aliases {
+                print_colored(&format!("  {} ", alias), theme_accent())?;
+                print_colored("→ ", theme_muted())?;
+                print_colored(&format!("{}\n", command), theme_primary())?;
+            }
+        }
+
+        println!();
+        print_info("Press any key to continue...")?;
+        pause()
+    }
+
+    /// Interactive alias addition
+    fn add_alias_interactive(state: &mut crate::state::GameState) -> io::Result<()> {
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                           ADD ALIAS                              ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_info("Create a shortcut for frequently used commands.")?;
+        println!();
+
+        let alias = read_input("Enter alias name: ")?;
+        if alias.is_empty() {
+            print_warning("Alias name cannot be empty.")?;
+            pause()?;
+            return Ok(());
+        }
+
+        let command = read_input("Enter command to alias: ")?;
+        if command.is_empty() {
+            print_warning("Command cannot be empty.")?;
+            pause()?;
+            return Ok(());
+        }
+
+        state.add_alias(&alias, &command);
+        print_success(&format!("Alias '{}' → '{}' created!", alias, command))?;
+        pause()
+    }
+
+    /// Interactive alias removal
+    fn remove_alias_interactive(state: &mut crate::state::GameState) -> io::Result<()> {
+        clear_screen()?;
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            "║                         REMOVE ALIAS                             ║\n",
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        let aliases = state.list_aliases();
+        if aliases.is_empty() {
+            println!();
+            print_info("No aliases to remove.")?;
+            pause()?;
+            return Ok(());
+        }
+
+        println!();
+        print_info("Current aliases:")?;
+        for (alias, command) in aliases {
+            print_colored(&format!("  {} ", alias), theme_accent())?;
+            print_colored("→ ", theme_muted())?;
+            print_colored(&format!("{}\n", command), theme_primary())?;
+        }
+
+        println!();
+        let alias = read_input("Enter alias to remove: ")?;
+        if state.remove_alias(&alias) {
+            print_success(&format!("Alias '{}' removed!", alias))?;
+        } else {
+            print_warning(&format!("Alias '{}' not found.", alias))?;
+        }
+        pause()
+    }
+
+    /// Show save slot management menu (v1.2.0)
+    pub fn show_save_slot_menu(state: &mut crate::state::GameState) -> io::Result<()> {
+        loop {
+            clear_screen()?;
+
+            print_colored(
+                "╔═══════════════════════════════════════════════════════════════════╗\n",
+                theme_border(),
+            )?;
+            print_colored(
+                "║                       SAVE SLOT MANAGER                          ║\n",
+                theme_accent(),
+            )?;
+            print_colored(
+                "╚═══════════════════════════════════════════════════════════════════╝\n",
+                theme_border(),
+            )?;
+
+            println!();
+
+            // Display all save slots with metadata
+            for slot in 0..=4 {
+                if let Some(metadata) = crate::state::GameState::get_slot_metadata(slot) {
+                    let modified = if let Some(time) = metadata.last_modified {
+                        format!("{:?}", time)
+                    } else {
+                        "Unknown".to_string()
+                    };
+
+                    print_colored(&format!("  Slot {}: ", slot), theme_accent())?;
+                    print_colored(&format!("{} ", metadata.player_name), theme_primary())?;
+                    print_colored(
+                        &format!(
+                            "(Lv.{}, {} challenges, {:.1}KB)\n",
+                            metadata.level,
+                            metadata.completed_challenges,
+                            metadata.file_size as f32 / 1024.0
+                        ),
+                        theme_muted(),
+                    )?;
+                } else {
+                    print_colored(&format!("  Slot {}: ", slot), theme_accent())?;
+                    print_colored("Empty\n", theme_muted())?;
+                }
+            }
+
+            println!();
+            print_menu_option("0-4", "Save to specific slot", None)?;
+            print_menu_option("l", "Load from slot", None)?;
+            print_menu_option("e", "Export current save", None)?;
+            print_menu_option("i", "Import save data", None)?;
+            print_menu_option("back", "Return to main menu", None)?;
+
+            let choice = read_input_with_completion(
+                "\n> Select option: ",
+                CompletionContext::SaveSlotMenu,
+                true,
+            )?;
+
+            match choice.as_str() {
+                "back" => return Ok(()),
+                "0" | "1" | "2" | "3" | "4" => {
+                    if let Ok(slot) = choice.parse::<u8>() {
+                        if let Err(e) = state.save_to_slot(slot) {
+                            print_error(&format!("Failed to save to slot {}: {}", slot, e))?;
+                        } else {
+                            print_success(&format!("Game saved to slot {}!", slot))?;
+                        }
+                        pause()?;
+                    }
+                }
+                "l" | "load" => {
+                    let slot_str = read_input("Enter slot number to load (0-4): ")?;
+                    if let Ok(slot) = slot_str.parse::<u8>() {
+                        match crate::state::GameState::load_from_slot(slot) {
+                            Ok(loaded_state) => {
+                                *state = loaded_state;
+                                print_success(&format!("Game loaded from slot {}!", slot))?;
+                            }
+                            Err(e) => {
+                                print_error(&format!("Failed to load from slot {}: {}", slot, e))?;
+                            }
+                        }
+                        pause()?;
+                    } else {
+                        print_error("Invalid slot number.")?;
+                        pause()?;
+                    }
+                }
+                "e" | "export" => {
+                    match state.export_to_string() {
+                        Ok(json) => {
+                            print_success(
+                                "Export successful! Save data copied to clipboard (if supported).",
+                            )?;
+                            print_info("Save data JSON:")?;
+                            println!("{}", json);
+                        }
+                        Err(e) => {
+                            print_error(&format!("Export failed: {}", e))?;
+                        }
+                    }
+                    pause()?;
+                }
+                "i" | "import" => {
+                    print_info("Paste your save data JSON:")?;
+                    let json = read_input("")?;
+                    match crate::state::GameState::import_from_string(&json) {
+                        Ok(imported_state) => {
+                            print_warning(
+                                "This will overwrite your current progress. Continue? [y/N]: ",
+                            )?;
+                            let confirm = read_input("")?;
+                            if confirm.to_lowercase().starts_with('y') {
+                                *state = imported_state;
+                                print_success("Save data imported successfully!")?;
+                            }
+                        }
+                        Err(e) => {
+                            print_error(&format!("Import failed: {}", e))?;
+                        }
+                    }
+                    pause()?;
+                }
+                _ => {
+                    print_error("Invalid option.")?;
+                    pause()?;
+                }
+            }
+        }
+    }
+
+    /// Show challenge difficulty selection menu (v1.2.0)
+    pub fn show_challenge_difficulty_menu(
+        challenge: &crate::challenges::Challenge,
+    ) -> io::Result<Option<crate::challenges::ChallengeDifficulty>> {
+        use crate::challenges::ChallengeDifficulty;
+
+        if !challenge.has_variants() {
+            // No variants available, return standard difficulty
+            return Ok(Some(ChallengeDifficulty::Standard));
+        }
+
+        clear_screen()?;
+
+        print_colored(
+            "╔═══════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        print_colored(
+            &format!(
+                "║{}DIFFICULTY SELECTION{}║\n",
+                " ".repeat(22),
+                " ".repeat(22)
+            ),
+            theme_accent(),
+        )?;
+        print_colored(
+            "╚═══════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        print_colored(
+            &format!("Challenge: {}\n", challenge.title),
+            theme_primary(),
+        )?;
+        println!();
+
+        let difficulties = challenge.get_available_difficulties();
+        let mut menu_items = Vec::new();
+
+        for (idx, difficulty) in difficulties.iter().enumerate() {
+            let (desc, xp_mod, sanity_mod) = match difficulty {
+                ChallengeDifficulty::Beginner => ("Tutorial mode with extra guidance", 0.5, 0.5),
+                ChallengeDifficulty::Standard => ("Standard difficulty (default)", 1.0, 1.0),
+                ChallengeDifficulty::Advanced => ("Fewer hints, time pressure", 1.5, 1.2),
+                ChallengeDifficulty::Expert => ("Minimal help, real-world complexity", 2.0, 1.5),
+                ChallengeDifficulty::Dynamic => ("Randomly generated content", 1.3, 1.0),
+            };
+
+            let xp = (challenge.xp_reward as f32 * xp_mod) as i32;
+            let sanity = (challenge.sanity_cost as f32 * sanity_mod) as i32;
+
+            print_menu_option(
+                &(idx + 1).to_string(),
+                &format!("{:?}", difficulty),
+                Some(&format!("{} (+{} XP, -{} sanity)", desc, xp, sanity)),
+            )?;
+            menu_items.push(difficulty.clone());
+        }
+
+        println!();
+        print_menu_option("0", "Cancel", Some("Return to challenge list"))?;
+
+        let choice = read_input_with_completion(
+            "\n> Select difficulty (or 0 to cancel): ",
+            CompletionContext::DifficultyMenu,
+            true,
+        )?;
+
+        match choice.as_str() {
+            "0" | "cancel" => Ok(None),
+            _ => {
+                if let Ok(idx) = choice.parse::<usize>() {
+                    if idx > 0 && idx <= menu_items.len() {
+                        return Ok(Some(menu_items[idx - 1].clone()));
+                    }
+                }
+
+                // Try to match difficulty name directly
+                for difficulty in &menu_items {
+                    if format!("{:?}", difficulty).to_lowercase() == choice.to_lowercase() {
+                        return Ok(Some(difficulty.clone()));
+                    }
+                }
+
+                print_error("Invalid selection.")?;
+                pause()?;
+                Ok(None)
             }
         }
     }

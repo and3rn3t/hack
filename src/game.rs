@@ -152,8 +152,15 @@ pub fn run_game() -> io::Result<()> {
         println!("\n⚙️  OPTIONS:\n");
         ui::print_menu_option("1-N", "Select a challenge by number", None)?;
         ui::print_menu_option("stats", "View detailed statistics", None)?;
+        ui::print_menu_option(
+            "practice",
+            "Practice with dynamic challenges (v1.2.0)",
+            None,
+        )?;
         ui::print_menu_option("help", "Show available tooltips", None)?;
         ui::print_menu_option("theme", "Change color theme", None)?;
+        ui::print_menu_option("settings", "Configure preferences (v1.2.0)", None)?;
+        ui::print_menu_option("alias", "Manage command aliases (v1.2.0)", None)?;
         ui::print_menu_option("save", "Save your progress", None)?;
         ui::print_menu_option("quit", "Exit the Ghost Protocol", None)?;
 
@@ -161,17 +168,32 @@ pub fn run_game() -> io::Result<()> {
         let completion_context = CompletionContext::MainMenu {
             challenge_count: level_challenges.len(),
         };
-        let choice =
+        let raw_choice =
             ui::read_input_with_completion("\n> Enter your choice: ", completion_context, true)?;
+
+        // v1.2.0: Resolve command through user aliases
+        let choice = state.resolve_command(&raw_choice);
 
         match choice.to_lowercase().as_str() {
             "stats" => show_stats(&state)?,
+            "practice" | "dynamic" => {
+                show_practice_mode(&mut state)?;
+            }
             "help" | "tutorial" | "?" => show_help()?,
             "theme" | "themes" => ui::show_theme_selection()?,
+            // v1.2.0: New settings menu
+            "settings" | "preferences" | "config" => {
+                ui::show_settings_menu(&mut state)?;
+                state.save()?; // Auto-save preferences
+            }
+            // v1.2.0: Alias management
+            "alias" | "aliases" => {
+                ui::show_alias_menu(&mut state)?;
+                state.save()?; // Auto-save aliases
+            }
+            // v1.2.0: Enhanced save menu
             "save" => {
-                state.save()?;
-                ui::print_success("Game saved successfully!")?;
-                ui::pause()?;
+                ui::show_save_slot_menu(&mut state)?;
             }
             "quit" => {
                 state.save()?;
@@ -186,12 +208,63 @@ pub fn run_game() -> io::Result<()> {
                 // Try to parse as challenge number
                 if let Ok(num) = choice.parse::<usize>() {
                     if num > 0 && num <= level_challenges.len() {
-                        let challenge = &level_challenges[num - 1];
+                        let base_challenge = &level_challenges[num - 1];
 
-                        if state.has_completed(&challenge.id) {
+                        if state.has_completed(&base_challenge.id) {
                             ui::print_warning("You've already completed this challenge.")?;
-                            ui::pause()?;
+
+                            // v1.2.0: Offer to replay with different difficulty
+                            if base_challenge.has_variants() {
+                                ui::print_info(
+                                    "Would you like to try a different difficulty? [y/N]: ",
+                                )?;
+                                let replay = ui::read_input("")?;
+                                if replay.to_lowercase().starts_with('y') {
+                                    if let Some(difficulty) =
+                                        ui::show_challenge_difficulty_menu(base_challenge)?
+                                    {
+                                        let challenge_variant =
+                                            base_challenge.with_difficulty(difficulty);
+                                        challenge_variant.attempt(&mut state)?;
+                                    }
+                                }
+                            } else {
+                                ui::pause()?;
+                            }
                         } else {
+                            // v1.2.0: Show difficulty selection for new challenges
+                            let difficulty = if base_challenge.has_variants() {
+                                // Check user preference for automatic difficulty
+                                match state.get_difficulty_scaling() {
+                                    crate::state::DifficultyScaling::Adaptive => {
+                                        // Use adaptive difficulty based on performance
+                                        select_adaptive_difficulty(&state, base_challenge)
+                                    }
+                                    crate::state::DifficultyScaling::Static => {
+                                        // Always use standard difficulty
+                                        challenges::ChallengeDifficulty::Standard
+                                    }
+                                    crate::state::DifficultyScaling::Custom => {
+                                        // Let user choose each time
+                                        if let Some(chosen) =
+                                            ui::show_challenge_difficulty_menu(base_challenge)?
+                                        {
+                                            chosen
+                                        } else {
+                                            continue; // User cancelled
+                                        }
+                                    }
+                                }
+                            } else {
+                                challenges::ChallengeDifficulty::Standard
+                            };
+
+                            // Create challenge with selected difficulty
+                            let challenge = base_challenge.with_difficulty(difficulty);
+
+                            // Record challenge attempt
+                            state.record_challenge_attempt(&challenge.id);
+
                             // Attempt the challenge
                             challenge.attempt(&mut state)?;
                         }
@@ -445,6 +518,182 @@ TIPS:
 "#,
         theme_primary(),
     )?;
+
+    Ok(())
+}
+
+/// Select adaptive difficulty based on player performance (v1.2.0)
+fn select_adaptive_difficulty(
+    state: &GameState,
+    challenge: &challenges::Challenge,
+) -> challenges::ChallengeDifficulty {
+    let completion_rate = state.get_completion_rate();
+    let current_level = state.current_level;
+    let sanity_percentage = state.sanity as f32 / 100.0;
+
+    // Calculate adaptive difficulty score
+    let mut score = 0.0;
+
+    // High completion rate suggests player is doing well
+    if completion_rate > 80.0 {
+        score += 0.3;
+    } else if completion_rate > 60.0 {
+        score += 0.1;
+    } else if completion_rate < 40.0 {
+        score -= 0.2;
+    }
+
+    // High sanity suggests challenges aren't too difficult
+    if sanity_percentage > 0.75 {
+        score += 0.2;
+    } else if sanity_percentage < 0.5 {
+        score -= 0.3;
+    }
+
+    // Higher levels can handle more difficulty
+    score += (current_level as f32) * 0.1;
+
+    // Check if player has attempted this challenge before
+    if let Some(attempts) = state
+        .progress_analytics
+        .challenges_attempted
+        .get(&challenge.id)
+    {
+        if *attempts > 3 {
+            score -= 0.2; // Multiple attempts suggest difficulty
+        }
+    }
+
+    // Determine difficulty based on score
+    if score > 0.4
+        && challenge
+            .get_available_difficulties()
+            .contains(&challenges::ChallengeDifficulty::Advanced)
+    {
+        challenges::ChallengeDifficulty::Advanced
+    } else if score < -0.3
+        && challenge
+            .get_available_difficulties()
+            .contains(&challenges::ChallengeDifficulty::Beginner)
+    {
+        challenges::ChallengeDifficulty::Beginner
+    } else {
+        challenges::ChallengeDifficulty::Standard
+    }
+}
+
+/// Show practice mode with dynamic challenges (v1.2.0)
+fn show_practice_mode(state: &mut GameState) -> io::Result<()> {
+    loop {
+        ui::clear_screen()?;
+
+        ui::print_colored(
+            "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
+            theme_border(),
+        )?;
+        ui::print_colored(
+            "║                            PRACTICE MODE                                 ║\n",
+            theme_accent(),
+        )?;
+        ui::print_colored(
+            "╚═══════════════════════════════════════════════════════════════════════════╝\n",
+            theme_border(),
+        )?;
+
+        println!();
+        ui::print_colored(
+            "🎯 Practice with randomly generated challenges!\n",
+            theme_primary(),
+        )?;
+        ui::print_colored(
+            "These don't affect your main progress but help build skills.\n\n",
+            theme_muted(),
+        )?;
+
+        let dynamic_challenges = challenges::get_dynamic_challenges();
+
+        println!("📋 PRACTICE CHALLENGES:\n");
+        for (idx, challenge) in dynamic_challenges.iter().enumerate() {
+            print!("  ");
+            ui::print_colored(&format!("[{}]", idx + 1), theme_accent())?;
+            print!(" {} ", challenge.title);
+            ui::print_colored(
+                &format!(
+                    "(+{} XP, -{} sanity)",
+                    challenge.xp_reward, challenge.sanity_cost
+                ),
+                theme_muted(),
+            )?;
+            println!();
+        }
+
+        ui::print_separator()?;
+        println!("\n⚙️  OPTIONS:\n");
+        ui::print_menu_option("1-N", "Select a practice challenge", None)?;
+        ui::print_menu_option("random", "Random challenge", None)?;
+        ui::print_menu_option("back", "Return to main menu", None)?;
+
+        let choice = ui::read_input_with_completion(
+            "\n> Select practice challenge: ",
+            ui::CompletionContext::MainMenu {
+                challenge_count: dynamic_challenges.len(),
+            },
+            true,
+        )?;
+
+        match choice.to_lowercase().as_str() {
+            "back" => break,
+            "random" => {
+                use rand::Rng;
+                let mut rng = rand::thread_rng();
+                let idx = rng.gen_range(0..dynamic_challenges.len());
+                let challenge = &dynamic_challenges[idx];
+
+                ui::print_info(&format!("Randomly selected: {}", challenge.title))?;
+                ui::pause()?;
+
+                // Practice challenges don't affect main progress but give small XP
+                let mut practice_result = challenge.attempt(state)?;
+                if practice_result {
+                    // Give bonus XP for practice
+                    state.add_xp(challenge.xp_reward / 2);
+                    ui::print_success(&format!(
+                        "Practice bonus: +{} XP!",
+                        challenge.xp_reward / 2
+                    ))?;
+                }
+                ui::pause()?;
+            }
+            _ => {
+                if let Ok(num) = choice.parse::<usize>() {
+                    if num > 0 && num <= dynamic_challenges.len() {
+                        let challenge = &dynamic_challenges[num - 1];
+
+                        ui::print_info(&format!("Starting practice: {}", challenge.title))?;
+                        ui::pause()?;
+
+                        // Practice challenges don't affect main progress but give small XP
+                        let mut practice_result = challenge.attempt(state)?;
+                        if practice_result {
+                            // Give bonus XP for practice
+                            state.add_xp(challenge.xp_reward / 2);
+                            ui::print_success(&format!(
+                                "Practice bonus: +{} XP!",
+                                challenge.xp_reward / 2
+                            ))?;
+                        }
+                        ui::pause()?;
+                    } else {
+                        ui::print_error("Invalid challenge number.")?;
+                        ui::pause()?;
+                    }
+                } else {
+                    ui::print_error("Invalid input.")?;
+                    ui::pause()?;
+                }
+            }
+        }
+    }
 
     Ok(())
 }
