@@ -97,6 +97,42 @@ impl GameState {
     pub fn needs_tutorial(&self) -> bool {
         !self.tutorial_completed && self.completed_challenges.is_empty()
     }
+
+    // Compatibility methods for web module
+    pub fn level(&self) -> usize {
+        self.current_level
+    }
+
+    pub fn xp(&self) -> i32 {
+        self.experience
+    }
+
+    pub fn add_xp(&mut self, amount: i32) {
+        self.experience += amount;
+        // Auto-level up based on XP
+        let new_level = ((self.experience / 100).min(10)) as usize;
+        if new_level > self.current_level {
+            self.current_level = new_level;
+        }
+    }
+
+    pub fn check_level_up(&mut self) -> bool {
+        let new_level = ((self.experience / 100).min(10)) as usize;
+        if new_level > self.current_level {
+            self.current_level = new_level;
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn decrease_sanity(&mut self, amount: i32) {
+        self.sanity = (self.sanity - amount).max(0);
+    }
+
+    pub fn add_completed_challenge(&mut self, challenge_id: &str) {
+        self.completed_challenges.insert(challenge_id.to_string());
+    }
 }
 
 #[cfg(test)]

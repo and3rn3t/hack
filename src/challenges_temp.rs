@@ -1,13 +1,7 @@
-#[cfg(feature = "native")]
-use crate::narrative;
 use crate::ui::CompletionContext;
-use crate::{state::GameState, ui};
+use crate::{narrative, state::GameState, ui};
+use std::io;
 use std::sync::OnceLock;
-
-#[cfg(feature = "web")]
-fn default_check_answer() -> fn(&str) -> bool {
-    |_| false
-}
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "web", derive(serde::Serialize, serde::Deserialize))]
@@ -20,7 +14,7 @@ pub struct Challenge {
     pub level: usize,
     pub xp_reward: i32,
     pub sanity_cost: i32,
-    #[cfg_attr(feature = "web", serde(skip, default = "default_check_answer"))]
+    #[cfg_attr(feature = "web", serde(skip))]
     pub check_answer: fn(&str) -> bool,
     pub solution: String,
     pub hints: Vec<String>,
@@ -102,8 +96,7 @@ impl Challenge {
         (self.check_answer)(answer)
     }
 
-    pub fn attempt(&self, state: &mut GameState) -> Result<bool, String> {
-        #[cfg(feature = "native")]
+    pub fn attempt(&self, state: &mut GameState) -> io::Result<bool> {
         narrative::show_challenge_intro(&self.title, &self.description)?;
 
         let mut attempts = 0;
@@ -123,8 +116,7 @@ impl Challenge {
 
             if input.to_lowercase() == "hint" {
                 if !self.hints.is_empty() {
-                    let _hint_index = attempts.min(self.hints.len() - 1);
-                    #[cfg(feature = "native")]
+                    let hint_index = attempts.min(self.hints.len() - 1);
                     narrative::show_hint(&self.hints[hint_index])?;
                 } else {
                     ui::print_warning("No hints available for this challenge.")?;
@@ -138,11 +130,10 @@ impl Challenge {
             }
 
             if (self.check_answer)(&input) {
-                #[cfg(feature = "native")]
                 narrative::show_completion_message(self.xp_reward)?;
                 state.complete_challenge(&self.id, self.xp_reward);
                 state.modify_sanity(-self.sanity_cost);
-                state.save().map_err(|e| e.to_string())?;
+                state.save()?;
                 ui::pause()?;
                 return Ok(true);
             } else {
@@ -165,35 +156,38 @@ impl Challenge {
         }
     }
 
-    fn provide_feedback(&self, answer: &str, attempt_num: usize) -> Result<(), String> {
+    fn provide_feedback(&self, answer: &str, attempt_num: usize) -> io::Result<()> {
         // Basic feedback - can be enhanced per challenge
         if attempt_num == 1 {
-            ui::print_colored("\n❌ Incorrect. ", ui::Color::Red)?;
+            ui::print_colored("\n❌ Incorrect. ", crossterm::style::Color::Red)?;
             ui::print_colored(
                 "Review the challenge description carefully.\n",
-                ui::Color::White,
+                crossterm::style::Color::White,
             )?;
         } else if attempt_num == 2 {
-            ui::print_colored("\n❌ Still incorrect. ", ui::Color::Red)?;
-            ui::print_colored("Consider using 'hint' for guidance.\n", ui::Color::Yellow)?;
+            ui::print_colored("\n❌ Still incorrect. ", crossterm::style::Color::Red)?;
+            ui::print_colored(
+                "Consider using 'hint' for guidance.\n",
+                crossterm::style::Color::Yellow,
+            )?;
         } else if attempt_num >= 3 {
-            ui::print_colored("\n❌ Incorrect. ", ui::Color::Red)?;
+            ui::print_colored("\n❌ Incorrect. ", crossterm::style::Color::Red)?;
 
             // Provide specific feedback based on answer analysis
             if answer.is_empty() {
                 ui::print_colored(
                     "Your answer is empty. Please provide a value.\n",
-                    ui::Color::White,
+                    crossterm::style::Color::White,
                 )?;
             } else if answer.len() < 3 {
                 ui::print_colored(
                     "Your answer seems very short. Check if you're missing something.\n",
-                    ui::Color::White,
+                    crossterm::style::Color::White,
                 )?;
             } else if answer.len() > 100 {
                 ui::print_colored(
                     "Your answer is quite long. The solution might be simpler.\n",
-                    ui::Color::White,
+                    crossterm::style::Color::White,
                 )?;
             } else {
                 ui::print_colored(
@@ -201,7 +195,7 @@ impl Challenge {
                         "You've tried {} times. Use 'hint' if you need help.\n",
                         attempt_num
                     ),
-                    ui::Color::White,
+                    crossterm::style::Color::White,
                 )?;
             }
         }
@@ -209,22 +203,25 @@ impl Challenge {
         Ok(())
     }
 
-    fn show_learning_resources(&self) -> Result<(), String> {
+    fn show_learning_resources(&self) -> io::Result<()> {
         ui::print_separator()?;
-        ui::print_colored("\n💡 LEARNING RESOURCES:\n", ui::Color::Cyan)?;
+        ui::print_colored("\n💡 LEARNING RESOURCES:\n", crossterm::style::Color::Cyan)?;
 
         // Provide category-specific learning tips
         let category_tip = self.get_category_tip();
-        ui::print_colored(&format!("   • {}\n", category_tip), ui::Color::White)?;
+        ui::print_colored(
+            &format!("   • {}\n", category_tip),
+            crossterm::style::Color::White,
+        )?;
 
         ui::print_colored(
             "   • Review the challenge description and hints carefully\n",
-            ui::Color::White,
+            crossterm::style::Color::White,
         )?;
 
         ui::print_colored(
             "   • Try searching online for the concepts mentioned\n",
-            ui::Color::White,
+            crossterm::style::Color::White,
         )?;
 
         Ok(())
