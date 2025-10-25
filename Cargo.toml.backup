@@ -28,16 +28,13 @@ js-sys = { version = "0.3", optional = true }
 getrandom = { version = "0.2", features = ["js"] }
 console_error_panic_hook = { version = "0.1", optional = true }
 
-# Small allocator for WASM builds
-wee_alloc = { version = "0.4", optional = true }
-
 # Terminal dependencies (only for native builds)
 crossterm = { version = "0.27", optional = true }
 
 [features]
 default = ["native"]
 native = ["crossterm"]
-web = ["wasm-bindgen", "web-sys", "js-sys", "console_error_panic_hook", "wee_alloc"]
+web = ["wasm-bindgen", "web-sys", "js-sys", "console_error_panic_hook"]
 
 [dev-dependencies]
 proptest = "1.4"

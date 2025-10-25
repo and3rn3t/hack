@@ -1,6 +1,357 @@
 // The Hack: Ghost Protocol - Web Interface
 // Integrates with WebAssembly backend
 
+// Register Service Worker for PWA functionality
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        registerServiceWorker();
+    });
+}
+
+async function registerServiceWorker() {
+    try {
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+            scope: "/",
+        });
+
+        console.log(
+            "✅ Service Worker registered successfully:",
+            registration.scope
+        );
+
+        // Listen for updates
+        registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener("statechange", () => {
+                if (
+                    newWorker.state === "installed" &&
+                    navigator.serviceWorker.controller
+                ) {
+                    showUpdateNotification();
+                }
+            });
+        });
+
+        // Handle message from service worker
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            handleServiceWorkerMessage(event.data);
+        });
+    } catch (error) {
+        console.warn("❌ Service Worker registration failed:", error);
+    }
+}
+
+function showUpdateNotification() {
+    if (terminal && terminal.element) {
+        terminal.writeln(
+            "\x1b[33m📱 App update available! Refresh to get the latest features.\x1b[0m"
+        );
+    }
+}
+
+function handleServiceWorkerMessage(data) {
+    if (data.type === "CACHE_UPDATED") {
+        console.log("🔄 Cache updated:", data.payload);
+    }
+}
+
+// Install PWA prompt
+let deferredPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    showInstallPrompt();
+});
+
+function showInstallPrompt() {
+    // Add install button to UI
+    const installBtn = document.createElement("button");
+    installBtn.className = "btn btn-primary install-btn";
+    installBtn.textContent = "📱 Install App";
+    installBtn.onclick = installPWA;
+
+    const controls = document.querySelector(".controls");
+    if (controls && !controls.querySelector(".install-btn")) {
+        controls.appendChild(installBtn);
+    }
+}
+
+// Mobile interface enhancements
+let isMobile = false;
+let virtualKeyboardVisible = false;
+let touchStartY = 0;
+let touchStartTime = 0;
+
+// Detect mobile device
+function detectMobile() {
+    isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+        ) || window.innerWidth <= 768;
+
+    if (isMobile) {
+        document.body.classList.add("mobile-device");
+        initializeMobileFeatures();
+    }
+
+    return isMobile;
+}
+
+// Initialize mobile-specific features
+function initializeMobileFeatures() {
+    // Add virtual keyboard
+    addVirtualKeyboard();
+
+    // Add touch gesture support
+    addTouchGestures();
+
+    // Handle virtual keyboard visibility
+    handleVirtualKeyboard();
+
+    // Optimize terminal for mobile
+    optimizeTerminalForMobile();
+
+    console.log("📱 Mobile features initialized");
+}
+
+// Add virtual keyboard for common commands
+function addVirtualKeyboard() {
+    const gameContainer = document.querySelector(".game-container");
+
+    const keyboard = document.createElement("div");
+    keyboard.className = "mobile-keyboard";
+    keyboard.innerHTML = `
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="help">help</button>
+            <button class="key-btn" data-key="list">list</button>
+            <button class="key-btn" data-key="hint">hint</button>
+            <button class="key-btn" data-key="stats">stats</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn" data-key="start">start</button>
+            <button class="key-btn" data-key="submit">submit</button>
+            <button class="key-btn" data-key="quit">quit</button>
+            <button class="key-btn" data-key="save">save</button>
+        </div>
+        <div class="keyboard-row">
+            <button class="key-btn wide" data-key="backspace">⌫ Backspace</button>
+            <button class="key-btn wide" data-key="enter">↵ Enter</button>
+            <button class="key-btn" data-key="toggle">⌨️</button>
+        </div>
+    `;
+
+    gameContainer.appendChild(keyboard);
+
+    // Add click handlers
+    keyboard.addEventListener("click", (event) => {
+        if (event.target.classList.contains("key-btn")) {
+            const key = event.target.dataset.key;
+            handleVirtualKeyPress(key);
+        }
+    });
+}
+
+// Handle virtual key press
+function handleVirtualKeyPress(key) {
+    if (!terminal) return;
+
+    switch (key) {
+        case "backspace":
+            // Simulate backspace
+            terminal.write("\b \b");
+            break;
+        case "enter":
+            // Simulate enter
+            terminal.write("\r\n");
+            break;
+        case "toggle":
+            // Toggle virtual keyboard visibility
+            toggleVirtualKeyboard();
+            break;
+        default:
+            // Type the command
+            terminal.write(key + " ");
+            break;
+    }
+
+    // Haptic feedback if available
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+}
+
+// Toggle virtual keyboard
+function toggleVirtualKeyboard() {
+    const keyboard = document.querySelector(".mobile-keyboard");
+    keyboard.classList.toggle("active");
+    virtualKeyboardVisible = keyboard.classList.contains("active");
+
+    // Adjust terminal container padding
+    const terminalContainer = document.querySelector(".terminal-container");
+    if (virtualKeyboardVisible) {
+        terminalContainer.style.paddingBottom = "200px";
+    } else {
+        terminalContainer.style.paddingBottom = isMobile ? "120px" : "20px";
+    }
+}
+
+// Add touch gesture support
+function addTouchGestures() {
+    const gameContainer = document.querySelector(".game-container");
+
+    gameContainer.addEventListener("touchstart", handleTouchStart, {
+        passive: false,
+    });
+    gameContainer.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+    });
+    gameContainer.addEventListener("touchend", handleTouchEnd, {
+        passive: false,
+    });
+
+    // Add swipe hints
+    showSwipeHints();
+}
+
+function handleTouchStart(event) {
+    touchStartY = event.touches[0].clientY;
+    touchStartTime = Date.now();
+}
+
+function handleTouchMove(event) {
+    // Prevent default scrolling in certain areas
+    const target = event.target;
+    if (target.closest(".terminal-container")) {
+        // Allow vertical scrolling in terminal
+        return;
+    }
+}
+
+function handleTouchEnd(event) {
+    const touchEndY = event.changedTouches[0].clientY;
+    const touchDuration = Date.now() - touchStartTime;
+    const swipeDistance = touchStartY - touchEndY;
+
+    // Detect swipe gestures
+    if (touchDuration < 300 && Math.abs(swipeDistance) > 50) {
+        if (swipeDistance > 0) {
+            // Swipe up - show virtual keyboard
+            if (!virtualKeyboardVisible) {
+                toggleVirtualKeyboard();
+            }
+        } else {
+            // Swipe down - hide virtual keyboard or show stats
+            if (virtualKeyboardVisible) {
+                toggleVirtualKeyboard();
+            } else {
+                showStats();
+            }
+        }
+
+        // Haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(100);
+        }
+    }
+}
+
+function showSwipeHints() {
+    if (!isMobile) return;
+
+    const hint = document.createElement("div");
+    hint.className = "swipe-hint";
+    hint.textContent = "↕️ Swipe up for keyboard, down for stats";
+    document.body.appendChild(hint);
+
+    // Show hint briefly
+    setTimeout(() => hint.classList.add("show"), 1000);
+    setTimeout(() => hint.classList.remove("show"), 4000);
+    setTimeout(() => hint.remove(), 4500);
+}
+
+// Handle device keyboard visibility changes
+function handleVirtualKeyboard() {
+    if (!isMobile) return;
+
+    let initialViewportHeight = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+        const currentHeight = window.innerHeight;
+        const heightDifference = initialViewportHeight - currentHeight;
+
+        const terminalContainer = document.querySelector(".terminal-container");
+        const controls = document.querySelector(".controls");
+
+        if (heightDifference > 150) {
+            // Virtual keyboard is likely open
+            document.body.classList.add("keyboard-open");
+            terminalContainer.style.paddingBottom = "10px";
+            controls.style.display = "none";
+        } else {
+            // Virtual keyboard is likely closed
+            document.body.classList.remove("keyboard-open");
+            terminalContainer.style.paddingBottom = "120px";
+            controls.style.display = "flex";
+        }
+    });
+}
+
+// Optimize terminal for mobile
+function optimizeTerminalForMobile() {
+    if (!terminal || !isMobile) return;
+
+    // Adjust font size for mobile
+    terminal.setOption("fontSize", window.innerWidth < 480 ? 11 : 12);
+
+    // Enable touch scrolling
+    terminal.setOption("scrollback", 1000);
+
+    // Optimize cursor for touch
+    terminal.setOption("cursorBlink", true);
+    terminal.setOption("cursorStyle", "block");
+
+    // Add touch-friendly input handling
+    const terminalElement = document.querySelector("#terminal");
+    if (terminalElement) {
+        terminalElement.addEventListener("touchstart", (event) => {
+            // Focus on touch for better keyboard handling
+            terminal.focus();
+
+            // Double-tap to show virtual keyboard
+            if (event.touches.length === 1) {
+                const now = Date.now();
+                const lastTap = terminalElement.dataset.lastTap || 0;
+
+                if (now - lastTap < 300) {
+                    toggleVirtualKeyboard();
+                }
+
+                terminalElement.dataset.lastTap = now;
+            }
+        });
+    }
+}
+
+async function installPWA() {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+
+    if (result.outcome === "accepted") {
+        console.log("🎉 PWA installed successfully");
+        achievements.push("pwa_installer");
+        saveAchievements();
+
+        // Remove install button
+        const installBtn = document.querySelector(".install-btn");
+        if (installBtn) installBtn.remove();
+    }
+
+    deferredPrompt = null;
+}
+
 let gameEngine = null;
 let gameState = null;
 let wasmModule = null;
@@ -50,10 +401,20 @@ async function init() {
 
         updateLoadingProgress(100);
 
+        // Initialize mobile features if needed
+        if (detectMobile()) {
+            console.log("📱 Mobile device detected, optimizing interface");
+        }
+
         // Hide loading screen
         setTimeout(() => {
             document.getElementById("loading").style.display = "none";
             document.getElementById("gameContainer").style.display = "flex";
+
+            // Final mobile optimizations after UI is visible
+            if (isMobile) {
+                setTimeout(optimizeTerminalForMobile, 100);
+            }
         }, 500);
     } catch (error) {
         console.error("Failed to initialize game:", error);
@@ -314,7 +675,7 @@ function startGame() {
 
     // Start atmospheric effects and ambient audio
     startAtmosphericEffects();
-    
+
     // Start ambient audio now that everything is initialized
     if (audioContext) {
         setTimeout(() => startAmbientAudio(), 2000); // Delay slightly for better UX
@@ -327,7 +688,11 @@ function startGame() {
 function startAtmosphericEffects() {
     // Occasional subtle glitch effects
     setInterval(() => {
-        if (Math.random() < 0.02 && gameState && typeof gameState.get_sanity === 'function') {
+        if (
+            Math.random() < 0.02 &&
+            gameState &&
+            typeof gameState.get_sanity === "function"
+        ) {
             try {
                 if (gameState.get_sanity() < 50) {
                     triggerSubtleGlitch();
@@ -340,7 +705,7 @@ function startAtmosphericEffects() {
 
     // Sanity-based effects
     setInterval(() => {
-        if (gameState && typeof gameState.get_sanity === 'function') {
+        if (gameState && typeof gameState.get_sanity === "function") {
             try {
                 if (gameState.get_sanity() < 25) {
                     triggerSanityEffect();
@@ -498,21 +863,30 @@ function showStatsCommand() {
     // Level and XP with visual bar
     writeAccent(`🎯 Level: ${stats.level}`);
     const xpProgress = Math.min(stats.xp / 100, 1) * 20; // Scale to 20 chars
-    const xpBar = "█".repeat(Math.floor(xpProgress)) + "░".repeat(20 - Math.floor(xpProgress));
+    const xpBar =
+        "█".repeat(Math.floor(xpProgress)) +
+        "░".repeat(20 - Math.floor(xpProgress));
     terminal.writeln(`   XP: ${stats.xp} [${xpBar}]`);
     // Sanity with colored bar
     const sanityPercent = stats.sanity;
     const sanityProgress = Math.floor(sanityPercent / 5); // 20 segments
-    const sanityBar = "█".repeat(sanityProgress) + "░".repeat(20 - sanityProgress);
-    const sanityColor = sanityPercent > 60 ? "🟢" : sanityPercent > 30 ? "🟡" : "🔴";
+    const sanityBar =
+        "█".repeat(sanityProgress) + "░".repeat(20 - sanityProgress);
+    const sanityColor =
+        sanityPercent > 60 ? "🟢" : sanityPercent > 30 ? "🟡" : "🔴";
     writeAccent(`🧠 Sanity: ${stats.sanity}/100 ${sanityColor}`);
     terminal.writeln(`   [${sanityBar}]`);
     terminal.writeln("");
 
     // Challenge completion
-    writeAccent(`🎮 Challenges Completed: ${stats.completed_challenges.length}/11`);
-    const challengeProgress = Math.floor((stats.completed_challenges.length / 11) * 20);
-    const challengeBar = "█".repeat(challengeProgress) + "░".repeat(20 - challengeProgress);
+    writeAccent(
+        `🎮 Challenges Completed: ${stats.completed_challenges.length}/11`
+    );
+    const challengeProgress = Math.floor(
+        (stats.completed_challenges.length / 11) * 20
+    );
+    const challengeBar =
+        "█".repeat(challengeProgress) + "░".repeat(20 - challengeProgress);
     terminal.writeln(`   [${challengeBar}]`);
     terminal.writeln("");
 
@@ -520,19 +894,26 @@ function showStatsCommand() {
     writeAccent("📈 Performance Metrics:");
     terminal.writeln(`   Total Attempts: ${stats.total_attempts || 0}`);
     terminal.writeln(`   Hints Used: ${stats.hints_used || 0}`);
-    const efficiency = stats.completed_challenges.length > 0 ?
-        ((stats.total_attempts || 0) / stats.completed_challenges.length).toFixed(1) : "N/A";
+    const efficiency =
+        stats.completed_challenges.length > 0
+            ? (
+                  (stats.total_attempts || 0) /
+                  stats.completed_challenges.length
+              ).toFixed(1)
+            : "N/A";
     terminal.writeln(`   Avg Attempts per Challenge: ${efficiency}`);
     terminal.writeln("");
 
     // Achievement summary
     const unlockedCount = achievements.length;
     const totalAchievements = Object.keys(ACHIEVEMENTS).length;
-    writeAccent(`🏆 Achievements: ${unlockedCount}/${totalAchievements} unlocked`);
+    writeAccent(
+        `🏆 Achievements: ${unlockedCount}/${totalAchievements} unlocked`
+    );
 
     if (unlockedCount > 0) {
         terminal.writeln("   Recent achievements:");
-        achievements.slice(-3).forEach(id => {
+        achievements.slice(-3).forEach((id) => {
             const achievement = ACHIEVEMENTS[id];
             if (achievement) {
                 writeMuted(`   • ${achievement.title}`);
@@ -1249,8 +1630,13 @@ function playAchievementSound() {
 }
 
 function startAmbientAudio() {
-    if (!audioContext || !gameState || typeof gameState.get_sanity !== 'function') return;
-    
+    if (
+        !audioContext ||
+        !gameState ||
+        typeof gameState.get_sanity !== "function"
+    )
+        return;
+
     try {
         if (gameState.get_sanity() > 70) return;
     } catch (error) {
@@ -1273,7 +1659,10 @@ function startAmbientAudio() {
     filter.type = "lowpass";
     filter.frequency.setValueAtTime(200, audioContext.currentTime);
 
-    const sanityLevel = gameState && typeof gameState.get_sanity === 'function' ? gameState.get_sanity() / 100 : 0.5;
+    const sanityLevel =
+        gameState && typeof gameState.get_sanity === "function"
+            ? gameState.get_sanity() / 100
+            : 0.5;
     gainNode.gain.setValueAtTime(
         0.02 * (1 - sanityLevel),
         audioContext.currentTime
@@ -1308,41 +1697,58 @@ document.addEventListener("drop", (e) => {
 function showLeaderboard() {
     writeInfo("🏆 Community Leaderboard");
     terminal.writeln("");
-    
+
     writeMuted("📊 Anonymous leaderboard coming soon!");
     terminal.writeln("");
     writeMuted("Your stats (local only):");
     const stats = JSON.parse(gameState.get_stats_json());
-    terminal.writeln(`• Challenges completed: ${stats.completed_challenges.length}/11`);
+    terminal.writeln(
+        `• Challenges completed: ${stats.completed_challenges.length}/11`
+    );
     terminal.writeln(`• Current level: ${stats.level}`);
-    terminal.writeln(`• Achievements unlocked: ${achievements.length}/${Object.keys(ACHIEVEMENTS).length}`);
+    terminal.writeln(
+        `• Achievements unlocked: ${achievements.length}/${
+            Object.keys(ACHIEVEMENTS).length
+        }`
+    );
     terminal.writeln("");
-    
-    writeMuted("🔒 Your privacy is protected - we never collect personal data!");
+
+    writeMuted(
+        "🔒 Your privacy is protected - we never collect personal data!"
+    );
     writeMuted("🎮 Keep playing to improve your ranking!");
 }
 
 function shareProgress() {
     const stats = JSON.parse(gameState.get_stats_json());
-    const completionPercent = Math.floor((stats.completed_challenges.length / 11) * 100);
+    const completionPercent = Math.floor(
+        (stats.completed_challenges.length / 11) * 100
+    );
     const achievementCount = achievements.length;
-    
-    const shareText = `🎮 I'm playing The Hack: Ghost Protocol! 
-📊 Progress: ${completionPercent}% complete (${stats.completed_challenges.length}/11 challenges)
-🏆 Achievements: ${achievementCount}/${Object.keys(ACHIEVEMENTS).length} unlocked
+
+    const shareText = `🎮 I'm playing The Hack: Ghost Protocol!
+📊 Progress: ${completionPercent}% complete (${
+        stats.completed_challenges.length
+    }/11 challenges)
+🏆 Achievements: ${achievementCount}/${
+        Object.keys(ACHIEVEMENTS).length
+    } unlocked
 💀 Sanity: ${stats.sanity}/100
 
 Try it yourself at hack.andernet.dev - A horror-themed cybersecurity CTF game! 👻`;
 
     // Copy to clipboard
     try {
-        navigator.clipboard.writeText(shareText).then(() => {
-            writeSuccess("📋 Progress shared to clipboard!");
-            writeMuted("Paste this anywhere to share your achievements!");
-        }).catch(() => {
-            // Fallback: show the text for manual copying
-            showShareText(shareText);
-        });
+        navigator.clipboard
+            .writeText(shareText)
+            .then(() => {
+                writeSuccess("📋 Progress shared to clipboard!");
+                writeMuted("Paste this anywhere to share your achievements!");
+            })
+            .catch(() => {
+                // Fallback: show the text for manual copying
+                showShareText(shareText);
+            });
     } catch (error) {
         showShareText(shareText);
     }

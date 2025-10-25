@@ -14,7 +14,7 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 -   ✅ Core game engine with terminal UI
 -   ✅ **26 CTF challenges** across 5 difficulty levels (expanded from 11)
--   ✅ Horror narrative with sanity mechanic  
+-   ✅ Horror narrative with sanity mechanic
 -   ✅ Save/load system
 -   ✅ Progressive hint system
 -   ✅ Multi-platform support (Windows, Linux, macOS)

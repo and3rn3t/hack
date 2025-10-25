@@ -1,349 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Hack: Ghost Protocol</title>
-    <meta name="description" content="A horror-themed hacking simulator and CTF challenge game">
-    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A">
-    
-    <!-- Terminal emulator CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
-    
-    <!-- Custom CSS -->
-    <style>
-        :root {
-            --bg-primary: #000000;
-            --bg-secondary: #0a0a0a;
-            --text-primary: #ffffff;
-            --text-accent: #00ff41;
-            --text-danger: #ff0000;
-            --text-warning: #ffff00;
-            --text-muted: #666666;
-            --border-color: #333333;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Hack: Ghost Protocol</title>
+        <meta
+            name="description"
+            content="A horror-themed hacking simulator and CTF challenge game"
+        />
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        <!-- PWA Meta Tags -->
+        <meta name="application-name" content="The Hack: Ghost Protocol" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <meta name="apple-mobile-web-app-title" content="Hack Ghost" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#00ff41" />
+        <meta name="msapplication-TileColor" content="#000000" />
 
-        body {
-            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            overflow: hidden;
-            height: 100vh;
-            background-image: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.05) 0%, transparent 50%);
-        }
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="manifest.json" />
 
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+        <!-- Favicon and Icons -->
+        <link
+            rel="icon"
+            type="image/x-icon"
+            href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A"
+        />
+        <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+        <link
+            rel="apple-touch-icon"
+            sizes="152x152"
+            href="icons/icon-152x152.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="icons/icon-192x192.png"
+        />
 
-        .loading-text {
-            color: var(--text-accent);
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
+        <!-- Terminal emulator CSS -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css"
+        />
 
-        .loading-bar {
-            width: 300px;
-            height: 4px;
-            background: var(--border-color);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .loading-progress {
-            height: 100%;
-            background: var(--text-accent);
-            width: 0%;
-            transition: width 0.3s ease;
-            animation: glow 2s infinite alternate;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px var(--text-accent); }
-            100% { box-shadow: 0 0 20px var(--text-accent), 0 0 30px var(--text-accent); }
-        }
-
-        .game-container {
-            display: none;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        .header {
-            background: var(--bg-secondary);
-            padding: 10px 20px;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .title {
-            color: var(--text-danger);
-            font-size: 1.5em;
-            font-weight: bold;
-            text-shadow: 0 0 10px var(--text-danger);
-        }
-
-        .stats {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9em;
-        }
-
-        .stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 0.8em;
-        }
-
-        .stat-value {
-            color: var(--text-accent);
-            font-weight: bold;
-        }
-
-        .terminal-container {
-            flex: 1;
-            padding: 20px;
-            background: var(--bg-primary);
-            position: relative;
-        }
-
-        .xterm {
-            height: 100%;
-        }
-
-        .controls {
-            background: var(--bg-secondary);
-            padding: 10px 20px;
-            border-top: 2px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
-        }
-
-        .btn:hover {
-            background: var(--border-color);
-            color: var(--text-accent);
-        }
-
-        .btn-primary {
-            border-color: var(--text-accent);
-            color: var(--text-accent);
-        }
-
-        .btn-primary:hover {
-            background: var(--text-accent);
-            color: var(--bg-primary);
-        }
-
-        .btn-danger {
-            border-color: var(--text-danger);
-            color: var(--text-danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--text-danger);
-            color: var(--bg-primary);
-        }
-
-        /* Horror theme effects */
-        .glitch {
-            position: relative;
-            animation: glitch 2s infinite;
-        }
-
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-        }
-
-        .scanlines {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(transparent 50%, rgba(0, 255, 65, 0.02) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-        }
-
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .header {
-                padding: 5px 10px;
+        <!-- Custom CSS -->
+        <style>
+            :root {
+                --bg-primary: #000000;
+                --bg-secondary: #0a0a0a;
+                --text-primary: #ffffff;
+                --text-accent: #00ff41;
+                --text-danger: #ff0000;
+                --text-warning: #ffff00;
+                --text-muted: #666666;
+                --border-color: #333333;
             }
-            
-            .title {
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Courier New", "Monaco", "Menlo", monospace;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                overflow: hidden;
+                height: 100vh;
+                background-image: radial-gradient(
+                        circle at 20% 80%,
+                        rgba(120, 119, 198, 0.1) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        circle at 80% 20%,
+                        rgba(255, 119, 198, 0.05) 0%,
+                        transparent 50%
+                    );
+            }
+
+            .loading {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--bg-primary);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .loading-text {
+                color: var(--text-accent);
                 font-size: 1.2em;
+                margin-bottom: 20px;
+                animation: pulse 2s infinite;
             }
-            
+
+            .loading-bar {
+                width: 300px;
+                height: 4px;
+                background: var(--border-color);
+                border-radius: 2px;
+                overflow: hidden;
+            }
+
+            .loading-progress {
+                height: 100%;
+                background: var(--text-accent);
+                width: 0%;
+                transition: width 0.3s ease;
+                animation: glow 2s infinite alternate;
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.6;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes glow {
+                0% {
+                    box-shadow: 0 0 5px var(--text-accent);
+                }
+                100% {
+                    box-shadow: 0 0 20px var(--text-accent),
+                        0 0 30px var(--text-accent);
+                }
+            }
+
+            .game-container {
+                display: none;
+                height: 100vh;
+                flex-direction: column;
+            }
+
+            .header {
+                background: var(--bg-secondary);
+                padding: 10px 20px;
+                border-bottom: 2px solid var(--border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .title {
+                color: var(--text-danger);
+                font-size: 1.5em;
+                font-weight: bold;
+                text-shadow: 0 0 10px var(--text-danger);
+            }
+
             .stats {
-                gap: 10px;
+                display: flex;
+                gap: 20px;
+                font-size: 0.9em;
             }
-            
+
+            .stat {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stat-label {
+                color: var(--text-muted);
+                font-size: 0.8em;
+            }
+
+            .stat-value {
+                color: var(--text-accent);
+                font-weight: bold;
+            }
+
             .terminal-container {
-                padding: 10px;
+                flex: 1;
+                padding: 20px;
+                background: var(--bg-primary);
+                position: relative;
             }
-            
+
+            .xterm {
+                height: 100%;
+            }
+
             .controls {
-                padding: 5px 10px;
+                background: var(--bg-secondary);
+                padding: 10px 20px;
+                border-top: 2px solid var(--border-color);
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
             }
-        }
 
-        /* Accessibility */
-        .high-contrast {
-            --bg-primary: #000000;
-            --bg-secondary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-accent: #ffff00;
-            --text-danger: #ff6b6b;
-            --border-color: #ffffff;
-        }
+            .btn {
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border: 1px solid var(--border-color);
+                padding: 8px 16px;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 0.9em;
+                transition: all 0.2s ease;
+            }
 
-        .colorblind-friendly {
-            --text-accent: #0099ff;
-            --text-danger: #ff00ff;
-            --text-warning: #ffaa00;
-        }
+            .btn:hover {
+                background: var(--border-color);
+                color: var(--text-accent);
+            }
 
-        /* Game over screen */
-        .game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
+            .btn-primary {
+                border-color: var(--text-accent);
+                color: var(--text-accent);
+            }
 
-        .game-over-text {
-            font-size: 3em;
-            color: var(--text-danger);
-            text-shadow: 0 0 20px var(--text-danger);
-            margin-bottom: 20px;
-            animation: flicker 0.5s infinite alternate;
-        }
+            .btn-primary:hover {
+                background: var(--text-accent);
+                color: var(--bg-primary);
+            }
 
-        @keyframes flicker {
-            0% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-    </style>
-</head>
-<body>
-    <!-- Loading screen -->
-    <div class="loading" id="loading">
-        <div class="loading-text">Initializing Ghost Protocol...</div>
-        <div class="loading-bar">
-            <div class="loading-progress" id="loadingProgress"></div>
-        </div>
-    </div>
+            .btn-danger {
+                border-color: var(--text-danger);
+                color: var(--text-danger);
+            }
 
-    <!-- Game over screen -->
-    <div class="game-over" id="gameOver">
-        <div class="game-over-text glitch">SANITY DEPLETED</div>
-        <div style="color: var(--text-muted); margin-bottom: 20px;">
-            The ghost has consumed your mind...
-        </div>
-        <button class="btn btn-primary" onclick="resetGame()">
-            Try Again
-        </button>
-    </div>
+            .btn-danger:hover {
+                background: var(--text-danger);
+                color: var(--bg-primary);
+            }
 
-    <!-- Main game container -->
-    <div class="game-container" id="gameContainer">
-        <header class="header">
-            <div class="title glitch">THE HACK: GHOST PROTOCOL</div>
-            <div class="stats">
-                <div class="stat">
-                    <div class="stat-label">LEVEL</div>
-                    <div class="stat-value" id="playerLevel">0</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">XP</div>
-                    <div class="stat-value" id="playerXP">0</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">SANITY</div>
-                    <div class="stat-value" id="playerSanity">100</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">CHALLENGES</div>
-                    <div class="stat-value" id="challengesCompleted">0</div>
-                </div>
+            /* Horror theme effects */
+            .glitch {
+                position: relative;
+                animation: glitch 2s infinite;
+            }
+
+            @keyframes glitch {
+                0%,
+                100% {
+                    transform: translate(0);
+                }
+                20% {
+                    transform: translate(-2px, 2px);
+                }
+                40% {
+                    transform: translate(-2px, -2px);
+                }
+                60% {
+                    transform: translate(2px, 2px);
+                }
+                80% {
+                    transform: translate(2px, -2px);
+                }
+            }
+
+            .scanlines {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(
+                    transparent 50%,
+                    rgba(0, 255, 65, 0.02) 50%
+                );
+                background-size: 100% 4px;
+                pointer-events: none;
+            }
+
+            /* Enhanced Mobile responsiveness and touch support */
+            @media (max-width: 768px) {
+                .header {
+                    padding: 8px 12px;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .title {
+                    font-size: 1.1em;
+                    text-align: center;
+                }
+
+                .stats {
+                    gap: 15px;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
+
+                .stat {
+                    min-width: 60px;
+                }
+
+                .terminal-container {
+                    padding: 8px;
+                    padding-bottom: 120px; /* Extra space for mobile virtual keyboard */
+                }
+
+                .controls {
+                    padding: 8px 12px;
+                    gap: 8px;
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 1000;
+                    background: var(--bg-secondary);
+                    border-top: 2px solid var(--border-color);
+                    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+                }
+
+                .btn {
+                    padding: 12px 16px;
+                    font-size: 0.85em;
+                    min-height: 44px; /* Touch-friendly size */
+                    border-radius: 4px;
+                    flex: 1;
+                    text-align: center;
+                }
+
+                .xterm {
+                    font-size: 12px;
+                }
+
+                .xterm .xterm-viewport {
+                    padding-bottom: 20px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .header {
+                    padding: 5px 8px;
+                }
+
+                .title {
+                    font-size: 1em;
+                }
+
+                .stats {
+                    gap: 8px;
+                }
+
+                .stat {
+                    font-size: 0.8em;
+                    min-width: 50px;
+                }
+
+                .terminal-container {
+                    padding: 5px;
+                    padding-bottom: 140px;
+                }
+
+                .controls {
+                    padding: 6px 8px;
+                    gap: 6px;
+                }
+
+                .btn {
+                    padding: 10px 12px;
+                    font-size: 0.8em;
+                    min-height: 40px;
+                }
+
+                .xterm {
+                    font-size: 11px;
+                }
+            }
+
+            /* Touch and gesture improvements */
+            .btn {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+                user-select: none;
+            }
+
+            .btn:active {
+                transform: scale(0.98);
+                transition: transform 0.1s;
+            }
+
+            /* Virtual keyboard handling */
+            .keyboard-open {
+                padding-bottom: 0 !important;
+            }
+
+            /* Mobile virtual keyboard overlay */
+            .mobile-keyboard {
+                display: none;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: var(--bg-secondary);
+                border-top: 2px solid var(--border-color);
+                padding: 10px;
+                z-index: 999;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .mobile-keyboard.active {
+                display: flex;
+            }
+
+            .keyboard-row {
+                display: flex;
+                gap: 5px;
+                justify-content: center;
+            }
+
+            .key-btn {
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border: 1px solid var(--border-color);
+                padding: 8px 12px;
+                font-family: "Courier New", monospace;
+                font-size: 0.9em;
+                border-radius: 4px;
+                min-width: 35px;
+                text-align: center;
+                cursor: pointer;
+                user-select: none;
+                touch-action: manipulation;
+            }
+
+            .key-btn:active {
+                background: var(--text-accent);
+                color: var(--bg-primary);
+            }
+
+            .key-btn.wide {
+                flex: 1;
+                max-width: 120px;
+            }
+
+            /* Swipe gesture indicators */
+            .swipe-hint {
+                position: fixed;
+                top: 50%;
+                left: 10px;
+                right: 10px;
+                text-align: center;
+                color: var(--text-muted);
+                font-size: 0.8em;
+                opacity: 0;
+                transition: opacity 0.3s;
+                pointer-events: none;
+            }
+
+            .swipe-hint.show {
+                opacity: 1;
+            }
+
+            /* Touch feedback for terminal */
+            .xterm-screen {
+                touch-action: pan-y;
+            }
+
+            /* Install prompt styling for mobile */
+            .install-btn {
+                background: var(--text-accent) !important;
+                color: var(--bg-primary) !important;
+                border-color: var(--text-accent) !important;
+                animation: pulse-green 2s infinite;
+            }
+
+            @keyframes pulse-green {
+                0%,
+                100% {
+                    box-shadow: 0 0 5px var(--text-accent);
+                }
+                50% {
+                    box-shadow: 0 0 15px var(--text-accent),
+                        0 0 25px var(--text-accent);
+                }
+            }
+
+            /* Accessibility */
+            .high-contrast {
+                --bg-primary: #000000;
+                --bg-secondary: #1a1a1a;
+                --text-primary: #ffffff;
+                --text-accent: #ffff00;
+                --text-danger: #ff6b6b;
+                --border-color: #ffffff;
+            }
+
+            .colorblind-friendly {
+                --text-accent: #0099ff;
+                --text-danger: #ff00ff;
+                --text-warning: #ffaa00;
+            }
+
+            /* Game over screen */
+            .game-over {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                display: none;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 999;
+            }
+
+            .game-over-text {
+                font-size: 3em;
+                color: var(--text-danger);
+                text-shadow: 0 0 20px var(--text-danger);
+                margin-bottom: 20px;
+                animation: flicker 0.5s infinite alternate;
+            }
+
+            @keyframes flicker {
+                0% {
+                    opacity: 0.8;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Loading screen -->
+        <div class="loading" id="loading">
+            <div class="loading-text">Initializing Ghost Protocol...</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
             </div>
-        </header>
-
-        <div class="terminal-container">
-            <div id="terminal"></div>
-            <div class="scanlines"></div>
         </div>
 
-        <div class="controls">
-            <button class="btn btn-primary" onclick="showHelp()">Help</button>
-            <button class="btn" onclick="showStats()">Statistics</button>
-            <button class="btn" onclick="saveGame()">Save Game</button>
-            <button class="btn" onclick="loadGame()">Load Game</button>
-            <button class="btn" onclick="toggleTheme()">Change Theme</button>
-            <button class="btn btn-danger" onclick="resetGame()">New Game</button>
+        <!-- Game over screen -->
+        <div class="game-over" id="gameOver">
+            <div class="game-over-text glitch">SANITY DEPLETED</div>
+            <div style="color: var(--text-muted); margin-bottom: 20px">
+                The ghost has consumed your mind...
+            </div>
+            <button class="btn btn-primary" onclick="resetGame()">
+                Try Again
+            </button>
         </div>
-    </div>
 
-    <!-- Terminal emulator -->
-    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+        <!-- Main game container -->
+        <div class="game-container" id="gameContainer">
+            <header class="header">
+                <div class="title glitch">THE HACK: GHOST PROTOCOL</div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-label">LEVEL</div>
+                        <div class="stat-value" id="playerLevel">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">XP</div>
+                        <div class="stat-value" id="playerXP">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">SANITY</div>
+                        <div class="stat-value" id="playerSanity">100</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">CHALLENGES</div>
+                        <div class="stat-value" id="challengesCompleted">0</div>
+                    </div>
+                </div>
+            </header>
 
-    <!-- Game JavaScript -->
-    <script type="module" src="game.js"></script>
-</body>
+            <div class="terminal-container">
+                <div id="terminal"></div>
+                <div class="scanlines"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="showHelp()">
+                    Help
+                </button>
+                <button class="btn" onclick="showStats()">Statistics</button>
+                <button class="btn" onclick="saveGame()">Save Game</button>
+                <button class="btn" onclick="loadGame()">Load Game</button>
+                <button class="btn" onclick="toggleTheme()">
+                    Change Theme
+                </button>
+                <button class="btn btn-danger" onclick="resetGame()">
+                    New Game
+                </button>
+            </div>
+        </div>
+
+        <!-- Terminal emulator -->
+        <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+
+        <!-- Game JavaScript -->
+        <script type="module" src="game.js"></script>
+    </body>
 </html>

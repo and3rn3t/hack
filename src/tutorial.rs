@@ -1,6 +1,17 @@
 use crate::{state::GameState, ui};
 use std::io;
 
+/// Convert UI result to io::Result for compatibility
+#[cfg(feature = "web")]
+fn ui_to_io_result<T>(result: Result<T, String>) -> std::io::Result<T> {
+    result.map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
+}
+
+#[cfg(feature = "native")]
+fn ui_to_io_result<T>(result: std::io::Result<T>) -> std::io::Result<T> {
+    result
+}
+
 /// Run the interactive tutorial for new players
 pub fn run_tutorial(state: &mut GameState) -> io::Result<()> {
     ui::clear_screen()?;

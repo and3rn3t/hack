@@ -35,6 +35,8 @@ pub enum ChallengeCategory {
     Forensics,
     Reverse,
     Binary,
+    OSINT,         // Open Source Intelligence
+    Steganography, // Hidden data techniques
 }
 
 impl Challenge {
@@ -728,6 +730,158 @@ What does CORS stand for?
                 "CORS = Cross-Origin Resource Sharing".to_string(),
             ],
         ),
+        // Level 2: OSINT (Open Source Intelligence) challenges
+        Challenge::new_legacy(
+            "osint_social_media",
+            "Digital Footprints",
+            r#"You're investigating a target who uses the handle "GhostHacker2024" online.
+They posted a photo on social media with the caption: "At my favorite coffee shop again!"
+
+The image metadata reveals these EXIF details:
+- Camera: iPhone 12 Pro
+- GPS Coordinates: 40.7128° N, 74.0060° W
+- Timestamp: 2024-01-15 14:30:22
+
+Based on the GPS coordinates, what major city is this person located in?
+(Answer: City name only)"#,
+            2,
+            100,
+            12,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "new york" || a == "new york city" || a == "nyc" || a == "manhattan"
+            },
+            vec![
+                "GPS coordinates can reveal exact locations from photos.".to_string(),
+                "Those coordinates are for a very famous US city.".to_string(),
+                "40.7128° N, 74.0060° W = New York City coordinates".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_domain_recon",
+            "Domain Investigation",
+            r#"During reconnaissance of "ghost-corp.example", you gather OSINT data:
+
+WHOIS Record:
+- Registrar: GoDaddy
+- Created: 2020-05-15
+- Expires: 2025-05-15
+- Email: admin@ghost-corp.example
+- Name Server: ns1.cloudflare.com
+
+DNS Records:
+- A Record: 192.168.1.100
+- MX Record: mail.ghost-corp.example (Priority 10)
+- TXT Record: "v=spf1 include:_spf.google.com ~all"
+
+What email service provider do they use based on the SPF record?
+(Answer: Company name)"#,
+            2,
+            100,
+            10,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "google" || a == "gmail" || a == "g suite" || a == "google workspace"
+            },
+            vec![
+                "SPF records reveal authorized email servers.".to_string(),
+                "Look at the 'include:' domain in the TXT record.".to_string(),
+                "The SPF record includes Google's servers.".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_email_analysis",
+            "Electronic Trail",
+            r#"You receive a suspicious email during investigation:
+
+From: security@gh0st-bank.com
+To: victim@company.com
+Subject: Urgent: Verify Your Account
+Date: Mon, 15 Jan 2024 10:30:00 +0000
+Message-ID: <ABC123@gh0st-bank.com>
+X-Originating-IP: 203.0.113.45
+Return-Path: bounce@gh0st-bank.com
+
+Several red flags suggest this is a phishing attempt:
+1. Suspicious domain (gh0st-bank vs ghost-bank)
+2. Urgent language creating pressure
+3. Originating IP from a different country
+
+What is the technique called when attackers use domains that look similar
+to legitimate ones? (Answer: One word, starts with 'typo')"#,
+            2,
+            100,
+            12,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "typosquatting" || a == "typosquat" || a == "cybersquatting"
+            },
+            vec![
+                "This attack uses domains with small spelling differences.".to_string(),
+                "Attackers register domains that look like legitimate ones.".to_string(),
+                "The answer is: typosquatting".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_geolocation",
+            "Location Triangulation",
+            r#"You're tracking a suspect who posted this message:
+
+"Just grabbed lunch at that pizza place across from the big clock tower.
+ Can see the river from here, and there's construction on the main bridge.
+ The weather app says it's 23°C - perfect for a walk in the financial district!"
+
+Additional clues from their profile:
+- Posts often mention "the tube" (subway system)
+- Uses British spelling: "colour", "realise"
+- Recent check-in at "Borough Market"
+- Time zone: GMT+0
+
+Which major European city fits these location clues?
+(Answer: City name)"#,
+            2,
+            100,
+            15,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "london" || a == "london uk" || a == "london england"
+            },
+            vec![
+                "Look for clues about the country and famous landmarks.".to_string(),
+                "'The tube', British spelling, and GMT+0 suggest which country?".to_string(),
+                "Big Ben clock tower, Thames river, Borough Market = London".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_breach_investigation",
+            "Data Breach Analysis",
+            r#"You're investigating a data breach. Analysis reveals:
+
+Breach Details:
+- 50,000 user accounts compromised
+- Password hashes: MD5 (unsalted)
+- Stolen data: emails, usernames, phone numbers
+- Attack vector: SQL injection on login form
+- Timeline: Data exfiltrated over 3 months
+
+The breach notification states: "We use industry-standard encryption"
+But investigation shows they used MD5 for passwords with no salt.
+
+What critical security practice was missing from their password storage?
+(Answer: One word that makes rainbow table attacks much harder)"#,
+            2,
+            100,
+            12,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "salt" || a == "salting" || a == "hashing salt" || a == "password salt"
+            },
+            vec![
+                "This makes each password hash unique even for identical passwords.".to_string(),
+                "Prevents rainbow table attacks by adding random data.".to_string(),
+                "The answer is: salt (or salting)".to_string(),
+            ],
+        ),
         // Level 3+: Advanced challenges
         Challenge::new_legacy(
             "binary_exploit",
@@ -1368,7 +1522,7 @@ mod tests {
 
         assert_eq!(level_0.len(), 6, "Expected 6 challenges in Level 0");
         assert_eq!(level_1.len(), 7, "Expected 7 challenges in Level 1");
-        assert_eq!(level_2.len(), 7, "Expected 7 challenges in Level 2");
+        assert_eq!(level_2.len(), 12, "Expected 12 challenges in Level 2");
         assert_eq!(level_3.len(), 5, "Expected 5 challenges in Level 3");
         assert_eq!(level_4.len(), 1, "Expected 1 challenge in Level 4");
     }
