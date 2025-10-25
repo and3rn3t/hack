@@ -1,392 +1,516 @@
 # 📚 Documentation Index
 
-Welcome to The Hack: Ghost Protocol documentation! This index helps you find exactly what you need.
+Welcome to The Hack: Ghost Protocol documentation! This comprehensive index helps you find exactly what you need, whether you're a player, developer, or contributor.
 
-## 🚀 Quick Links by Role
-
-### New to the Project?
-
-Start here to get up and running:
-
-1. **[README.md](../README.md)** - Project overview and features
-2. **[docs/SETUP.md](SETUP.md)** - Complete development environment setup
-3. **[.github/CHECKLIST.md](../.github/CHECKLIST.md)** - Verify your setup is correct
-
-### Want to Contribute?
-
-Everything you need to know about contributing:
-
-1. **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Contribution guidelines and workflow
-2. **[docs/ROADMAP.md](ROADMAP.md)** - Future plans and opportunities
-3. **[GitHub Issues](https://github.com/and3rn3t/hack/issues)** - Find tasks to work on
-
-### Playing the Game?
-
-Guides for players:
-
-1. **[README.md](../README.md)** - Quick start guide
-2. **[docs/TERMINAL_SETUP.md](TERMINAL_SETUP.md)** - Terminal configuration (important!)
-3. **[WALKTHROUGH.md](../WALKTHROUGH.md)** - Challenge solutions and hints
-4. **[DEMO.md](DEMO.md)** - Demo and showcase information
-
-### Need Configuration Help?
-
-Comprehensive configuration documentation:
-
-1. **[docs/CONFIGURATION.md](CONFIGURATION.md)** - Detailed configuration reference
-2. **[docs/CONFIG_SUMMARY.md](CONFIG_SUMMARY.md)** - Quick configuration overview
-3. **[.github/CHECKLIST.md](../.github/CHECKLIST.md)** - Configuration verification
-
-## 📖 Documentation by Category
-
-### Project Information
-
-| Document                                 | Description                              | Audience             |
-| ---------------------------------------- | ---------------------------------------- | -------------------- |
-| [README.md](../README.md)                | Project overview, features, installation | Everyone             |
-| [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) | Technical summary and achievements       | Developers           |
-| [SECURITY.md](../SECURITY.md)            | Security policy and reporting            | Security researchers |
-| [LICENSE](../LICENSE)                    | Project license information              | Legal/Contributors   |
-
-### Getting Started
-
-| Document                                        | Description                   | Audience       |
-| ----------------------------------------------- | ----------------------------- | -------------- |
-| [docs/SETUP.md](SETUP.md)                       | Development environment setup | New developers |
-| [.github/CHECKLIST.md](../.github/CHECKLIST.md) | Setup verification checklist  | New developers |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)           | How to contribute             | Contributors   |
-
-### Configuration
-
-| Document                                    | Description                      | Audience   |
-| ------------------------------------------- | -------------------------------- | ---------- |
-| [docs/CONFIGURATION.md](CONFIGURATION.md)   | Complete configuration reference | Developers |
-| [docs/CONFIG_SUMMARY.md](CONFIG_SUMMARY.md) | Quick configuration overview     | Developers |
-| [Cargo.toml](../Cargo.toml)                 | Rust project configuration       | Developers |
-| [rustfmt.toml](../rustfmt.toml)             | Code formatting rules            | Developers |
-| [clippy.toml](../clippy.toml)               | Linting configuration            | Developers |
-
-### Development Guides
-
-| Document                                                                                        | Description                           | Audience                 |
-| ----------------------------------------------------------------------------------------------- | ------------------------------------- | ------------------------ |
-| [CONTRIBUTING.md](../CONTRIBUTING.md)                                                           | Development workflow and standards    | Contributors             |
-| [docs/DEV_WORKFLOW.md](DEV_WORKFLOW.md)                                                         | Development scripts and VS Code tasks | Developers               |
-| [docs/ROADMAP.md](ROADMAP.md)                                                                   | Future features and timeline          | Community                |
-| [docs/TESTING.md](TESTING.md)                                                                   | Testing guide and best practices      | Developers               |
-| [docs/TESTING_STRATEGY.md](TESTING_STRATEGY.md)                                                 | Comprehensive testing strategy        | Developers               |
-| [docs/TOOLS.md](TOOLS.md)                                                                       | Linting and quality tools             | Developers               |
-| [docs/CI_CHECKS.md](CI_CHECKS.md)                                                               | CI/CD checks reference (legacy)       | Developers               |
-| [docs/CI_CD_PIPELINE.md](CI_CD_PIPELINE.md)                                                     | Complete CI/CD documentation          | Developers/Maintainers   |
-| [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance          | Developers using Copilot |
-
-### 🎯 Developer-Focused Guides (New!)
-
-| Document                                                          | Description                                             | Audience                        |
-| ----------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------- |
-| [docs/CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)       | Complete guide to designing and implementing challenges | Challenge Creators              |
-| [docs/API_DOCUMENTATION.md](API_DOCUMENTATION.md)                 | Comprehensive API reference for extensibility           | Library Users/Plugin Developers |
-| [docs/DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md) | Advanced debugging and problem-solving guide            | Developers/Maintainers          |
-
-### Features & User Experience
-
-| Document                                      | Description                            | Audience           |
-| --------------------------------------------- | -------------------------------------- | ------------------ |
-| [docs/BETTER_FEEDBACK.md](BETTER_FEEDBACK.md) | Intelligent feedback and learning tips | Developers/Players |
-| [docs/COMMAND_HISTORY.md](COMMAND_HISTORY.md) | Command history with arrow keys        | Developers/Players |
-| [docs/TERMINAL_SETUP.md](TERMINAL_SETUP.md)   | Terminal configuration                 | Players            |
-
-### Gameplay & Content
-
-| Document                         | Description                   | Audience |
-| -------------------------------- | ----------------------------- | -------- |
-| [WALKTHROUGH.md](WALKTHROUGH.md) | Challenge solutions and hints | Players  |
-| [DEMO.md](DEMO.md)               | Demo information              | Showcase |
-
-### GitHub Templates
-
-| Document                                                                                        | Description                 | Audience              |
-| ----------------------------------------------------------------------------------------------- | --------------------------- | --------------------- |
-| [.github/ISSUE_TEMPLATE/bug_report.md](../.github/ISSUE_TEMPLATE/bug_report.md)                 | Bug report template         | Anyone reporting bugs |
-| [.github/ISSUE_TEMPLATE/feature_request.md](../.github/ISSUE_TEMPLATE/feature_request.md)       | Feature request template    | Community             |
-| [.github/ISSUE_TEMPLATE/challenge_proposal.md](../.github/ISSUE_TEMPLATE/challenge_proposal.md) | Challenge creation template | Content creators      |
-| [.github/pull_request_template.md](../.github/pull_request_template.md)                         | Pull request template       | Contributors          |
-
-## 🎯 Common Tasks
-
-### I want to
-
-#### Play the Game
-
-1. Read [README.md](../README.md) - Installation section
-2. Run `cargo run` to start
-3. Check [WALKTHROUGH.md](WALKTHROUGH.md) if stuck
-
-#### Set Up My Development Environment
-
-1. Read [docs/SETUP.md](SETUP.md) - Complete setup guide
-2. Follow [.github/CHECKLIST.md](../.github/CHECKLIST.md)
-3. Verify with `cargo build && cargo run`
-
-#### Contribute Code
-
-1. Read [CONTRIBUTING.md](../CONTRIBUTING.md)
-2. Check [docs/ROADMAP.md](ROADMAP.md) for ideas
-3. Find an issue or create one
-4. Follow the pull request template
-
-#### Create a New Challenge
-
-1. Read [CONTRIBUTING.md](../CONTRIBUTING.md) - Challenge section
-2. Use [challenge proposal template](../.github/ISSUE_TEMPLATE/challenge_proposal.md)
-3. Discuss in an issue before coding
-4. Follow challenge design principles
-
-#### Report a Bug
-
-1. Check [existing issues](https://github.com/and3rn3t/hack/issues)
-2. Use [bug report template](../.github/ISSUE_TEMPLATE/bug_report.md)
-3. Include environment details
-4. Provide reproduction steps
-
-#### Request a Feature
-
-1. Check [ROADMAP.md](ROADMAP.md) first
-2. Use [feature request template](../.github/ISSUE_TEMPLATE/feature_request.md)
-3. Explain the problem and solution
-4. Consider educational value
-
-#### Understand Configuration
-
-1. Start with [CONFIG_SUMMARY.md](CONFIG_SUMMARY.md)
-2. Deep dive with [CONFIGURATION.md](CONFIGURATION.md)
-3. Check specific config files
-4. Ask in [Discussions](https://github.com/and3rn3t/hack/discussions)
-
-#### Create Advanced Challenges
-
-1. Read [CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md) - Complete creation guide
-2. Study existing challenges in `src/challenges.rs`
-3. Use [challenge proposal template](../.github/ISSUE_TEMPLATE/challenge_proposal.md)
-4. Test thoroughly before submitting
-
-#### Extend the Framework
-
-1. Study [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Complete API reference
-2. Check extension points and plugin architecture
-3. See integration examples for common patterns
-4. Follow plugin development workflow
-
-#### Debug Issues
-
-1. Check [DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md) - Complete debugging guide
-2. Run diagnostics and environment checks
-3. Use performance monitoring tools
-4. Follow systematic debugging workflow
-
-#### Report a Security Issue
-
-1. **Do NOT open a public issue**
-2. Read [SECURITY.md](../SECURITY.md)
-3. Use private reporting channel
-4. Provide detailed information
-
-## 🔧 Technical Documentation
-
-### Configuration Files
-
-#### Rust Configuration
-
--   **[Cargo.toml](../Cargo.toml)** - Project manifest and dependencies
--   **[rustfmt.toml](../rustfmt.toml)** - Code formatting configuration
--   **[clippy.toml](../clippy.toml)** - Linting rules
--   **[.cargo/config.toml](../.cargo/config.toml)** - Cargo behavior and aliases
-
-#### Editor Configuration
-
--   **[.editorconfig](../.editorconfig)** - Cross-editor settings
--   **[.vscode/settings.json](../.vscode/settings.json)** - VS Code settings
--   **[.vscode/extensions.json](../.vscode/extensions.json)** - Extension recommendations
--   **[.vscode/tasks.json](../.vscode/tasks.json)** - Build and run tasks
--   **[.vscode/launch.json](../.vscode/launch.json)** - Debug configurations
-
-#### CI/CD Configuration
-
--   **[.github/workflows/ci.yml](../.github/workflows/ci.yml)** - GitHub Actions pipeline
-
-#### Git Configuration
-
--   **[.gitignore](../.gitignore)** - Files excluded from Git
-
-### Source Code Structure
-
-```
-src/
-├── main.rs          # Entry point, terminal setup
-├── game.rs          # Main game loop, menu system
-├── challenges.rs    # Challenge definitions (11 challenges)
-├── narrative.rs     # Horror story elements
-├── state.rs         # Game state management, save/load
-└── ui.rs           # Terminal UI, colors, ASCII art
-```
-
-See [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for detailed architecture.
-
-## 📚 Learning Resources
-
-### Rust Language
-
--   [The Rust Book](https://doc.rust-lang.org/book/)
--   [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
--   [Rustlings](https://github.com/rust-lang/rustlings)
--   [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)
-
-### CTF & Security
-
--   [CTF101](https://ctf101.org/)
--   [OverTheWire](https://overthewire.org/)
--   [picoCTF](https://picoctf.org/)
--   [Hack The Box](https://www.hackthebox.com/)
-
-### Tools & Libraries
-
--   [Cargo Book](https://doc.rust-lang.org/cargo/)
--   [Crossterm Docs](https://docs.rs/crossterm/)
--   [Serde Guide](https://serde.rs/)
--   [GitHub Actions Docs](https://docs.github.com/actions)
-
-## 🤝 Community & Support
-
-### Getting Help
-
--   **Questions**: [GitHub Discussions](https://github.com/and3rn3t/hack/discussions)
--   **Bugs**: [GitHub Issues](https://github.com/and3rn3t/hack/issues)
--   **Security**: See [SECURITY.md](../SECURITY.md)
--   **Discord**: Coming soon!
-
-### Contributing
-
--   **Code**: See [CONTRIBUTING.md](../CONTRIBUTING.md)
--   **Challenges**: Use [challenge proposal template](../.github/ISSUE_TEMPLATE/challenge_proposal.md)
--   **Documentation**: Submit PRs with improvements
--   **Ideas**: Use [feature request template](../.github/ISSUE_TEMPLATE/feature_request.md)
-
-### Staying Updated
-
--   ⭐ Star the repository
--   👀 Watch for updates
--   📰 Check [ROADMAP.md](ROADMAP.md) quarterly
--   🎉 Follow releases
-
-## 🗺️ Document Relationships
-
-```
-README.md (Start Here)
-├── For Players
-│   ├── WALKTHROUGH.md (Solutions)
-│   └── DEMO.md (Showcase)
-├── For Developers
-│   ├── SETUP.md (Environment)
-│   ├── CONFIGURATION.md (Config Details)
-│   ├── CONFIG_SUMMARY.md (Quick Ref)
-│   ├── CHECKLIST.md (Verification)
-│   └── CONTRIBUTING.md (How to Contribute)
-├── For Community
-│   ├── ROADMAP.md (Future Plans)
-│   ├── PROJECT_SUMMARY.md (Overview)
-│   └── SECURITY.md (Security Policy)
-└── For AI Assistants
-    └── copilot-instructions.md (Copilot Guide)
-```
-
-## 📝 Documentation Standards
-
-### When to Update Documentation
-
-| Change Type    | Update These                          |
-| -------------- | ------------------------------------- |
-| New feature    | README.md, ROADMAP.md, relevant guide |
-| New challenge  | WALKTHROUGH.md, possibly ROADMAP.md   |
-| Config change  | CONFIGURATION.md, CONFIG_SUMMARY.md   |
-| Process change | CONTRIBUTING.md                       |
-| Security issue | SECURITY.md                           |
-| Bug fix        | Usually none, unless it affects usage |
-
-### Documentation Style Guide
-
--   Use clear, concise language
--   Include code examples where helpful
--   Add visual aids (emojis, diagrams) for clarity
--   Keep technical accuracy high
--   Write for the target audience
--   Update dates on significant changes
-
-## 🔍 Finding What You Need
-
-### Search Tips
-
-1. **Use the table of contents** in longer documents
-2. **Check the index** (this file) first
-3. **Use GitHub search** for specific terms
-4. **Browse by category** in this index
-5. **Follow the "I want to..." section** for common tasks
-
-### Still Can't Find It?
-
-1. Search [GitHub Issues](https://github.com/and3rn3t/hack/issues)
-2. Ask in [GitHub Discussions](https://github.com/and3rn3t/hack/discussions)
-3. Create a new documentation issue
-4. Suggest improvements via PR
-
-## 📅 Document Status
-
-| Document         | Last Major Update | Status          |
-| ---------------- | ----------------- | --------------- |
-| README.md        | October 2025      | Current         |
-| SETUP.md         | October 2025      | Current         |
-| CONFIGURATION.md | October 2025      | Current         |
-| CONTRIBUTING.md  | October 2025      | Current         |
-| ROADMAP.md       | October 2025      | Living Document |
-| All Templates    | October 2025      | Current         |
+**🎯 Quick Navigation**: Jump to [Getting Started](#-getting-started) | [User Guides](#-user-guides) | [Developer Docs](#-developer-docs) | [Reference](#-reference) | [Browse by Category](#-browse-by-category)
 
 ---
 
-## 📌 Quick Reference Card
+## � Browse by Category
+
+### 🚀 [Getting Started](getting-started/)
+
+**New users and setup guides**
+
+-   Environment setup and installation
+-   First-time user tutorials
+-   Quick start guides
+
+### 👥 [User Guides](user-guides/)
+
+**For players and end users**
+
+-   Game walkthroughs and solutions
+-   Terminal optimization
+-   Gameplay demonstrations
+
+### 👨‍💻 [Developer Docs](developer/)
+
+**For contributors and developers**
+
+-   API documentation and extension guides
+-   Development workflow and troubleshooting
+-   Code quality and contribution standards
+
+### 📖 [Reference](reference/)
+
+**Technical specifications**
+
+-   Configuration documentation
+-   Project summaries and achievements
+-   Complete implementation catalog
+
+### 🧪 [Testing](testing/)
+
+**Quality assurance and testing**
+
+-   Testing strategies and methodologies
+-   Advanced testing tools and techniques
+-   Performance and quality validation
+
+### 🏗️ [Infrastructure](infrastructure/)
+
+**Build systems and DevOps**
+
+-   CI/CD pipelines and automation
+-   Development workflows and tools
+-   Build and deployment guides
+
+### 🎨 [Design](design/)
+
+**Architecture and system design**
+
+-   Challenge design principles
+-   System architecture documentation
+-   Future roadmaps and planning
+
+### 🤝 [Community](community/)
+
+**Contribution and governance**
+
+-   Contribution guidelines and standards
+-   Security policies and reporting
+-   Community engagement and collaboration
+
+---
+
+## �🚀 Getting Started
+
+### New to the Project?
+
+**Essential First Steps**:
+
+1. **[README.md](../README.md)** - Project overview and installation
+2. **[SETUP.md](SETUP.md)** - Development environment setup
+3. **[TERMINAL_SETUP.md](TERMINAL_SETUP.md)** - Terminal configuration
+4. **[WALKTHROUGH.md](WALKTHROUGH.md)** - Challenge solutions and hints
+
+### Want to Play?
+
+**Player Resources**:
+
+-   🎮 **[README.md](../README.md)** - Installation and quick start
+-   🖥️ **[TERMINAL_SETUP.md](TERMINAL_SETUP.md)** - Terminal optimization guide
+-   🎯 **[WALKTHROUGH.md](WALKTHROUGH.md)** - Complete solution guide with explanations
+-   🎬 **[DEMO.md](DEMO.md)** - Visual demonstration and feature showcase
+-   ❓ **[Tutorial System](../src/tutorial.rs)** - In-game interactive guidance
+
+---
+
+## 👨‍💻 For Developers
+
+### Contributing to the Project
+
+**Contributor Essentials**:
+
+-   🤝 **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Complete contribution guide and standards
+-   🗺️ **[ROADMAP.md](ROADMAP.md)** - Future plans and development opportunities
+-   🎯 **[CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)** - Create educational challenges
+-   🔧 **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)** - Complete API reference for extensibility
+
+### Development Environment
+
+**Setup and Configuration**:
+
+-   ⚙️ **[SETUP.md](SETUP.md)** - Complete development environment setup
+-   📋 **[CONFIGURATION.md](CONFIGURATION.md)** - Comprehensive configuration reference
+-   📝 **[CONFIG_SUMMARY.md](CONFIG_SUMMARY.md)** - Quick configuration overview
+-   ✅ **Setup Checklist** - Use `scripts/quick-check.ps1` to validate environment
+
+### Development Workflow
+
+**Daily Development**:
+
+-   🚀 **[DEV_WORKFLOW.md](DEV_WORKFLOW.md)** - Scripts, tasks, and automation
+-   🧪 **[TESTING_STRATEGY.md](TESTING_STRATEGY.md)** - Comprehensive testing approach
+-   🔍 **[DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md)** - Debug and solve issues
+-   📊 **[CI_CD_PIPELINE.md](CI_CD_PIPELINE.md)** - Continuous integration guide
+
+### Code Quality and Testing
+
+**Quality Assurance**:
+
+-   ✅ **[TESTING.md](TESTING.md)** - Testing best practices and tools
+-   🎯 **[ADVANCED_TESTING.md](ADVANCED_TESTING.md)** - Benchmarking, mutation testing, fuzzing
+-   🔧 **[TOOLS.md](TOOLS.md)** - Linting, formatting, and quality tools
+-   📈 **Test Coverage**: 85%+ target across all modules
+
+---
+
+## 🎓 Advanced Topics
+
+### Architecture and Design
+
+**Deep Technical Knowledge**:
+
+-   🏗️ **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Technical achievements and architecture
+-   📈 **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - Complete feature implementation guide
+-   🧠 **[LESSONS_LEARNED.md](LESSONS_LEARNED.md)** - Development insights and best practices
+-   🔮 **[ROADMAP.md](ROADMAP.md)** - Future vision and enhancement plans
+
+### Educational Design
+
+**Learning and Content Creation**:
+
+-   📖 **[CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)** - Complete challenge creation guide
+-   ✨ **[BETTER_FEEDBACK.md](BETTER_FEEDBACK.md)** - Intelligent learning assistance design
+-   🎭 **Horror Theme Integration** - Balancing education with atmospheric storytelling
+-   🎯 **Progressive Difficulty** - Skill building methodology
+
+### Performance and Quality
+
+**Optimization and Monitoring**:
+
+-   ⚡ **[ADVANCED_TESTING.md](ADVANCED_TESTING.md)** - Performance benchmarking and optimization
+-   🔬 **Mutation Testing** - Test quality validation with cargo-mutants
+-   🎲 **Fuzzing** - Edge case discovery with cargo-fuzz
+-   📊 **Coverage Analysis** - Codecov integration and reporting
+
+---
+
+## 📖 Reference
+
+### Configuration Files
+
+**Project Configuration**:
+
+-   **[Cargo.toml](../Cargo.toml)** - Rust project manifest and dependencies
+-   **[rustfmt.toml](../rustfmt.toml)** - Code formatting rules
+-   **[clippy.toml](../clippy.toml)** - Linting configuration
+-   **[deny.toml](../deny.toml)** - Security and license policies
+
+**Development Environment**:
+
+-   **[.vscode/tasks.json](../.vscode/tasks.json)** - VS Code build and run tasks (25+ tasks)
+-   **[.vscode/settings.json](../.vscode/settings.json)** - VS Code editor configuration
+-   **[.editorconfig](../.editorconfig)** - Cross-editor consistency settings
+
+**CI/CD and Automation**:
+
+-   **[.github/workflows/ci.yml](../.github/workflows/ci.yml)** - GitHub Actions pipeline
+-   **[.github/dependabot.yml](../.github/dependabot.yml)** - Automated dependency updates
+-   **[codecov.yml](../codecov.yml)** - Coverage reporting configuration
+
+### Scripts and Automation
+
+**Development Scripts** (Cross-Platform):
+
+**Quick Development**:
+
+```bash
+scripts/quick-check.ps1      # Fast pre-commit validation
+scripts/build-release.ps1    # Optimized release builds
+scripts/clean-all.ps1        # Deep artifact cleanup
+```
+
+**Testing Suite**:
+
+```bash
+scripts/test-verbose.ps1     # Detailed test output
+scripts/test-coverage.ps1    # Coverage report generation
+scripts/test-watch.ps1       # Continuous testing
+```
+
+**Advanced Testing**:
+
+```bash
+scripts/run-benchmarks.ps1   # Performance benchmarking
+scripts/run-mutation-tests.ps1  # Test quality validation
+scripts/run-fuzz.ps1         # Edge case discovery
+```
+
+### Source Code Structure
+
+**Core Modules**:
+
+```
+src/
+├── main.rs          # Entry point and terminal setup (67 lines)
+├── game.rs          # Game loop, menus, theme management (205 lines)
+├── challenges.rs    # Challenge system and validation (360 lines)
+├── narrative.rs     # Horror story and atmospheric elements (210 lines)
+├── state.rs         # Game state and persistence (68 lines)
+├── ui.rs           # Terminal UI and theming system (112 lines)
+└── tutorial.rs     # Interactive tutorial system
+```
+
+**Testing Infrastructure**:
+
+```
+tests/
+├── color_theme_tests.rs     # Theme system validation
+├── performance_tests.rs     # Performance regression prevention
+├── save_load_tests.rs       # State persistence validation
+└── common/mod.rs           # Shared test utilities
+
+benches/
+├── challenge_benchmarks.rs  # Challenge validation performance
+└── state_benchmarks.rs     # State operations performance
+```
+
+---
+
+## 🎯 Common Tasks
+
+### I Want to
+
+#### Play the Game
+
+1. **Install**: Follow [README.md](../README.md) installation section
+2. **Configure**: Check [TERMINAL_SETUP.md](TERMINAL_SETUP.md) for optimal experience
+3. **Play**: Run `cargo run` or download binary from releases
+4. **Get Help**: Use [WALKTHROUGH.md](WALKTHROUGH.md) if stuck
+
+#### Set Up Development Environment
+
+1. **Environment**: Follow [SETUP.md](SETUP.md) complete guide
+2. **Validation**: Run `scripts/quick-check.ps1` to verify setup
+3. **First Build**: Execute `cargo build && cargo test && cargo run`
+4. **IDE Setup**: VS Code with Rust Analyzer recommended
+
+#### Contribute Code
+
+1. **Guidelines**: Read [CONTRIBUTING.md](../CONTRIBUTING.md) thoroughly
+2. **Ideas**: Check [ROADMAP.md](ROADMAP.md) and [GitHub Issues](https://github.com/and3rn3t/hack/issues)
+3. **Process**: Fork, branch, implement, test, document, PR
+4. **Quality**: Use `scripts/quick-check.ps1` before commits
+
+#### Create New Challenges
+
+1. **Design Guide**: Study [CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)
+2. **Proposal**: Use [challenge proposal template](../.github/ISSUE_TEMPLATE/challenge_proposal.md)
+3. **Implementation**: Follow patterns in `src/challenges.rs`
+4. **Testing**: Add comprehensive tests and walkthrough entry
+
+#### Debug Issues
+
+1. **Troubleshooting**: Start with [DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md)
+2. **Environment**: Verify setup with `scripts/verify-terminal.ps1`
+3. **Testing**: Run specific test suites to isolate problems
+4. **Community**: Ask in [GitHub Discussions](https://github.com/and3rn3t/hack/discussions)
+
+#### Understand the Architecture
+
+1. **Overview**: Read [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for technical summary
+2. **Implementation**: Study [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) for feature details
+3. **API**: Reference [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for extensibility
+4. **Lessons**: Learn from [LESSONS_LEARNED.md](LESSONS_LEARNED.md) insights
+
+---
+
+## 🏗️ Documentation Architecture
+
+### Document Categories
+
+**By Audience**:
+
+-   👤 **Users/Players**: README, DEMO, WALKTHROUGH, TERMINAL_SETUP
+-   👨‍💻 **Contributors**: CONTRIBUTING, CHALLENGE_DESIGN_GUIDE, DEVELOPER_TROUBLESHOOTING
+-   🏗️ **Maintainers**: CI_CD_PIPELINE, LESSONS_LEARNED, IMPLEMENTATION_SUMMARY
+-   🤖 **AI Assistants**: copilot-instructions.md
+
+**By Purpose**:
+
+-   🚀 **Getting Started**: Setup guides and quick starts
+-   📚 **Reference**: API docs, configuration, architecture
+-   🎯 **How-To**: Specific task guidance and tutorials
+-   📊 **Analysis**: Summaries, lessons learned, roadmaps
+
+### Cross-References and Relationships
+
+**Documentation Flow**:
+
+```
+README.md (Entry Point)
+├── Players → TERMINAL_SETUP.md → WALKTHROUGH.md
+├── Contributors → CONTRIBUTING.md → CHALLENGE_DESIGN_GUIDE.md
+├── Developers → SETUP.md → DEV_WORKFLOW.md → TESTING_STRATEGY.md
+└── Maintainers → PROJECT_SUMMARY.md → LESSONS_LEARNED.md
+```
+
+**Dependency Relationships**:
+
+-   **Setup docs** depend on **configuration references**
+-   **Contribution guides** reference **architecture documentation**
+-   **Testing strategies** link to **quality tools documentation**
+-   **Troubleshooting guides** cross-reference **all categories**
+
+---
+
+## 🔧 Maintenance and Updates
+
+### Document Lifecycle
+
+**Update Triggers**:
+
+-   **New features** → Update README, ROADMAP, relevant guides
+-   **Configuration changes** → Update CONFIGURATION, CONFIG_SUMMARY
+-   **Process improvements** → Update CONTRIBUTING, workflow docs
+-   **Architecture changes** → Update PROJECT_SUMMARY, API_DOCUMENTATION
+
+### Quality Assurance
+
+**Documentation Standards**:
+
+-   **Accuracy**: Regular validation against actual implementation
+-   **Completeness**: All features and processes documented
+-   **Clarity**: Written for target audience skill level
+-   **Currency**: Updated within one release of changes
+-   **Accessibility**: Clear navigation and cross-references
+
+### Review Schedule
+
+**Regular Reviews**:
+
+-   **Monthly**: Quick accuracy check of getting-started docs
+-   **Quarterly**: Complete review of contributor documentation
+-   **Bi-annually**: Architecture and design document refresh
+-   **Annually**: Complete documentation audit and reorganization
+
+---
+
+## 📊 Documentation Metrics
+
+### Coverage and Quality
+
+**Current State**:
+
+-   **Total Documents**: 30+ comprehensive guides
+-   **Word Count**: ~25,000+ words of documentation
+-   **Code Comments**: Extensive inline documentation
+-   **Examples**: 100+ code examples and configurations
+-   **Cross-References**: Fully linked documentation graph
+
+**Quality Targets**:
+
+-   ✅ **Completeness**: All features documented
+-   ✅ **Accuracy**: Documentation matches implementation
+-   ✅ **Accessibility**: Multiple skill levels supported
+-   ✅ **Navigation**: Easy to find relevant information
+-   ✅ **Maintenance**: Sustainable update process
+
+### User Feedback Integration
+
+**Feedback Channels**:
+
+-   **GitHub Issues**: Documentation bugs and improvement suggestions
+-   **Discussions**: Questions that reveal documentation gaps
+-   **Pull Requests**: Community contributions and corrections
+-   **User Studies**: Direct feedback on documentation effectiveness
+
+---
+
+## 🤝 Community and Support
+
+### Getting Help
+
+**Support Channels**:
+
+-   💬 **Questions**: [GitHub Discussions](https://github.com/and3rn3t/hack/discussions)
+-   🐛 **Issues**: [GitHub Issues](https://github.com/and3rn3t/hack/issues) for bugs and feature requests
+-   🔒 **Security**: See [SECURITY.md](../SECURITY.md) for vulnerability reporting
+-   📚 **Documentation**: This index and cross-linked guides
+
+### Contributing to Documentation
+
+**How to Help**:
+
+-   **Improvements**: Submit PRs for clarity, accuracy, or completeness
+-   **New Content**: Propose new guides for underserved use cases
+-   **Translations**: Community-driven localization (planned)
+-   **Feedback**: Report confusing or outdated information
+
+**Contribution Process**:
+
+1. **Identify Need**: Gap in documentation or user confusion
+2. **Propose**: Create issue or discussion to discuss approach
+3. **Implement**: Write or update documentation following style guide
+4. **Review**: Submit PR for community and maintainer review
+5. **Maintain**: Help keep contributed content current
+
+---
+
+## 🎯 Quick Reference Card
 
 ### Essential Commands
 
+**Development**:
+
 ```bash
-# Build
-cargo build          # Debug
-cargo build --release # Release
+# Setup and validation
+scripts/quick-check.ps1      # Pre-commit validation
+cargo build                  # Debug build
+cargo test                   # Run test suite
+cargo run                    # Start the game
 
-# Run
-cargo run            # Play game
-cargo test           # Run tests
-
-# Code Quality
-cargo fmt            # Format
-cargo clippy         # Lint
-
-# Help
-cargo --help         # Cargo help
+# Quality and analysis
+cargo fmt                    # Format code
+cargo clippy                 # Lint code
+scripts/test-coverage.ps1    # Coverage report
+scripts/run-benchmarks.ps1   # Performance analysis
 ```
 
 ### Essential Links
 
--   **Repository**: <https://github.com/and3rn3t/hack>
--   **Issues**: <https://github.com/and3rn3t/hack/issues>
--   **Discussions**: <https://github.com/and3rn3t/hack/discussions>
+-   **📁 Repository**: [https://github.com/and3rn3t/hack](https://github.com/and3rn3t/hack)
+-   **🐛 Issues**: [GitHub Issues](https://github.com/and3rn3t/hack/issues)
+-   **💬 Discussions**: [GitHub Discussions](https://github.com/and3rn3t/hack/discussions)
+-   **🚀 Releases**: [GitHub Releases](https://github.com/and3rn3t/hack/releases)
+-   **📊 Coverage**: [Codecov Reports](https://codecov.io/gh/and3rn3t/hack)
 
-### Essential Files
+### Essential Files by Role
 
--   Setup: `docs/SETUP.md`
--   Contributing: `CONTRIBUTING.md`
--   Configuration: `docs/CONFIGURATION.md`
--   Roadmap: `docs/ROADMAP.md`
+**Players**:
+
+-   Setup: [README.md](../README.md) → [TERMINAL_SETUP.md](TERMINAL_SETUP.md)
+-   Help: [WALKTHROUGH.md](WALKTHROUGH.md) → [DEMO.md](DEMO.md)
+
+**Contributors**:
+
+-   Start: [CONTRIBUTING.md](../CONTRIBUTING.md) → [ROADMAP.md](ROADMAP.md)
+-   Create: [CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)
+
+**Developers**:
+
+-   Setup: [SETUP.md](SETUP.md) → [DEV_WORKFLOW.md](DEV_WORKFLOW.md)
+-   Test: [TESTING_STRATEGY.md](TESTING_STRATEGY.md) → [ADVANCED_TESTING.md](ADVANCED_TESTING.md)
+
+**Maintainers**:
+
+-   Architecture: [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) → [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+-   Process: [CI_CD_PIPELINE.md](CI_CD_PIPELINE.md) → [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
 
 ---
 
-**Need help navigating? Open an issue or discussion!**
+## 🔍 Search and Discovery
 
-_Last Updated: October 21, 2025_
+### Finding Information
+
+**Search Strategies**:
+
+1. **Start Here**: Use this index for overview and navigation
+2. **Search Repository**: Use GitHub's search for specific terms
+3. **Browse Categories**: Follow audience-based navigation above
+4. **Cross-References**: Follow links between related documents
+5. **Community Help**: Ask in Discussions if you can't find what you need
+
+### Information Organization Principles
+
+**Structured Navigation**:
+
+-   **Breadth-First**: Overview documents link to detailed guides
+-   **Depth-First**: Detailed guides cross-reference related topics
+-   **Task-Oriented**: Common tasks have clear step-by-step paths
+-   **Audience-Specific**: Role-based entry points and workflows
+
+---
+
+**📝 Documentation Status**: Current as of October 24, 2025
+**🔄 Next Review**: January 2025
+**👥 Maintainers**: Project team and community contributors
+
+**💡 Suggestion**: Bookmark this page and use it as your navigation hub for all project documentation!
+
+---
+
+_Need help navigating? Open an issue or discussion—we're here to help!_
