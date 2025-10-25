@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Hack: Ghost Protocol - Icon Converters</title>
+    <style>
+        body { background: #000; color: #00ff41; font-family: monospace; padding: 20px; }
+        h1 { color: #ff4444; text-shadow: 0 0 10px #ff4444; }
+        .converter-link { 
+            display: block; 
+            color: #00ff41; 
+            text-decoration: none; 
+            padding: 10px; 
+            border: 1px solid #333; 
+            margin: 5px 0; 
+        }
+        .converter-link:hover { background: #001100; border-color: #00ff41; }
+        .instructions { background: #111; padding: 15px; margin: 20px 0; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>🎯 SVG to PNG Icon Converters</h1>
+    
+    <div class="instructions">
+        <h2>📋 Instructions:</h2>
+        <ol>
+            <li>Click on any converter link below</li>
+            <li>Wait for the PNG to generate (should be instant)</li>
+            <li>Click "Download PNG" to save the converted icon</li>
+            <li>Repeat for all icons you need</li>
+            <li>Copy downloaded PNGs to <code>web/static/icons/</code> (replace existing placeholder PNGs)</li>
+        </ol>
+    </div>
+    
+    <h2>🎨 Available Converters:</h2>
+    <a href="file-import-converter.html" class="converter-link">📱 file-import.svg → PNG</a><a href="icon-128x128-converter.html" class="converter-link">📱 icon-128x128.svg → PNG</a><a href="icon-144x144-converter.html" class="converter-link">📱 icon-144x144.svg → PNG</a><a href="icon-152x152-converter.html" class="converter-link">📱 icon-152x152.svg → PNG</a><a href="icon-192x192-converter.html" class="converter-link">📱 icon-192x192.svg → PNG</a><a href="icon-384x384-converter.html" class="converter-link">📱 icon-384x384.svg → PNG</a><a href="icon-512x512-converter.html" class="converter-link">📱 icon-512x512.svg → PNG</a><a href="icon-72x72-converter.html" class="converter-link">📱 icon-72x72.svg → PNG</a><a href="icon-96x96-converter.html" class="converter-link">📱 icon-96x96.svg → PNG</a><a href="shortcut-challenges-converter.html" class="converter-link">📱 shortcut-challenges.svg → PNG</a><a href="shortcut-continue-converter.html" class="converter-link">📱 shortcut-continue.svg → PNG</a><a href="shortcut-new-converter.html" class="converter-link">📱 shortcut-new.svg → PNG</a><a href="shortcut-stats-converter.html" class="converter-link">📱 shortcut-stats.svg → PNG</a>
+    
+    <div class="instructions" style="margin-top: 30px;">
+        <h2>🔧 Alternative Methods:</h2>
+        <p>If this doesn't work, you can:</p>
+        <ul>
+            <li>Use online SVG to PNG converters (search "SVG to PNG converter")</li>
+            <li>Open SVG files in browser and take screenshots</li>
+            <li>Use the main HTML icon generator: <code>scripts/generate-icons.html</code></li>
+        </ul>
+    </div>
+</body>
+</html>

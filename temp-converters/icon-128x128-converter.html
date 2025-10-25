@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>body { margin: 0; padding: 20px; background: #000; }</style>
+</head>
+<body>
+    <div id="svg-container"><svg width="128" height="128" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="bg-main" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" style="stop-color:#001100;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+                </radialGradient>
+            </defs>
+            <!-- Background -->
+            <rect width="128" height="128" fill="url(#bg-main)" />
+            
+            <!-- Border -->
+            <rect x="1" y="1" width="126" height="126" 
+                  fill="none" stroke="#00ff41" stroke-width="2" 
+                  stroke-dasharray="8,4" />
+            
+            <!-- Skull outline -->
+            <ellipse cx="64" cy="51.2" 
+                     rx="30.72" ry="25.599999999999998" 
+                     fill="#002200" stroke="#00ff41" stroke-width="2.6666666666666665" />
+            
+            <!-- Left eye socket -->
+            <rect x="40" y="46.400000000000006" 
+                  width="9.6" height="9.6" 
+                  fill="#000" stroke="#00ff41" stroke-width="1" />
+            
+            <!-- Right eye socket -->  
+            <rect x="78.4" y="46.400000000000006" 
+                  width="9.6" height="9.6" 
+                  fill="#000" stroke="#00ff41" stroke-width="1" />
+            
+            <!-- Eye terminals -->
+            <text x="44.8" y="53.2" text-anchor="middle" 
+                  fill="#00ff41" font-family="monospace" font-size="8">></text>
+            <text x="83.2" y="53.2" text-anchor="middle" 
+                  fill="#00ff41" font-family="monospace" font-size="8">_</text>
+            
+            <!-- Nose (USB port) -->
+            <rect x="60.8" y="64" 
+                  width="6.3999999999999995" height="3.84" 
+                  fill="#000" stroke="#00ff41" stroke-width="1" />
+            
+            <!-- Mouth (HACK keys) -->
+            <g fill="#002200" stroke="#00ff41" stroke-width="1" font-family="monospace" font-size="6" text-anchor="middle">
+                
+                        <rect x="57.6" y="75.2" 
+                              width="3.1999999999999997" height="3.1999999999999997" />
+                        <text x="59.2" y="78.8" fill="#00ff41">H</text>
+                    
+                        <rect x="60.800000000000004" y="75.2" 
+                              width="3.1999999999999997" height="3.1999999999999997" />
+                        <text x="62.400000000000006" y="78.8" fill="#00ff41">A</text>
+                    
+                        <rect x="63.99999999999999" y="75.2" 
+                              width="3.1999999999999997" height="3.1999999999999997" />
+                        <text x="65.6" y="78.8" fill="#00ff41">C</text>
+                    
+                        <rect x="67.2" y="75.2" 
+                              width="3.1999999999999997" height="3.1999999999999997" />
+                        <text x="68.8" y="78.8" fill="#00ff41">K</text>
+                    
+            </g>
+            
+            <!-- Matrix rain effect -->
+            <g fill="rgba(0,255,65,0.3)" font-family="monospace" font-size="6">
+                <text x="20.254557078678175" y="75.12587483956608">1</text><text x="8.247486470616565" y="56.68380182414958">0</text><text x="17.78047183137531" y="85.64751973247738">0</text><text x="99.48482085715025" y="94.29025553977053">0</text><text x="55.545740522615034" y="88.55321760090101">1</text><text x="118.27361498222032" y="6.032723366372892">0</text><text x="66.34679700937838" y="26.95685635060093">0</text><text x="47.787052705536524" y="43.92886609136767">1</text>
+            </g>
+        </svg></div>
+    <canvas id="canvas" width="128" height="128" style="border: 1px solid #00ff41;"></canvas>
+    <div id="output" style="color: #00ff41; font-family: monospace; margin-top: 10px;"></div>
+    
+    <script>
+        function convertSvgToPng() {
+            const svg = document.querySelector('svg');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create an image from the SVG
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            const img = new Image();
+            img.onload = function() {
+                // Clear canvas and draw the image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Convert to PNG data URL
+                const pngDataUrl = canvas.toDataURL('image/png');
+                
+                // Display result
+                document.getElementById('output').innerHTML = 
+                    '<strong>PNG Data URL Generated!</strong><br>' +
+                    '<textarea style="width:100%;height:100px;background:#111;color:#0f0;border:1px solid #0f0;">' + 
+                    pngDataUrl + '</textarea><br>' +
+                    '<button onclick="downloadPng()" style="background:#0f0;color:#000;padding:10px;border:none;margin:10px;">Download PNG</button>';
+                
+                // Store for download
+                window.pngDataUrl = pngDataUrl;
+                URL.revokeObjectURL(url);
+            };
+            img.src = url;
+        }
+        
+        function downloadPng() {
+            if (window.pngDataUrl) {
+                const link = document.createElement('a');
+                link.download = 'converted-icon.png';
+                link.href = window.pngDataUrl;
+                link.click();
+            }
+        }
+        
+        // Auto-convert when page loads
+        window.addEventListener('load', convertSvgToPng);
+    </script>
+</body>
+</html>

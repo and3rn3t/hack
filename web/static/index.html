@@ -396,7 +396,7 @@
                 padding-bottom: 0 !important;
             }
 
-            /* Mobile virtual keyboard overlay */
+            /* Enhanced mobile virtual keyboard */
             .mobile-keyboard {
                 display: none;
                 position: fixed;
@@ -405,13 +405,68 @@
                 right: 0;
                 background: var(--bg-secondary);
                 border-top: 2px solid var(--border-color);
-                padding: 10px;
                 z-index: 999;
                 flex-direction: column;
-                gap: 5px;
+                max-height: 50vh;
+                overflow-y: auto;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
             }
 
             .mobile-keyboard.active {
+                display: flex;
+            }
+
+            .keyboard-header {
+                display: flex;
+                padding: 8px 10px;
+                background: var(--bg-primary);
+                border-bottom: 1px solid var(--border-color);
+                gap: 5px;
+                align-items: center;
+            }
+
+            .keyboard-mode-btn {
+                background: var(--bg-secondary);
+                color: var(--text-muted);
+                border: 1px solid var(--border-color);
+                padding: 6px 12px;
+                font-size: 0.8em;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: all 0.2s;
+                flex: 1;
+                text-align: center;
+            }
+
+            .keyboard-mode-btn.active {
+                background: var(--text-accent);
+                color: var(--bg-primary);
+                border-color: var(--text-accent);
+            }
+
+            .keyboard-close-btn {
+                background: var(--text-danger);
+                color: white;
+                border: none;
+                padding: 6px 10px;
+                border-radius: 50%;
+                font-size: 0.9em;
+                cursor: pointer;
+                min-width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .keyboard-layout {
+                display: none;
+                flex-direction: column;
+                gap: 5px;
+                padding: 10px;
+            }
+
+            .keyboard-layout.active {
                 display: flex;
             }
 
@@ -425,25 +480,73 @@
                 background: var(--bg-primary);
                 color: var(--text-primary);
                 border: 1px solid var(--border-color);
-                padding: 8px 12px;
+                padding: 10px 8px;
                 font-family: "Courier New", monospace;
                 font-size: 0.9em;
-                border-radius: 4px;
-                min-width: 35px;
+                border-radius: 6px;
+                min-width: 40px;
+                min-height: 44px;
                 text-align: center;
                 cursor: pointer;
                 user-select: none;
                 touch-action: manipulation;
+                transition: all 0.15s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1;
+                max-width: 60px;
             }
 
-            .key-btn:active {
+            .key-btn:active,
+            .key-btn.active {
                 background: var(--text-accent);
                 color: var(--bg-primary);
+                transform: scale(0.95);
             }
 
             .key-btn.wide {
-                flex: 1;
+                flex: 2;
                 max-width: 120px;
+            }
+
+            .commands-layout .key-btn {
+                font-size: 0.8em;
+                padding: 8px 6px;
+                max-width: 80px;
+            }
+
+            /* Completion hints */
+            .mobile-completion-hints {
+                position: fixed;
+                bottom: 200px;
+                left: 10px;
+                right: 10px;
+                display: none;
+                flex-wrap: wrap;
+                gap: 5px;
+                z-index: 1001;
+                padding: 10px;
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            }
+
+            .completion-hint-btn {
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border: 1px solid var(--border-color);
+                padding: 6px 12px;
+                font-size: 0.85em;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .completion-hint-btn:active {
+                background: var(--text-accent);
+                color: var(--bg-primary);
             }
 
             /* Swipe gesture indicators */
