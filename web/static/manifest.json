@@ -1,16 +1,31 @@
 {
-  "name": "The Hack: Ghost Protocol",
+  "name": "The Hack: Ghost Protocol - Cybersecurity CTF",
   "short_name": "Hack Ghost",
-  "description": "A horror-themed hacking simulator and CTF challenge game",
-  "start_url": "/",
+  "description": "A horror-themed cybersecurity education game and CTF challenge platform. Learn hacking techniques through immersive gameplay with progressive difficulty.",
+  "start_url": "/?source=pwa",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "any",
   "background_color": "#000000",
   "theme_color": "#00ff41",
-  "categories": ["education", "games", "security"],
+  "categories": [
+    "education",
+    "games",
+    "security",
+    "entertainment",
+    "productivity"
+  ],
   "lang": "en-US",
   "dir": "ltr",
   "scope": "/",
+  "id": "hack-ghost-protocol-cybersecurity-ctf",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
   "icons": [
     {
       "src": "icons/icon-72x72.png",
@@ -63,62 +78,94 @@
   ],
   "screenshots": [
     {
-      "src": "screenshots/desktop.png",
+      "src": "screenshots/desktop-main.png",
       "sizes": "1280x720",
       "type": "image/png",
       "platform": "wide",
-      "label": "Desktop interface showing terminal and challenge selection"
+      "label": "Main game interface with horror-themed terminal showing challenge selection and player stats"
     },
     {
-      "src": "screenshots/mobile.png", 
+      "src": "screenshots/desktop-challenge.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Active challenge screen demonstrating cryptography puzzle with progressive hints system"
+    },
+    {
+      "src": "screenshots/mobile-portrait.png",
       "sizes": "360x640",
       "type": "image/png",
       "platform": "narrow",
-      "label": "Mobile interface optimized for touch interaction"
+      "label": "Mobile portrait mode with touch-optimized interface and virtual keyboard support"
+    },
+    {
+      "src": "screenshots/mobile-landscape.png",
+      "sizes": "640x360",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Mobile landscape mode providing expanded terminal view for enhanced gameplay"
     }
   ],
   "shortcuts": [
     {
       "name": "New Game",
       "short_name": "New Game",
-      "description": "Start a new horror hacking adventure",
-      "url": "/?action=new-game",
+      "description": "Start a fresh cybersecurity adventure from the beginning",
+      "url": "/?action=new-game&source=shortcut",
       "icons": [
         {
           "src": "icons/shortcut-new.png",
           "sizes": "96x96",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any"
         }
       ]
     },
     {
       "name": "Continue Game",
       "short_name": "Continue",
-      "description": "Resume your cybersecurity journey",
-      "url": "/?action=continue",
+      "description": "Resume your saved cybersecurity learning journey",
+      "url": "/?action=continue&source=shortcut",
       "icons": [
         {
           "src": "icons/shortcut-continue.png",
-          "sizes": "96x96", 
-          "type": "image/png"
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name": "Challenge List",
+      "short_name": "Challenges",
+      "description": "Browse all available cybersecurity challenges",
+      "url": "/?action=challenges&source=shortcut",
+      "icons": [
+        {
+          "src": "icons/shortcut-challenges.png",
+          "sizes": "96x96",
+          "type": "image/png",
+          "purpose": "any"
         }
       ]
     },
     {
       "name": "Statistics",
       "short_name": "Stats",
-      "description": "View your progress and achievements",
-      "url": "/?action=stats",
+      "description": "View detailed progress, achievements, and performance analytics",
+      "url": "/?action=stats&source=shortcut",
       "icons": [
         {
           "src": "icons/shortcut-stats.png",
           "sizes": "96x96",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any"
         }
       ]
     }
   ],
   "prefer_related_applications": false,
+  "related_applications": [],
   "edge_side_panel": {
     "preferred_width": 400
   },
@@ -127,5 +174,50 @@
       "protocol": "web+hackghost",
       "url": "/?share=%s"
     }
-  ]
+  ],
+  "file_handlers": [
+    {
+      "action": "/?action=import",
+      "accept": {
+        "application/json": [
+          ".json"
+        ],
+        "text/plain": [
+          ".txt"
+        ]
+      },
+      "icons": [
+        {
+          "src": "icons/file-import.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    }
+  ],
+  "share_target": {
+    "action": "/?action=share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "save_files",
+          "accept": [
+            "application/json",
+            ".json"
+          ]
+        }
+      ]
+    }
+  },
+  "handle_links": "preferred",
+  "capture_links": "new-client",
+  "note_taking": {
+    "new_note_url": "/?action=notes"
+  }
 }

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JavaScript Syntax Test</title>
+        <style>
+            body {
+                font-family: "Courier New", monospace;
+                background: #000;
+                color: #00ff41;
+                padding: 20px;
+            }
+            .test-result {
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #333;
+            }
+            .success {
+                border-color: #00ff41;
+                background: #001100;
+            }
+            .error {
+                border-color: #ff4444;
+                background: #110000;
+                color: #ff4444;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>🔧 JavaScript Syntax Test</h1>
+        <p>Testing for duplicate function declaration errors...</p>
+
+        <div id="results"></div>
+
+        <script>
+            const results = document.getElementById("results");
+
+            function addResult(message, isSuccess = true) {
+                const div = document.createElement("div");
+                div.className = `test-result ${
+                    isSuccess ? "success" : "error"
+                }`;
+                div.innerHTML = `${isSuccess ? "✅" : "❌"} ${message}`;
+                results.appendChild(div);
+            }
+
+            // Test 1: Check if handleTouchStart exists
+            try {
+                // This should not cause an error anymore
+                eval(`
+                function handleTouchStart(event, gestureState) {
+                    console.log('Test function 1');
+                }
+            `);
+                addResult("First handleTouchStart function declaration - OK");
+            } catch (e) {
+                addResult(`First handleTouchStart error: ${e.message}`, false);
+            }
+
+            // Test 2: Try to declare another handleTouchStart (should fail)
+            try {
+                eval(`
+                function handleTouchStart(event) {
+                    console.log('Test function 2');
+                }
+            `);
+                addResult(
+                    "Second handleTouchStart declaration did not throw error - This indicates the duplicate was NOT removed!",
+                    false
+                );
+            } catch (e) {
+                addResult(
+                    `Second handleTouchStart correctly failed: ${e.message.substring(
+                        0,
+                        50
+                    )}...`
+                );
+            }
+
+            // Test 3: Load actual game.js and check for errors
+            const script = document.createElement("script");
+            script.onload = function () {
+                addResult(
+                    "game.js loaded successfully - No syntax errors detected"
+                );
+            };
+            script.onerror = function () {
+                addResult(
+                    "game.js failed to load - Syntax errors may still exist",
+                    false
+                );
+            };
+
+            // Don't actually load it as it might interfere with this test page
+            addResult(
+                "Skipping game.js load test (would interfere with test page)"
+            );
+
+            // Test 4: Check for specific error patterns
+            fetch("game.js")
+                .then((response) => response.text())
+                .then((code) => {
+                    const handleTouchStartMatches = (
+                        code.match(/function handleTouchStart/g) || []
+                    ).length;
+                    if (handleTouchStartMatches === 1) {
+                        addResult(
+                            `Found exactly 1 handleTouchStart function (correct)`
+                        );
+                    } else {
+                        addResult(
+                            `Found ${handleTouchStartMatches} handleTouchStart functions (should be 1)`,
+                            false
+                        );
+                    }
+
+                    if (code.includes("handleSimpleTouchStart")) {
+                        addResult(
+                            "Still contains handleSimpleTouchStart - cleanup incomplete",
+                            false
+                        );
+                    } else {
+                        addResult(
+                            "handleSimpleTouchStart successfully removed"
+                        );
+                    }
+                })
+                .catch((e) => {
+                    addResult(
+                        `Could not test game.js content: ${e.message}`,
+                        false
+                    );
+                });
+
+            addResult("JavaScript syntax test completed");
+        </script>
+    </body>
+</html>
