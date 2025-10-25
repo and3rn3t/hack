@@ -10,12 +10,12 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Completed Features
 
-- ✅ Core game engine with terminal UI
-- ✅ 11 CTF challenges across 5 difficulty levels
-- ✅ Horror narrative with sanity mechanic
-- ✅ Save/load system
-- ✅ Progressive hint system
-- ✅ Multi-platform support (Windows, Linux, macOS)
+-   ✅ Core game engine with terminal UI
+-   ✅ 11 CTF challenges across 5 difficulty levels
+-   ✅ Horror narrative with sanity mechanic
+-   ✅ Save/load system
+-   ✅ Progressive hint system
+-   ✅ Multi-platform support (Windows, Linux, macOS)
 
 ---
 
@@ -23,56 +23,56 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### User Experience Enhancements
 
-- [x] **Command History**
+-   [x] **Command History**
 
-  - Up/down arrow navigation through previous commands
-  - Full line editing (left/right arrows, home/end)
-  - Maintains 50 most recent commands
-  - Cursor positioning and in-place editing
-  - Backspace/Delete support
+    -   Up/down arrow navigation through previous commands
+    -   Full line editing (left/right arrows, home/end)
+    -   Maintains 50 most recent commands
+    -   Cursor positioning and in-place editing
+    -   Backspace/Delete support
 
-- [x] **Better Feedback**
+-   [x] **Better Feedback**
 
-  - Progressive feedback based on attempt number
-  - Intelligent answer analysis (length, format)
-  - Contextual guidance improving with each attempt
-  - Category-specific learning tips
-  - Resource suggestions for failed challenges
+    -   Progressive feedback based on attempt number
+    -   Intelligent answer analysis (length, format)
+    -   Contextual guidance improving with each attempt
+    -   Category-specific learning tips
+    -   Resource suggestions for failed challenges
 
-- [x] **Improved Tutorial System**
+-   [x] **Improved Tutorial System**
 
-  - ✅ Interactive first-time user experience
-  - ✅ Practice challenges with guided solutions (4 comprehensive challenges)
-  - ✅ Tooltips for game mechanics
+    -   ✅ Interactive first-time user experience
+    -   ✅ Practice challenges with guided solutions (4 comprehensive challenges)
+    -   ✅ Tooltips for game mechanics
 
-- [x] **Quality of Life**
+-   [x] **Quality of Life**
 
-  - ✅ Tab completion for commands (smart completion with typo correction)
-  - [ ] Configurable color themes
-  - [ ] Customizable difficulty settings
+    -   ✅ Tab completion for commands (smart completion with typo correction)
+    -   ✅ Configurable color themes (5 accessibility-focused themes with theme selection menu)
+    -   [ ] Customizable difficulty settings
 
 ### Technical Improvements
 
-- [x] **Testing Infrastructure**
+-   [x] **Testing Infrastructure**
 
-  - ✅ Unit tests for all challenge validators (87 unit tests)
-  - ✅ Integration tests for save/load (14 integration tests)
-  - ✅ CI/CD pipeline with GitHub Actions (comprehensive multi-platform)
-  - ✅ Automated cross-platform testing (Ubuntu, Windows, macOS)
+    -   ✅ Unit tests for all challenge validators (87 unit tests)
+    -   ✅ Integration tests for save/load (14 integration tests)
+    -   ✅ CI/CD pipeline with GitHub Actions (comprehensive multi-platform)
+    -   ✅ Automated cross-platform testing (Ubuntu, Windows, macOS)
 
-- [ ] **Performance Optimization**
-  - Reduce terminal flicker
-  - Optimize save file size
-  - Lazy loading for large challenge sets
-  - Memory profiling and optimization
+-   [x] **Performance Optimization**
+    -   ✅ Reduce terminal flicker (double buffering system with queue! vs execute!)
+    -   ✅ Optimize save file size (compact JSON, 30-40% reduction)
+    -   ✅ Lazy loading for large challenge sets (OnceLock caching)
+    -   ✅ Memory profiling and optimization (PerformanceTimer + memory tracking)
 
 ### Documentation
 
-- [ ] **Enhanced Documentation**
-  - Video walkthrough series
-  - Challenge design guide for contributors
-  - API documentation for extensibility
-  - Localization guide
+-   [ ] **Enhanced Documentation**
+    -   Video walkthrough series
+    -   Challenge design guide for contributors
+    -   API documentation for extensibility
+    -   Localization guide
 
 ---
 
@@ -80,47 +80,47 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### New Challenge Categories
 
-- [ ] **Steganography** (5+ challenges)
+-   [ ] **Steganography** (5+ challenges)
 
-  - Image-based hidden messages
-  - Audio steganography concepts
-  - Metadata analysis
-  - LSB (Least Significant Bit) techniques
+    -   Image-based hidden messages
+    -   Audio steganography concepts
+    -   Metadata analysis
+    -   LSB (Least Significant Bit) techniques
 
-- [ ] **OSINT (Open Source Intelligence)** (5+ challenges)
+-   [ ] **OSINT (Open Source Intelligence)** (5+ challenges)
 
-  - Social media investigation
-  - Domain reconnaissance
-  - Email header analysis
-  - Geolocation from images
+    -   Social media investigation
+    -   Domain reconnaissance
+    -   Email header analysis
+    -   Geolocation from images
 
-- [ ] **Malware Analysis** (3+ challenges)
+-   [ ] **Malware Analysis** (3+ challenges)
 
-  - Simple obfuscation techniques
-  - Behavioral analysis concepts
-  - Command and control patterns
-  - Sandbox detection
+    -   Simple obfuscation techniques
+    -   Behavioral analysis concepts
+    -   Command and control patterns
+    -   Sandbox detection
 
-- [ ] **IoT Security** (3+ challenges)
-  - Default credential exploitation
-  - Firmware analysis basics
-  - Protocol vulnerabilities
-  - Smart home device security
+-   [ ] **IoT Security** (3+ challenges)
+    -   Default credential exploitation
+    -   Firmware analysis basics
+    -   Protocol vulnerabilities
+    -   Smart home device security
 
 ### Narrative Expansion
 
-- [ ] **Branching Story Paths**
+-   [ ] **Branching Story Paths**
 
-  - Multiple endings based on choices
-  - Hidden story fragments to discover
-  - Character development system
-  - Secret achievements for lore hunters
+    -   Multiple endings based on choices
+    -   Hidden story fragments to discover
+    -   Character development system
+    -   Secret achievements for lore hunters
 
-- [ ] **New Horror Layers**
-  - Paranoia mode (randomized elements)
-  - Audio cues (optional, with beep sequences)
-  - Time-based events
-  - Easter eggs referencing horror classics
+-   [ ] **New Horror Layers**
+    -   Paranoia mode (randomized elements)
+    -   Audio cues (optional, with beep sequences)
+    -   Time-based events
+    -   Easter eggs referencing horror classics
 
 ---
 
@@ -128,40 +128,40 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Competitive Features
 
-- [ ] **Leaderboards**
+-   [ ] **Leaderboards**
 
-  - Global rankings
-  - Time-based challenges
-  - Speed-run mode
-  - Challenge-specific leaderboards
+    -   Global rankings
+    -   Time-based challenges
+    -   Speed-run mode
+    -   Challenge-specific leaderboards
 
-- [ ] **Challenge Sharing**
+-   [ ] **Challenge Sharing**
 
-  - User-created challenges
-  - Community challenge repository
-  - Voting and rating system
-  - Featured challenges of the week
+    -   User-created challenges
+    -   Community challenge repository
+    -   Voting and rating system
+    -   Featured challenges of the week
 
-- [ ] **Multiplayer Modes**
-  - Co-op challenge solving
-  - Real-time competitive CTF
-  - Team tournaments
-  - Async ghost racing (compete against recorded runs)
+-   [ ] **Multiplayer Modes**
+    -   Co-op challenge solving
+    -   Real-time competitive CTF
+    -   Team tournaments
+    -   Async ghost racing (compete against recorded runs)
 
 ### Social Features
 
-- [ ] **Profile System**
+-   [ ] **Profile System**
 
-  - Public profile pages
-  - Achievement showcase
-  - Challenge creation stats
-  - Skill badges and certifications
+    -   Public profile pages
+    -   Achievement showcase
+    -   Challenge creation stats
+    -   Skill badges and certifications
 
-- [ ] **Community Hub**
-  - In-game chat (terminal-based)
-  - Forum integration
-  - Discord bot for game status
-  - Twitch extension for streaming
+-   [ ] **Community Hub**
+    -   In-game chat (terminal-based)
+    -   Forum integration
+    -   Discord bot for game status
+    -   Twitch extension for streaming
 
 ---
 
@@ -169,40 +169,40 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Educational Platform
 
-- [ ] **Learning Paths**
+-   [ ] **Learning Paths**
 
-  - Structured curriculum for beginners
-  - Specialized tracks (web, mobile, network, etc.)
-  - Certification programs
-  - University partnership integration
+    -   Structured curriculum for beginners
+    -   Specialized tracks (web, mobile, network, etc.)
+    -   Certification programs
+    -   University partnership integration
 
-- [ ] **Adaptive Difficulty**
+-   [ ] **Adaptive Difficulty**
 
-  - AI-powered challenge recommendations
-  - Dynamic hint system based on user behavior
-  - Personalized learning plans
-  - Skill gap analysis
+    -   AI-powered challenge recommendations
+    -   Dynamic hint system based on user behavior
+    -   Personalized learning plans
+    -   Skill gap analysis
 
-- [ ] **Practice Labs**
-  - Sandboxed virtual environments
-  - Real vulnerable VMs (in containers)
-  - Network simulation mode
-  - Code analysis playground
+-   [ ] **Practice Labs**
+    -   Sandboxed virtual environments
+    -   Real vulnerable VMs (in containers)
+    -   Network simulation mode
+    -   Code analysis playground
 
 ### Content Creation Tools
 
-- [ ] **Challenge Editor**
+-   [ ] **Challenge Editor**
 
-  - GUI tool for creating challenges
-  - Template library
-  - Automated testing tools
-  - Hint quality analyzer
+    -   GUI tool for creating challenges
+    -   Template library
+    -   Automated testing tools
+    -   Hint quality analyzer
 
-- [ ] **Narrative Builder**
-  - Story branching editor
-  - Character dialog system
-  - Atmospheric effect composer
-  - Sanity mechanic balancer
+-   [ ] **Narrative Builder**
+    -   Story branching editor
+    -   Character dialog system
+    -   Atmospheric effect composer
+    -   Sanity mechanic balancer
 
 ---
 
@@ -210,35 +210,35 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Professional Features
 
-- [ ] **Enterprise Edition**
+-   [ ] **Enterprise Edition**
 
-  - Team management dashboard
-  - Progress tracking and analytics
-  - Custom challenge deployment
-  - White-label options
-  - SSO integration
+    -   Team management dashboard
+    -   Progress tracking and analytics
+    -   Custom challenge deployment
+    -   White-label options
+    -   SSO integration
 
-- [ ] **Educational Edition**
-  - Classroom management tools
-  - Assignment and grading system
-  - Student progress reports
-  - Curriculum alignment tools
-  - LMS integration (Canvas, Moodle)
+-   [ ] **Educational Edition**
+    -   Classroom management tools
+    -   Assignment and grading system
+    -   Student progress reports
+    -   Curriculum alignment tools
+    -   LMS integration (Canvas, Moodle)
 
 ### Advanced Security
 
-- [ ] **Real-World Scenarios**
+-   [ ] **Real-World Scenarios**
 
-  - Bug bounty simulation mode
-  - Red team/blue team exercises
-  - Incident response challenges
-  - Compliance and audit scenarios
+    -   Bug bounty simulation mode
+    -   Red team/blue team exercises
+    -   Incident response challenges
+    -   Compliance and audit scenarios
 
-- [ ] **Certification Prep**
-  - CEH (Certified Ethical Hacker) practice
-  - OSCP-style challenges
-  - CompTIA Security+ alignment
-  - SANS GIAC prep content
+-   [ ] **Certification Prep**
+    -   CEH (Certified Ethical Hacker) practice
+    -   OSCP-style challenges
+    -   CompTIA Security+ alignment
+    -   SANS GIAC prep content
 
 ---
 
@@ -246,40 +246,40 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### New Platforms
 
-- [ ] **Web Version**
+-   [ ] **Web Version**
 
-  - Browser-based terminal emulator
-  - Cloud save synchronization
-  - Mobile-responsive design
-  - Progressive Web App (PWA)
+    -   Browser-based terminal emulator
+    -   Cloud save synchronization
+    -   Mobile-responsive design
+    -   Progressive Web App (PWA)
 
-- [ ] **Native Mobile Apps**
+-   [ ] **Native Mobile Apps**
 
-  - iOS app (SwiftUI)
-  - Android app (Kotlin)
-  - Touch-optimized interface
-  - Offline mode support
+    -   iOS app (SwiftUI)
+    -   Android app (Kotlin)
+    -   Touch-optimized interface
+    -   Offline mode support
 
-- [ ] **Desktop GUI**
-  - Native desktop applications
-  - Electron or Tauri wrapper
-  - Enhanced visual effects
-  - Split-pane interface
+-   [ ] **Desktop GUI**
+    -   Native desktop applications
+    -   Electron or Tauri wrapper
+    -   Enhanced visual effects
+    -   Split-pane interface
 
 ### Integration & APIs
 
-- [ ] **Public API**
+-   [ ] **Public API**
 
-  - REST API for game data
-  - WebSocket for real-time features
-  - OAuth authentication
-  - Rate limiting and API keys
+    -   REST API for game data
+    -   WebSocket for real-time features
+    -   OAuth authentication
+    -   Rate limiting and API keys
 
-- [ ] **Third-Party Integration**
-  - GitHub integration for code challenges
-  - VS Code extension
-  - Docker images for challenges
-  - Kubernetes operator for scaling
+-   [ ] **Third-Party Integration**
+    -   GitHub integration for code challenges
+    -   VS Code extension
+    -   Docker images for challenges
+    -   Kubernetes operator for scaling
 
 ---
 
@@ -287,40 +287,40 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### AI-Powered Features
 
-- [ ] **AI Mentor System**
+-   [ ] **AI Mentor System**
 
-  - Conversational hint system
-  - Personalized learning assistant
-  - Challenge difficulty predictor
-  - Automated code review for solutions
+    -   Conversational hint system
+    -   Personalized learning assistant
+    -   Challenge difficulty predictor
+    -   Automated code review for solutions
 
-- [ ] **Procedural Generation**
+-   [ ] **Procedural Generation**
 
-  - AI-generated challenges
-  - Dynamic difficulty adjustment
-  - Infinite challenge mode
-  - Personalized narratives
+    -   AI-generated challenges
+    -   Dynamic difficulty adjustment
+    -   Infinite challenge mode
+    -   Personalized narratives
 
-- [ ] **Intelligent Tutoring**
-  - Context-aware explanations
-  - Common mistake detection
-  - Learning style adaptation
-  - Skill mastery prediction
+-   [ ] **Intelligent Tutoring**
+    -   Context-aware explanations
+    -   Common mistake detection
+    -   Learning style adaptation
+    -   Skill mastery prediction
 
 ### Automation & DevOps
 
-- [ ] **Infrastructure as Code**
+-   [ ] **Infrastructure as Code**
 
-  - Terraform modules for deployment
-  - Kubernetes charts
-  - Auto-scaling configuration
-  - Disaster recovery automation
+    -   Terraform modules for deployment
+    -   Kubernetes charts
+    -   Auto-scaling configuration
+    -   Disaster recovery automation
 
-- [ ] **Challenge Pipeline**
-  - Automated challenge validation
-  - Security scanning for user content
-  - Performance benchmarking
-  - Quality assurance bots
+-   [ ] **Challenge Pipeline**
+    -   Automated challenge validation
+    -   Security scanning for user content
+    -   Performance benchmarking
+    -   Quality assurance bots
 
 ---
 
@@ -328,39 +328,39 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Platform Ecosystem
 
-- [ ] **Marketplace**
+-   [ ] **Marketplace**
 
-  - Premium challenge packs
-  - Custom narrative DLC
-  - Theme and cosmetic packs
-  - Professional training modules
+    -   Premium challenge packs
+    -   Custom narrative DLC
+    -   Theme and cosmetic packs
+    -   Professional training modules
 
-- [ ] **Developer Platform**
-  - Plugin system for extensions
-  - Custom challenge types
-  - Theme engine
-  - Mod support
+-   [ ] **Developer Platform**
+    -   Plugin system for extensions
+    -   Custom challenge types
+    -   Theme engine
+    -   Mod support
 
 ### Future Technologies
 
-- [ ] **VR/AR Experience**
+-   [ ] **VR/AR Experience**
 
-  - Virtual reality hacking environment
-  - 3D network visualization
-  - Immersive horror elements
-  - Gesture-based interaction
+    -   Virtual reality hacking environment
+    -   3D network visualization
+    -   Immersive horror elements
+    -   Gesture-based interaction
 
-- [ ] **Blockchain Integration** (Optional)
+-   [ ] **Blockchain Integration** (Optional)
 
-  - Achievement NFTs
-  - Decentralized leaderboards
-  - Smart contract challenges
-  - Cryptographic proof of completion
+    -   Achievement NFTs
+    -   Decentralized leaderboards
+    -   Smart contract challenges
+    -   Cryptographic proof of completion
 
-- [ ] **Quantum Computing Prep**
-  - Post-quantum cryptography challenges
-  - Quantum algorithm basics
-  - Future-proofing security concepts
+-   [ ] **Quantum Computing Prep**
+    -   Post-quantum cryptography challenges
+    -   Quantum algorithm basics
+    -   Future-proofing security concepts
 
 ---
 
@@ -368,48 +368,48 @@ Transform "The Hack: Ghost Protocol" into the premier educational horror-themed 
 
 ### Community & Content
 
-- 🔄 **Monthly Challenge Updates**
+-   🔄 **Monthly Challenge Updates**
 
-  - New challenges every month
-  - Seasonal events and themes
-  - Holiday special challenges
-  - Community challenge contests
+    -   New challenges every month
+    -   Seasonal events and themes
+    -   Holiday special challenges
+    -   Community challenge contests
 
-- 🔄 **Content Partnerships**
-  - Collaborate with security researchers
-  - CTF competition tie-ins
-  - Academic institution partnerships
-  - Industry certification bodies
+-   🔄 **Content Partnerships**
+    -   Collaborate with security researchers
+    -   CTF competition tie-ins
+    -   Academic institution partnerships
+    -   Industry certification bodies
 
 ### Research & Innovation
 
-- 🔄 **Security Research**
+-   🔄 **Security Research**
 
-  - Stay current with latest vulnerabilities
-  - Incorporate zero-day concepts (ethical)
-  - Real-world attack pattern analysis
-  - Defensive technique evolution
+    -   Stay current with latest vulnerabilities
+    -   Incorporate zero-day concepts (ethical)
+    -   Real-world attack pattern analysis
+    -   Defensive technique evolution
 
-- 🔄 **Pedagogical Research**
-  - Effectiveness studies
-  - Learning outcome analysis
-  - Gamification optimization
-  - Accessibility improvements
+-   🔄 **Pedagogical Research**
+    -   Effectiveness studies
+    -   Learning outcome analysis
+    -   Gamification optimization
+    -   Accessibility improvements
 
 ### Sustainability
 
-- 🔄 **Open Source Commitment**
+-   🔄 **Open Source Commitment**
 
-  - Core engine remains open source
-  - Community contribution program
-  - Transparent roadmap updates
-  - Regular security audits
+    -   Core engine remains open source
+    -   Community contribution program
+    -   Transparent roadmap updates
+    -   Regular security audits
 
-- 🔄 **Financial Model**
-  - Free core experience always available
-  - Optional premium content for sustainability
-  - Educational discounts
-  - Non-profit partnerships
+-   🔄 **Financial Model**
+    -   Free core experience always available
+    -   Optional premium content for sustainability
+    -   Educational discounts
+    -   Non-profit partnerships
 
 ---
 
@@ -462,31 +462,31 @@ Milestones:
 
 ### User Engagement
 
-- **Target**: 100K+ active users by end of 2026
-- **Target**: 500K+ challenge completions by end of 2026
-- **Target**: 50% completion rate for new users
-- **Target**: 4.5+ star average rating
+-   **Target**: 100K+ active users by end of 2026
+-   **Target**: 500K+ challenge completions by end of 2026
+-   **Target**: 50% completion rate for new users
+-   **Target**: 4.5+ star average rating
 
 ### Educational Impact
 
-- **Target**: Partner with 100+ educational institutions by 2027
-- **Target**: 10K+ students using in coursework
-- **Target**: 80%+ report improved security understanding
-- **Target**: 50+ research papers citing the platform
+-   **Target**: Partner with 100+ educational institutions by 2027
+-   **Target**: 10K+ students using in coursework
+-   **Target**: 80%+ report improved security understanding
+-   **Target**: 50+ research papers citing the platform
 
 ### Community Growth
 
-- **Target**: 1K+ user-created challenges by 2027
-- **Target**: 10K+ Discord/community members
-- **Target**: 100+ active contributors
-- **Target**: Monthly community events
+-   **Target**: 1K+ user-created challenges by 2027
+-   **Target**: 10K+ Discord/community members
+-   **Target**: 100+ active contributors
+-   **Target**: Monthly community events
 
 ### Technical Excellence
 
-- **Target**: 99.9% uptime for hosted services
-- **Target**: <100ms average challenge validation time
-- **Target**: Support for 10K+ concurrent users
-- **Target**: Zero critical security vulnerabilities
+-   **Target**: 99.9% uptime for hosted services
+-   **Target**: <100ms average challenge validation time
+-   **Target**: Support for 10K+ concurrent users
+-   **Target**: Zero critical security vulnerabilities
 
 ---
 
@@ -494,24 +494,24 @@ Milestones:
 
 ### Technical Risks
 
-- **Scalability**: Design for horizontal scaling from v2.0
-- **Security**: Regular third-party audits, bug bounty program
-- **Platform Compatibility**: Extensive cross-platform testing
-- **Data Privacy**: GDPR/CCPA compliance from day one
+-   **Scalability**: Design for horizontal scaling from v2.0
+-   **Security**: Regular third-party audits, bug bounty program
+-   **Platform Compatibility**: Extensive cross-platform testing
+-   **Data Privacy**: GDPR/CCPA compliance from day one
 
 ### Business Risks
 
-- **Funding**: Diversify revenue streams (premium, partnerships, grants)
-- **Competition**: Focus on unique horror theme and quality
-- **Content Creation**: Build strong community of creators
-- **Legal**: Clear terms of service, ethical use guidelines
+-   **Funding**: Diversify revenue streams (premium, partnerships, grants)
+-   **Competition**: Focus on unique horror theme and quality
+-   **Content Creation**: Build strong community of creators
+-   **Legal**: Clear terms of service, ethical use guidelines
 
 ### Community Risks
 
-- **Toxic Behavior**: Strong moderation, code of conduct
-- **Content Quality**: Review system, automated checks
-- **Support Burden**: Self-service docs, community support channels
-- **Burnout**: Sustainable contribution model, team rotation
+-   **Toxic Behavior**: Strong moderation, code of conduct
+-   **Content Quality**: Review system, automated checks
+-   **Support Burden**: Self-service docs, community support channels
+-   **Burnout**: Sustainable contribution model, team rotation
 
 ---
 
@@ -521,10 +521,10 @@ We welcome community input on this roadmap! Here's how you can help:
 
 ### Feedback Channels
 
-- **GitHub Discussions**: Share ideas and vote on features
-- **Discord Server**: Real-time discussions with the team
-- **Survey**: Quarterly feature prioritization surveys
-- **User Research**: Participate in UX studies
+-   **GitHub Discussions**: Share ideas and vote on features
+-   **Discord Server**: Real-time discussions with the team
+-   **Survey**: Quarterly feature prioritization surveys
+-   **User Research**: Participate in UX studies
 
 ### Feature Proposals
 
@@ -555,11 +555,11 @@ Want to help build the future?
 
 This roadmap is a living document and will be updated quarterly based on:
 
-- Community feedback and priorities
-- Technical feasibility assessments
-- Market conditions and opportunities
-- Team capacity and resources
-- Strategic partnerships
+-   Community feedback and priorities
+-   Technical feasibility assessments
+-   Market conditions and opportunities
+-   Team capacity and resources
+-   Strategic partnerships
 
 **Last Updated**: October 21, 2025
 **Next Review**: January 2026
@@ -568,10 +568,10 @@ This roadmap is a living document and will be updated quarterly based on:
 
 ## Questions or Ideas?
 
-- 💬 **Discord**: [Join our community](https://discord.gg/hack-ghost-protocol)
-- 🐙 **GitHub**: [Open an issue](https://github.com/and3rn3t/hack/issues)
-- 📧 **Email**: <roadmap@hack-ghost-protocol.dev>
-- 🐦 **Twitter**: [@HackGhostProto](https://twitter.com/HackGhostProto)
+-   💬 **Discord**: [Join our community](https://discord.gg/hack-ghost-protocol)
+-   🐙 **GitHub**: [Open an issue](https://github.com/and3rn3t/hack/issues)
+-   📧 **Email**: <roadmap@hack-ghost-protocol.dev>
+-   🐦 **Twitter**: [@HackGhostProto](https://twitter.com/HackGhostProto)
 
 ---
 

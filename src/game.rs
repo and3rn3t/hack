@@ -1,4 +1,8 @@
 use crate::ui::CompletionContext;
+use crate::ui::{
+    theme_accent, theme_border, theme_error, theme_muted, theme_primary, theme_success,
+    theme_warning,
+};
 use crate::{challenges, narrative, state::GameState, tutorial, ui};
 use std::io;
 
@@ -9,12 +13,9 @@ pub fn run_game() -> io::Result<()> {
             ui::print_horror_banner()?;
             ui::print_colored(
                 &format!("\n\nWelcome back, {}...\n", saved_state.player_name),
-                crossterm::style::Color::Yellow,
+                theme_accent(),
             )?;
-            ui::print_colored(
-                "Your saved progress has been loaded.\n",
-                crossterm::style::Color::White,
-            )?;
+            ui::print_colored("Your saved progress has been loaded.\n", theme_primary())?;
             ui::pause()?;
             saved_state
         }
@@ -23,7 +24,7 @@ pub fn run_game() -> io::Result<()> {
             ui::print_horror_banner()?;
             ui::print_colored(
                 "\n\nBefore we begin, what should we call you?\n",
-                crossterm::style::Color::White,
+                theme_primary(),
             )?;
             let name = ui::read_input("Enter your name: ")?;
             let mut state = GameState::new(name);
@@ -32,12 +33,9 @@ pub fn run_game() -> io::Result<()> {
             if state.needs_tutorial() {
                 ui::print_colored(
                     "\n\nWould you like to play the interactive tutorial?\n",
-                    crossterm::style::Color::Cyan,
+                    theme_accent(),
                 )?;
-                ui::print_colored(
-                    "(Recommended for first-time players)\n",
-                    crossterm::style::Color::DarkGrey,
-                )?;
+                ui::print_colored("(Recommended for first-time players)\n", theme_muted())?;
 
                 let choice = ui::read_input("[Y/n]: ")?;
                 if choice.is_empty() || choice.to_lowercase().starts_with('y') {
@@ -45,7 +43,7 @@ pub fn run_game() -> io::Result<()> {
                 } else {
                     ui::print_colored(
                         "\nSkipping tutorial. You can review game mechanics in the README.\n",
-                        crossterm::style::Color::Yellow,
+                        theme_warning(),
                     )?;
                     state.mark_tutorial_completed();
                     state.save()?;
@@ -96,7 +94,7 @@ pub fn run_game() -> io::Result<()> {
         // Main header
         ui::print_colored(
             "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
-            crossterm::style::Color::Cyan,
+            theme_border(),
         )?;
         ui::print_colored(
             &format!(
@@ -105,11 +103,11 @@ pub fn run_game() -> io::Result<()> {
                 state.current_level,
                 " ".repeat(20)
             ),
-            crossterm::style::Color::Yellow,
+            theme_accent(),
         )?;
         ui::print_colored(
             "╚═══════════════════════════════════════════════════════════════════════════╝\n",
-            crossterm::style::Color::Cyan,
+            theme_border(),
         )?;
 
         // Stats section
@@ -123,7 +121,7 @@ pub fn run_game() -> io::Result<()> {
                 state.completed_challenges.len(),
                 challenges::get_all_challenges().len()
             ),
-            crossterm::style::Color::White,
+            theme_primary(),
         )?;
 
         ui::print_separator()?;
@@ -131,13 +129,13 @@ pub fn run_game() -> io::Result<()> {
         println!("\n📋 AVAILABLE CHALLENGES:\n");
         for (idx, challenge) in level_challenges.iter().enumerate() {
             let (status, status_color) = if state.has_completed(&challenge.id) {
-                ("✓ COMPLETED", crossterm::style::Color::Green)
+                ("✓ COMPLETED", theme_success())
             } else {
-                ("○ Available", crossterm::style::Color::Yellow)
+                ("○ Available", theme_accent())
             };
 
             print!("  ");
-            ui::print_colored(&format!("[{}]", idx + 1), crossterm::style::Color::Cyan)?;
+            ui::print_colored(&format!("[{}]", idx + 1), theme_accent())?;
             print!(" {} ", challenge.title);
             ui::print_colored(status, status_color)?;
             ui::print_colored(
@@ -145,7 +143,7 @@ pub fn run_game() -> io::Result<()> {
                     " (+{} XP, -{} sanity)",
                     challenge.xp_reward, challenge.sanity_cost
                 ),
-                crossterm::style::Color::DarkGrey,
+                theme_muted(),
             )?;
             println!();
         }
@@ -155,6 +153,7 @@ pub fn run_game() -> io::Result<()> {
         ui::print_menu_option("1-N", "Select a challenge by number", None)?;
         ui::print_menu_option("stats", "View detailed statistics", None)?;
         ui::print_menu_option("help", "Show available tooltips", None)?;
+        ui::print_menu_option("theme", "Change color theme", None)?;
         ui::print_menu_option("save", "Save your progress", None)?;
         ui::print_menu_option("quit", "Exit the Ghost Protocol", None)?;
 
@@ -168,6 +167,7 @@ pub fn run_game() -> io::Result<()> {
         match choice.to_lowercase().as_str() {
             "stats" => show_stats(&state)?,
             "help" | "tutorial" | "?" => show_help()?,
+            "theme" | "themes" => ui::show_theme_selection()?,
             "save" => {
                 state.save()?;
                 ui::print_success("Game saved successfully!")?;
@@ -177,7 +177,7 @@ pub fn run_game() -> io::Result<()> {
                 state.save()?;
                 ui::print_colored(
                     "\n\nThe Ghost Protocol awaits your return...\n",
-                    crossterm::style::Color::Red,
+                    theme_error(),
                 )?;
                 ui::pause()?;
                 break;
@@ -230,7 +230,7 @@ The last thing you see is the screen flickering:
 
 GAME OVER
 "#,
-                crossterm::style::Color::Red,
+                theme_error(),
             )?;
             ui::pause()?;
             break;
@@ -245,7 +245,7 @@ fn show_stats(state: &GameState) -> io::Result<()> {
 
     ui::print_colored(
         "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
-        crossterm::style::Color::Magenta,
+        theme_border(),
     )?;
     ui::print_colored(
         &format!(
@@ -253,25 +253,25 @@ fn show_stats(state: &GameState) -> io::Result<()> {
             " ".repeat(25),
             " ".repeat(25)
         ),
-        crossterm::style::Color::Yellow,
+        theme_accent(),
     )?;
     ui::print_colored(
         "╚═══════════════════════════════════════════════════════════════════════════╝\n",
-        crossterm::style::Color::Magenta,
+        theme_border(),
     )?;
 
     println!();
     ui::print_colored(
         &format!("👤 Player: {}\n", state.player_name),
-        crossterm::style::Color::Cyan,
+        theme_accent(),
     )?;
     ui::print_colored(
         &format!("⚡ Current Level: {}\n", state.current_level),
-        crossterm::style::Color::Yellow,
+        theme_warning(),
     )?;
     ui::print_colored(
         &format!("🌟 Experience: {} XP\n", state.experience),
-        crossterm::style::Color::Green,
+        theme_success(),
     )?;
 
     println!();
@@ -301,20 +301,17 @@ fn show_stats(state: &GameState) -> io::Result<()> {
         let percentage = (completed as f32 / total as f32 * 100.0) as i32;
 
         let color = if completed == total {
-            crossterm::style::Color::Green
+            theme_success()
         } else if completed > 0 {
-            crossterm::style::Color::Yellow
+            theme_warning()
         } else {
-            crossterm::style::Color::DarkGrey
+            theme_muted()
         };
 
         let bars = "█".repeat((completed as f32 / total as f32 * 10.0) as usize);
         let empty = "░".repeat(10 - (completed as f32 / total as f32 * 10.0) as usize);
 
-        ui::print_colored(
-            &format!("  Level {}: ", level),
-            crossterm::style::Color::White,
-        )?;
+        ui::print_colored(&format!("  Level {}: ", level), theme_primary())?;
         ui::print_colored(&format!("[{}{}]", bars, empty), color)?;
         ui::print_colored(
             &format!(" {}/{} ({}%)\n", completed, total, percentage),
@@ -328,7 +325,7 @@ fn show_stats(state: &GameState) -> io::Result<()> {
         println!("\n🏆 COMPLETED CHALLENGES:\n");
         for challenge_id in &state.completed_challenges {
             if let Some(challenge) = all_challenges.iter().find(|c| &c.id == challenge_id) {
-                ui::print_colored("  ✓ ", crossterm::style::Color::Green)?;
+                ui::print_colored("  ✓ ", theme_success())?;
                 println!("{} (+{} XP)", challenge.title, challenge.xp_reward);
             }
         }
@@ -364,15 +361,15 @@ fn show_help() -> io::Result<()> {
 
     ui::print_colored(
         "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
-        crossterm::style::Color::Cyan,
+        theme_border(),
     )?;
     ui::print_colored(
         "║                          📚 HELP & TOOLTIPS 📚                           ║\n",
-        crossterm::style::Color::Yellow,
+        theme_accent(),
     )?;
     ui::print_colored(
         "╚═══════════════════════════════════════════════════════════════════════════╝\n",
-        crossterm::style::Color::Cyan,
+        theme_border(),
     )?;
 
     println!("\nSelect a topic to learn more:\n");
@@ -418,10 +415,7 @@ fn show_help() -> io::Result<()> {
 }
 
 fn show_all_commands() -> io::Result<()> {
-    ui::print_colored(
-        "\n⚙️  ALL AVAILABLE COMMANDS\n",
-        crossterm::style::Color::Cyan,
-    )?;
+    ui::print_colored("\n⚙️  ALL AVAILABLE COMMANDS\n", theme_accent())?;
     ui::print_separator()?;
 
     ui::print_colored(
@@ -449,7 +443,7 @@ TIPS:
   • Failed challenges cost extra sanity
   • Save often (or it auto-saves after each challenge)
 "#,
-        crossterm::style::Color::White,
+        theme_primary(),
     )?;
 
     Ok(())

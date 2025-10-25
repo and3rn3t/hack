@@ -1,6 +1,7 @@
 use crate::ui::CompletionContext;
 use crate::{narrative, state::GameState, ui};
 use std::io;
+use std::sync::OnceLock;
 
 #[derive(Clone)]
 pub struct Challenge {
@@ -191,7 +192,15 @@ impl Challenge {
     }
 }
 
-pub fn get_all_challenges() -> Vec<Challenge> {
+// Cached challenge list for performance
+static CHALLENGE_CACHE: OnceLock<Vec<Challenge>> = OnceLock::new();
+
+pub fn get_all_challenges() -> &'static Vec<Challenge> {
+    CHALLENGE_CACHE.get_or_init(create_all_challenges)
+}
+
+/// Create all challenges - called only once and cached
+fn create_all_challenges() -> Vec<Challenge> {
     vec![
         // Level 0: Beginner challenges
         Challenge::new(
@@ -819,8 +828,9 @@ What is the Ghost Protocol's true name?
 
 pub fn get_challenges_for_level(level: usize) -> Vec<Challenge> {
     get_all_challenges()
-        .into_iter()
+        .iter()
         .filter(|c| c.level == level)
+        .cloned()
         .collect()
 }
 
@@ -831,7 +841,7 @@ mod tests {
     #[test]
     fn test_all_challenges_have_valid_ids() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 !challenge.id.is_empty(),
                 "Challenge '{}' has empty ID",
@@ -852,7 +862,7 @@ mod tests {
     fn test_all_challenges_have_unique_ids() {
         let challenges = get_all_challenges();
         let mut ids = std::collections::HashSet::new();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 ids.insert(challenge.id.clone()),
                 "Duplicate challenge ID found: {}",
@@ -864,7 +874,7 @@ mod tests {
     #[test]
     fn test_all_challenges_have_titles() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 !challenge.title.is_empty(),
                 "Challenge '{}' has empty title",
@@ -876,7 +886,7 @@ mod tests {
     #[test]
     fn test_all_challenges_have_descriptions() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 !challenge.description.is_empty(),
                 "Challenge '{}' has empty description",
@@ -893,7 +903,7 @@ mod tests {
     #[test]
     fn test_all_challenges_have_hints() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 !challenge.hints.is_empty(),
                 "Challenge '{}' has no hints",
@@ -910,7 +920,7 @@ mod tests {
     #[test]
     fn test_challenge_rewards_are_positive() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 challenge.xp_reward > 0,
                 "Challenge '{}' has non-positive XP reward",
@@ -927,7 +937,7 @@ mod tests {
     #[test]
     fn test_challenge_levels_are_valid() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 challenge.level <= 4,
                 "Challenge '{}' has invalid level {}",
@@ -1305,7 +1315,7 @@ mod tests {
     #[test]
     fn test_no_empty_hints() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             for (i, hint) in challenge.hints.iter().enumerate() {
                 assert!(
                     !hint.is_empty(),
@@ -1320,7 +1330,7 @@ mod tests {
     #[test]
     fn test_challenge_ids_follow_naming_convention() {
         let challenges = get_all_challenges();
-        for challenge in &challenges {
+        for challenge in challenges {
             assert!(
                 challenge
                     .id
@@ -1343,7 +1353,7 @@ mod tests {
             #[test]
             fn test_validators_never_panic(input in "\\PC*") {
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     // Should not panic, regardless of input
                     let _ = (challenge.check_answer)(&input);
                 }
@@ -1353,7 +1363,7 @@ mod tests {
             #[test]
             fn test_empty_input_never_valid(whitespace in "[ \t\n\r]*") {
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     // Empty/whitespace-only input should not be valid
                     assert!(
                         !(challenge.check_answer)(&whitespace),
@@ -1368,7 +1378,7 @@ mod tests {
             fn test_long_inputs_handled(repeat in 1..1000usize) {
                 let long_input = "A".repeat(repeat);
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     let _ = (challenge.check_answer)(&long_input);
                 }
             }
@@ -1377,7 +1387,7 @@ mod tests {
             #[test]
             fn test_special_chars_safe(special in "[!@#$%^&*()_+\\-=\\[\\]{}|;':\",./<>?`~]*") {
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     let _ = (challenge.check_answer)(&special);
                 }
             }
@@ -1392,7 +1402,7 @@ mod tests {
                     wrong.to_string(),
                 ];
 
-                for challenge in &challenges {
+                for challenge in challenges {
                     for variant in &variations {
                         // These generic wrong answers should not match any challenge
                         // (unless by chance a challenge actually expects "wrong" as answer)
@@ -1406,7 +1416,7 @@ mod tests {
             fn test_numeric_inputs_safe(num in any::<i64>()) {
                 let num_str = num.to_string();
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     let _ = (challenge.check_answer)(&num_str);
                 }
             }
@@ -1415,7 +1425,7 @@ mod tests {
             #[test]
             fn test_unicode_safe(unicode in "[\\u{0000}-\\u{FFFF}]{0,20}") {
                 let challenges = get_all_challenges();
-                for challenge in &challenges {
+                for challenge in challenges {
                     let _ = (challenge.check_answer)(&unicode);
                 }
             }

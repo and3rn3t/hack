@@ -34,7 +34,7 @@ fn test_save_and_load_round_trip() {
 fn test_save_preserves_all_fields() {
     let temp = TempSaveFile::new("test_all_fields.json");
 
-    let mut state = create_advanced_state();
+    let state = create_advanced_state();
 
     // Save
     let json = serde_json::to_string_pretty(&state).unwrap();

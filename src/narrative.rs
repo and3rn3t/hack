@@ -1,4 +1,5 @@
 use crate::ui;
+use crate::ui::theme_border;
 use crossterm::style::Color;
 use std::io;
 
@@ -141,7 +142,7 @@ pub fn show_challenge_intro(title: &str, description: &str) -> io::Result<()> {
     // Animated header
     ui::print_colored(
         "\n╔═══════════════════════════════════════════════════════════════════════════╗\n",
-        Color::Magenta,
+        theme_border(),
     )?;
     ui::print_colored(
         &format!(

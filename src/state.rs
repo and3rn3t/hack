@@ -36,6 +36,15 @@ impl GameState {
     }
 
     pub fn save_to(&self, path: &str) -> std::io::Result<()> {
+        // Use compact JSON instead of pretty for smaller file size
+        let json = serde_json::to_string(self)?;
+        fs::write(path, json)?;
+        Ok(())
+    }
+
+    /// Save with pretty formatting for debugging (dev use only)
+    #[cfg(debug_assertions)]
+    pub fn save_pretty(&self, path: &str) -> std::io::Result<()> {
         let json = serde_json::to_string_pretty(self)?;
         fs::write(path, json)?;
         Ok(())
