@@ -7,6 +7,105 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-10-25
+
+### Added - Advanced User Experience & Challenge Variants
+
+- **🎮 Advanced Command System**:
+
+  - **User Aliases**: Create custom shortcuts for frequently used commands
+  - **Enhanced Tab Completion**: Expanded completion contexts for settings, aliases, save slots, and difficulty options
+  - **Command Resolution**: Automatic alias resolution with circular reference protection
+  - **Smart Auto-completion**: Context-aware suggestions based on current menu
+
+- **⚙️ Comprehensive Settings System**:
+
+  - **Difficulty Scaling**: Choose between Adaptive, Static, or Custom difficulty progression
+  - **Hint Verbosity**: Select Minimal, Moderate, or Detailed hint levels
+  - **Font Size Options**: Small, Medium, Large, and Extra Large for accessibility
+  - **Audio Preferences**: Toggle atmospheric audio effects on/off
+  - **Animation Speed**: Control animation speeds (None, Slow, Normal, Fast) for accessibility
+  - **Theme Preferences**: Persistent color theme selection with user preference storage
+
+- **💾 Enhanced Save System**:
+
+  - **Multiple Save Slots**: 5 save slots (0-4) for different playthroughs
+  - **Save Slot Management**: Visual interface showing player name, level, progress, and file size
+  - **Export/Import**: Export save data as JSON for backup and sharing
+  - **Save Metadata**: Detailed information about each save slot including last modified time
+  - **Auto-save Preferences**: Automatic saving after settings changes
+
+- **📊 Progress Analytics**:
+
+  - **Detailed Statistics**: Track total playtime, challenge attempts, hint usage, and completion times
+  - **Performance Metrics**: Completion rate calculations and average completion times
+  - **Learning Streaks**: Track consecutive successful challenges
+  - **Difficulty Preferences**: Per-challenge difficulty preference tracking
+  - **Adaptive Recommendations**: Smart difficulty suggestions based on performance
+
+- **🎯 Challenge Difficulty Variants**:
+
+  - **Four Difficulty Levels**: Beginner (Tutorial), Standard (Default), Advanced (Fewer hints), Expert (Minimal help)
+  - **Dynamic Scaling**: XP and sanity cost multipliers based on difficulty selection
+  - **Variant System**: Challenges can have multiple versions with different content and complexity
+  - **Adaptive Selection**: Automatic difficulty selection based on player performance and preferences
+  - **Challenge Replay**: Completed challenges can be attempted at different difficulty levels
+
+- **🔄 Dynamic Challenge Generation**:
+
+  - **Randomized Content**: Procedurally generated challenges for practice
+  - **Practice Mode**: Dedicated practice area with dynamic challenges that don't affect main progress
+  - **Random Challenge Generator**: Dynamic Base64, ROT cipher, and hex decoding challenges
+  - **Flexible Validation**: Smart answer checking for procedurally generated content
+  - **Practice Bonuses**: Bonus XP rewards for completing practice challenges
+
+### Enhanced
+
+- **Menu System**: Expanded main menu with new options for settings, aliases, and practice mode
+- **User Interface**: Improved settings menus with comprehensive customization options
+- **Progress Tracking**: Enhanced statistics with detailed analytics and performance metrics
+- **Challenge Selection**: Interactive difficulty selection for challenges with variants
+- **Save System**: Robust multi-slot saving with metadata and import/export capabilities
+
+### Technical
+
+- **State Management**: Extended GameState with user preferences and progress analytics
+- **Compatibility**: Backward-compatible save file system with automatic field initialization
+- **Performance**: Efficient caching and analytics tracking without performance impact
+- **Architecture**: Modular design for easy extension of preferences and challenge variants
+
+## [1.0.0] - 2025-10-24
+
+### Added - Web Version & Major Enhancements
+
+- **🌐 Web Application**: Complete browser-based version with WebAssembly
+
+  - Full HTML5 frontend with xterm.js terminal emulator
+  - WebAssembly compilation with wasm-bindgen
+  - Production deployment on Cloudflare Workers at <https://hack.andernet.dev>
+  - Cross-platform save system compatible with browser storage
+  - Responsive design with horror theme styling
+
+- **🧪 Comprehensive Testing Infrastructure**:
+
+  - Web testing suite with Jest and Playwright
+  - End-to-end browser compatibility testing
+  - WebAssembly integration tests
+  - Performance and accessibility testing
+
+- **🎨 Achievement & Social System**:
+
+  - Digital achievement tracking and display
+  - Progress sharing capabilities
+  - Social media integration
+  - Clipboard API integration for sharing
+
+- **🔧 Development & Deployment**:
+  - Cloudflare Workers deployment with global CDN
+  - Automated CI/CD pipeline with GitHub Actions
+  - Cross-platform build system (native + web)
+  - Production-ready infrastructure
+
 ### Added
 
 - **Better Feedback System**:
@@ -163,5 +262,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Immersive horror narrative with glitch effects
 - Cross-platform support (Windows, Linux, macOS)
 
-[Unreleased]: https://github.com/and3rn3t/hack/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/and3rn3t/hack/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/and3rn3t/hack/compare/v1.0.0...v1.2.0
 [1.0.0]: https://github.com/and3rn3t/hack/releases/tag/v1.0.0

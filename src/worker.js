@@ -79,11 +79,13 @@ async function serveFile(filename, contentType) {
         <div style="margin-top: 30px;">
             <h2>🏗️ Implementation Status</h2>
             <ul style="text-align: left; margin-left: 200px;">
-                <li>✅ Rust game engine (11 challenges, horror narrative)</li>
+                <li>✅ Rust game engine (26 challenges, horror narrative)</li>
                 <li>✅ Web interface with xterm.js terminal emulator</li>
-                <li>✅ WebAssembly bindings created</li>
-                <li>✅ Cloudflare Workers deployment setup</li>
-                <li>🔄 Final WASM compilation (in progress)</li>
+                <li>✅ WebAssembly bindings and compilation</li>
+                <li>✅ Cloudflare Workers production deployment</li>
+                <li>✅ Version ${env.VERSION || "1.0.0"} deployed from ${
+            env.DEPLOY_TAG || "latest"
+        }</li>
             </ul>
         </div>
     </div>

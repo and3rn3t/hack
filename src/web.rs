@@ -1,6 +1,11 @@
 // Web-compatible version of The Hack: Ghost Protocol
 // Uses wasm-bindgen for browser integration
 
+// Use smaller allocator for WASM builds
+#[cfg(feature = "wee_alloc")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 use js_sys::Date;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;

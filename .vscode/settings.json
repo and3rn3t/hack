@@ -112,7 +112,7 @@
   ],
 
   // Additional recommendations
-  "workbench.colorTheme": "Solarized Dark",
+  "workbench.colorTheme": "Gothic Death's Embrace",
   "workbench.iconTheme": "material-icon-theme",
   "makefile.configureOnOpen": false
 }
