@@ -211,89 +211,197 @@ impl GameState {
     }
 
     // Achievement System Implementation
-    
+
     fn initialize_achievements() -> std::collections::HashMap<AchievementId, Achievement> {
         let mut achievements = std::collections::HashMap::new();
-        
+
         // Progress-based achievements
-        achievements.insert(AchievementId::FirstBlood, 
-            Achievement::new(AchievementId::FirstBlood, "🩸 First Blood", 
-                "Complete your first challenge", "🩸"));
-        
-        achievements.insert(AchievementId::SpeedDemon,
-            Achievement::new(AchievementId::SpeedDemon, "⚡ Speed Demon",
-                "Complete a challenge in under 2 minutes", "⚡"));
-        
-        achievements.insert(AchievementId::HintFree,
-            Achievement::new(AchievementId::HintFree, "🧠 Hint Free", 
-                "Complete a challenge without using any hints", "🧠"));
-        
-        achievements.insert(AchievementId::SanityReserves,
-            Achievement::new(AchievementId::SanityReserves, "😌 Sanity Reserves",
-                "Maintain sanity above 75% throughout the game", "😌"));
-        
-        achievements.insert(AchievementId::GhostHunter,
-            Achievement::new(AchievementId::GhostHunter, "👻 Ghost Hunter",
-                "Complete all challenges in the game", "👻"));
-        
-        achievements.insert(AchievementId::Explorer,
-            Achievement::new(AchievementId::Explorer, "🗺️ Explorer", 
-                "Try challenges from all available categories", "🗺️"));
-        
+        achievements.insert(
+            AchievementId::FirstBlood,
+            Achievement::new(
+                AchievementId::FirstBlood,
+                "🩸 First Blood",
+                "Complete your first challenge",
+                "🩸",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::SpeedDemon,
+            Achievement::new(
+                AchievementId::SpeedDemon,
+                "⚡ Speed Demon",
+                "Complete a challenge in under 2 minutes",
+                "⚡",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::HintFree,
+            Achievement::new(
+                AchievementId::HintFree,
+                "🧠 Hint Free",
+                "Complete a challenge without using any hints",
+                "🧠",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::SanityReserves,
+            Achievement::new(
+                AchievementId::SanityReserves,
+                "😌 Sanity Reserves",
+                "Maintain sanity above 75% throughout the game",
+                "😌",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::GhostHunter,
+            Achievement::new(
+                AchievementId::GhostHunter,
+                "👻 Ghost Hunter",
+                "Complete all challenges in the game",
+                "👻",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::Explorer,
+            Achievement::new(
+                AchievementId::Explorer,
+                "🗺️ Explorer",
+                "Try challenges from all available categories",
+                "🗺️",
+            ),
+        );
+
         // Skill-based achievements
-        achievements.insert(AchievementId::CryptographyMaster,
-            Achievement::new(AchievementId::CryptographyMaster, "🔐 Cryptography Master",
-                "Complete all cryptography challenges", "🔐"));
-        
-        achievements.insert(AchievementId::NetworkNinja, 
-            Achievement::new(AchievementId::NetworkNinja, "🥷 Network Ninja",
-                "Complete all network security challenges", "🥷"));
-        
-        achievements.insert(AchievementId::WebWarrior,
-            Achievement::new(AchievementId::WebWarrior, "🌐 Web Warrior", 
-                "Complete all web application security challenges", "🌐"));
-        
-        achievements.insert(AchievementId::OSINTOperative,
-            Achievement::new(AchievementId::OSINTOperative, "🔍 OSINT Operative",
-                "Complete all Open Source Intelligence challenges", "🔍"));
-        
-        achievements.insert(AchievementId::ForensicsExpert,
-            Achievement::new(AchievementId::ForensicsExpert, "🔬 Forensics Expert",
-                "Complete all advanced forensics challenges", "🔬"));
-        
-        // Behavioral achievements 
-        achievements.insert(AchievementId::Persistent,
-            Achievement::new(AchievementId::Persistent, "💪 Persistent",
-                "Play the game across 5 different sessions", "💪"));
-        
-        achievements.insert(AchievementId::ThemeMaster,
-            Achievement::new(AchievementId::ThemeMaster, "🎨 Theme Master", 
-                "Try all available color themes", "🎨"));
-        
-        achievements.insert(AchievementId::CompletePerfection,
-            Achievement::new(AchievementId::CompletePerfection, "💎 Complete Perfection",
-                "Complete all challenges while maintaining 100% sanity", "💎"));
-        
-        achievements.insert(AchievementId::RapidResponse,
-            Achievement::new(AchievementId::RapidResponse, "🚀 Rapid Response",
-                "Complete 3 challenges within 10 minutes", "🚀"));
-        
+        achievements.insert(
+            AchievementId::CryptographyMaster,
+            Achievement::new(
+                AchievementId::CryptographyMaster,
+                "🔐 Cryptography Master",
+                "Complete all cryptography challenges",
+                "🔐",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::NetworkNinja,
+            Achievement::new(
+                AchievementId::NetworkNinja,
+                "🥷 Network Ninja",
+                "Complete all network security challenges",
+                "🥷",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::WebWarrior,
+            Achievement::new(
+                AchievementId::WebWarrior,
+                "🌐 Web Warrior",
+                "Complete all web application security challenges",
+                "🌐",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::OSINTOperative,
+            Achievement::new(
+                AchievementId::OSINTOperative,
+                "🔍 OSINT Operative",
+                "Complete all Open Source Intelligence challenges",
+                "🔍",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::ForensicsExpert,
+            Achievement::new(
+                AchievementId::ForensicsExpert,
+                "🔬 Forensics Expert",
+                "Complete all advanced forensics challenges",
+                "🔬",
+            ),
+        );
+
+        // Behavioral achievements
+        achievements.insert(
+            AchievementId::Persistent,
+            Achievement::new(
+                AchievementId::Persistent,
+                "💪 Persistent",
+                "Play the game across 5 different sessions",
+                "💪",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::ThemeMaster,
+            Achievement::new(
+                AchievementId::ThemeMaster,
+                "🎨 Theme Master",
+                "Try all available color themes",
+                "🎨",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::CompletePerfection,
+            Achievement::new(
+                AchievementId::CompletePerfection,
+                "💎 Complete Perfection",
+                "Complete all challenges while maintaining 100% sanity",
+                "💎",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::RapidResponse,
+            Achievement::new(
+                AchievementId::RapidResponse,
+                "🚀 Rapid Response",
+                "Complete 3 challenges within 10 minutes",
+                "🚀",
+            ),
+        );
+
         // Discovery achievements
-        achievements.insert(AchievementId::SecretSeeker,
-            Achievement::new(AchievementId::SecretSeeker, "🕵️ Secret Seeker",
-                "Discover all hidden easter eggs", "🕵️"));
-        
-        achievements.insert(AchievementId::TerminalMaster,
-            Achievement::new(AchievementId::TerminalMaster, "💻 Terminal Master", 
-                "Use advanced terminal commands and features", "💻"));
-        
-        achievements.insert(AchievementId::TutorialGraduate,
-            Achievement::new(AchievementId::TutorialGraduate, "🎓 Tutorial Graduate",
-                "Complete the tutorial successfully", "🎓"));
-        
+        achievements.insert(
+            AchievementId::SecretSeeker,
+            Achievement::new(
+                AchievementId::SecretSeeker,
+                "🕵️ Secret Seeker",
+                "Discover all hidden easter eggs",
+                "🕵️",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::TerminalMaster,
+            Achievement::new(
+                AchievementId::TerminalMaster,
+                "💻 Terminal Master",
+                "Use advanced terminal commands and features",
+                "💻",
+            ),
+        );
+
+        achievements.insert(
+            AchievementId::TutorialGraduate,
+            Achievement::new(
+                AchievementId::TutorialGraduate,
+                "🎓 Tutorial Graduate",
+                "Complete the tutorial successfully",
+                "🎓",
+            ),
+        );
+
         achievements
     }
-    
+
     pub fn unlock_achievement(&mut self, achievement_id: AchievementId) -> bool {
         if let Some(achievement) = self.achievements.get_mut(&achievement_id) {
             if !achievement.is_unlocked() {
@@ -303,139 +411,185 @@ impl GameState {
         }
         false // Already unlocked or doesn't exist
     }
-    
+
     pub fn is_achievement_unlocked(&self, achievement_id: &AchievementId) -> bool {
-        self.achievements.get(achievement_id)
+        self.achievements
+            .get(achievement_id)
             .map_or(false, |a| a.is_unlocked())
     }
-    
+
     pub fn get_unlocked_achievements(&self) -> Vec<&Achievement> {
-        self.achievements.values()
+        self.achievements
+            .values()
             .filter(|a| a.is_unlocked())
             .collect()
     }
-    
+
     pub fn get_achievement_progress(&self) -> (usize, usize) {
-        let unlocked = self.achievements.values().filter(|a| a.is_unlocked()).count();
+        let unlocked = self
+            .achievements
+            .values()
+            .filter(|a| a.is_unlocked())
+            .count();
         let total = self.achievements.len();
         (unlocked, total)
     }
-    
+
     pub fn check_and_unlock_achievements(&mut self) -> Vec<AchievementId> {
         let mut newly_unlocked = Vec::new();
-        
+
         // Check progress-based achievements
         if self.completed_challenges.len() >= 1 {
             if self.unlock_achievement(AchievementId::FirstBlood) {
                 newly_unlocked.push(AchievementId::FirstBlood);
             }
         }
-        
-        if self.completed_challenges.len() >= 17 { // All challenges including new OSINT ones
+
+        if self.completed_challenges.len() >= 17 {
+            // All challenges including new OSINT ones
             if self.unlock_achievement(AchievementId::GhostHunter) {
                 newly_unlocked.push(AchievementId::GhostHunter);
             }
         }
-        
+
         if self.sanity >= 75 && self.completed_challenges.len() >= 5 {
             if self.unlock_achievement(AchievementId::SanityReserves) {
                 newly_unlocked.push(AchievementId::SanityReserves);
             }
         }
-        
+
         if self.sanity == 100 && self.completed_challenges.len() >= 17 {
             if self.unlock_achievement(AchievementId::CompletePerfection) {
                 newly_unlocked.push(AchievementId::CompletePerfection);
             }
         }
-        
+
         if self.session_count >= 5 {
             if self.unlock_achievement(AchievementId::Persistent) {
                 newly_unlocked.push(AchievementId::Persistent);
             }
         }
-        
-        if self.themes_tried.len() >= 5 { // Assuming 5+ themes available
+
+        if self.themes_tried.len() >= 5 {
+            // Assuming 5+ themes available
             if self.unlock_achievement(AchievementId::ThemeMaster) {
                 newly_unlocked.push(AchievementId::ThemeMaster);
             }
         }
-        
+
         if self.tutorial_completed {
             if self.unlock_achievement(AchievementId::TutorialGraduate) {
                 newly_unlocked.push(AchievementId::TutorialGraduate);
             }
         }
-        
-        if self.discovered_secrets.len() >= 3 { // Assuming 3+ secrets available
+
+        if self.discovered_secrets.len() >= 3 {
+            // Assuming 3+ secrets available
             if self.unlock_achievement(AchievementId::SecretSeeker) {
                 newly_unlocked.push(AchievementId::SecretSeeker);
             }
         }
-        
+
         // Check category-based achievements by analyzing completed challenges
         self.check_category_achievements(&mut newly_unlocked);
-        
+
         newly_unlocked
     }
-    
+
     fn check_category_achievements(&mut self, newly_unlocked: &mut Vec<AchievementId>) {
-        // Count challenges by category (simplified - in real implementation, 
+        // Count challenges by category (simplified - in real implementation,
         // you'd parse challenge IDs or maintain category tracking)
-        
-        let cryptography_challenges = ["caesar_cipher", "rot13_ghost", "md5_collision", "jwt_token"];
+
+        let cryptography_challenges =
+            ["caesar_cipher", "rot13_ghost", "md5_collision", "jwt_token"];
         let network_challenges = ["port_scan", "path_traversal", "command_injection"];
-        let web_challenges = ["sql_injection_basics", "xss_attack", "cors_bypass", "session_hijack"];
-        let osint_challenges = ["osint_social_media", "osint_domain_recon", "osint_email_analysis", 
-                               "osint_geolocation", "osint_breach_investigation"];
-        
-        if cryptography_challenges.iter().all(|c| self.completed_challenges.contains(*c)) {
+        let web_challenges = [
+            "sql_injection_basics",
+            "xss_attack",
+            "cors_bypass",
+            "session_hijack",
+        ];
+        let osint_challenges = [
+            "osint_social_media",
+            "osint_domain_recon",
+            "osint_email_analysis",
+            "osint_geolocation",
+            "osint_breach_investigation",
+        ];
+
+        if cryptography_challenges
+            .iter()
+            .all(|c| self.completed_challenges.contains(*c))
+        {
             if self.unlock_achievement(AchievementId::CryptographyMaster) {
                 newly_unlocked.push(AchievementId::CryptographyMaster);
             }
         }
-        
-        if network_challenges.iter().all(|c| self.completed_challenges.contains(*c)) {
+
+        if network_challenges
+            .iter()
+            .all(|c| self.completed_challenges.contains(*c))
+        {
             if self.unlock_achievement(AchievementId::NetworkNinja) {
                 newly_unlocked.push(AchievementId::NetworkNinja);
             }
         }
-        
-        if web_challenges.iter().all(|c| self.completed_challenges.contains(*c)) {
+
+        if web_challenges
+            .iter()
+            .all(|c| self.completed_challenges.contains(*c))
+        {
             if self.unlock_achievement(AchievementId::WebWarrior) {
                 newly_unlocked.push(AchievementId::WebWarrior);
             }
         }
-        
-        if osint_challenges.iter().all(|c| self.completed_challenges.contains(*c)) {
+
+        if osint_challenges
+            .iter()
+            .all(|c| self.completed_challenges.contains(*c))
+        {
             if self.unlock_achievement(AchievementId::OSINTOperative) {
                 newly_unlocked.push(AchievementId::OSINTOperative);
             }
         }
-        
+
         // Check if user has tried challenges from all categories
-        let has_crypto = cryptography_challenges.iter().any(|c| self.completed_challenges.contains(*c));
-        let has_network = network_challenges.iter().any(|c| self.completed_challenges.contains(*c));
-        let has_web = web_challenges.iter().any(|c| self.completed_challenges.contains(*c));
-        let has_osint = osint_challenges.iter().any(|c| self.completed_challenges.contains(*c));
-        
+        let has_crypto = cryptography_challenges
+            .iter()
+            .any(|c| self.completed_challenges.contains(*c));
+        let has_network = network_challenges
+            .iter()
+            .any(|c| self.completed_challenges.contains(*c));
+        let has_web = web_challenges
+            .iter()
+            .any(|c| self.completed_challenges.contains(*c));
+        let has_osint = osint_challenges
+            .iter()
+            .any(|c| self.completed_challenges.contains(*c));
+
         if has_crypto && has_network && has_web && has_osint {
             if self.unlock_achievement(AchievementId::Explorer) {
                 newly_unlocked.push(AchievementId::Explorer);
             }
         }
     }
-    
+
     pub fn start_challenge(&mut self, challenge_id: &str) {
-        self.challenge_start_times.insert(challenge_id.to_string(), chrono::Utc::now());
+        self.challenge_start_times
+            .insert(challenge_id.to_string(), chrono::Utc::now());
     }
-    
-    pub fn complete_challenge_with_timing(&mut self, challenge_id: &str, reward_xp: i32, hints_used: usize) -> Vec<AchievementId> {
+
+    pub fn complete_challenge_with_timing(
+        &mut self,
+        challenge_id: &str,
+        reward_xp: i32,
+        hints_used: usize,
+    ) -> Vec<AchievementId> {
         // Record completion
         self.complete_challenge(challenge_id, reward_xp);
-        
+
         let mut newly_unlocked = Vec::new();
-        
+
         // Check speed achievement
         if let Some(start_time) = self.challenge_start_times.get(challenge_id) {
             let duration = chrono::Utc::now().signed_duration_since(*start_time);
@@ -445,24 +599,24 @@ impl GameState {
                 }
             }
         }
-        
+
         // Check hint-free achievement
         if hints_used == 0 {
             if self.unlock_achievement(AchievementId::HintFree) {
                 newly_unlocked.push(AchievementId::HintFree);
             }
         }
-        
+
         // Check other achievements
         newly_unlocked.extend(self.check_and_unlock_achievements());
-        
+
         newly_unlocked
     }
-    
+
     pub fn increment_session(&mut self) {
         self.session_count += 1;
     }
-    
+
     pub fn add_theme_tried(&mut self, theme_name: &str) {
         self.themes_tried.insert(theme_name.to_string());
     }

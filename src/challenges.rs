@@ -104,7 +104,7 @@ impl Challenge {
         (self.check_answer)(answer)
     }
 
-    pub fn attempt(&self, state: &mut GameState) -> Result<bool, String> {
+    pub fn attempt(&self, state: &mut GameState) -> std::io::Result<bool> {
         #[cfg(feature = "native")]
         narrative::show_challenge_intro(&self.title, &self.description)?;
 
@@ -125,7 +125,7 @@ impl Challenge {
 
             if input.to_lowercase() == "hint" {
                 if !self.hints.is_empty() {
-                    let _hint_index = attempts.min(self.hints.len() - 1);
+                    let hint_index = attempts.min(self.hints.len() - 1);
                     #[cfg(feature = "native")]
                     narrative::show_hint(&self.hints[hint_index])?;
                 } else {
@@ -144,7 +144,7 @@ impl Challenge {
                 narrative::show_completion_message(self.xp_reward)?;
                 state.complete_challenge(&self.id, self.xp_reward);
                 state.modify_sanity(-self.sanity_cost);
-                state.save().map_err(|e| e.to_string())?;
+                state.save()?;
                 ui::pause()?;
                 return Ok(true);
             } else {
@@ -167,7 +167,7 @@ impl Challenge {
         }
     }
 
-    fn provide_feedback(&self, answer: &str, attempt_num: usize) -> Result<(), String> {
+    fn provide_feedback(&self, answer: &str, attempt_num: usize) -> std::io::Result<()> {
         // Basic feedback - can be enhanced per challenge
         if attempt_num == 1 {
             ui::print_colored("\n❌ Incorrect. ", ui::Color::Red)?;
@@ -211,7 +211,7 @@ impl Challenge {
         Ok(())
     }
 
-    fn show_learning_resources(&self) -> Result<(), String> {
+    fn show_learning_resources(&self) -> std::io::Result<()> {
         ui::print_separator()?;
         ui::print_colored("\n💡 LEARNING RESOURCES:\n", ui::Color::Cyan)?;
 
@@ -1509,7 +1509,7 @@ mod tests {
     #[test]
     fn test_total_challenge_count() {
         let challenges = get_all_challenges();
-        assert_eq!(challenges.len(), 26, "Expected 26 total challenges");
+        assert_eq!(challenges.len(), 31, "Expected 31 total challenges");
     }
 
     #[test]
