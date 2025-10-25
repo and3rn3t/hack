@@ -1394,7 +1394,7 @@ pub fn create_dynamic_challenges() -> Vec<Challenge> {
             check_answer: |answer| {
                 // For dynamic challenges, we need a more flexible validator
                 let a = answer.to_uppercase();
-                a.contains("PROTOCOL") || a.contains("SYSTEM") || a.contains("ACCESS") || 
+                a.contains("PROTOCOL") || a.contains("SYSTEM") || a.contains("ACCESS") ||
                 a.contains("GHOST") || a.contains("SECURE") || a.contains("DATA") ||
                 a.contains("STEALTH") || a.contains("PROXY") || a.contains("ACTIVE") ||
                 a.contains("BREACH") || a.contains("GRANTED") || a.contains("MODE") ||

@@ -1352,8 +1352,6 @@ mod native_ui_impl {
 
     /// Show comprehensive settings menu (v1.2.0)
     pub fn show_settings_menu(state: &mut crate::state::GameState) -> io::Result<()> {
-
-
         loop {
             clear_screen()?;
 
@@ -1892,7 +1890,10 @@ mod native_ui_impl {
                     };
 
                     print_colored(&format!("  Slot {}: ", slot), crate::ui::theme_accent())?;
-                    print_colored(&format!("{} ", metadata.player_name), crate::ui::theme_primary())?;
+                    print_colored(
+                        &format!("{} ", metadata.player_name),
+                        crate::ui::theme_primary(),
+                    )?;
                     print_colored(
                         &format!(
                             "(Lv.{}, {} challenges, {:.1}KB)\n",
