@@ -1369,7 +1369,7 @@ fn generate_random_sql_challenge() -> (String, String) {
     let payloads = ["' OR 1=1--", "' OR 'x'='x", "' UNION SELECT 1--"];
 
     let mut rng = rand::thread_rng();
-    let (user, query_template) = scenarios[rng.gen_range(0..scenarios.len())];
+    let (_user, query_template) = scenarios[rng.gen_range(0..scenarios.len())];
     let payload = payloads[rng.gen_range(0..payloads.len())];
 
     let vulnerable_query = query_template.replace("PASSWORD", &format!("{}{}", "secret", payload));

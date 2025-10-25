@@ -1352,22 +1352,22 @@ mod native_ui_impl {
 
     /// Show comprehensive settings menu (v1.2.0)
     pub fn show_settings_menu(state: &mut crate::state::GameState) -> io::Result<()> {
-        use crate::state::{AnimationSpeed, DifficultyScaling, FontSize, HintVerbosity};
+
 
         loop {
             clear_screen()?;
 
             print_colored(
                 "╔═══════════════════════════════════════════════════════════════════╗\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
             print_colored(
                 "║                          SETTINGS MENU                           ║\n",
-                theme_accent(),
+                crate::ui::theme_accent(),
             )?;
             print_colored(
                 "╚═══════════════════════════════════════════════════════════════════╝\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
 
             println!();
@@ -1459,15 +1459,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                      DIFFICULTY SCALING                          ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
@@ -1514,15 +1514,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                        HINT VERBOSITY                            ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
@@ -1568,15 +1568,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                          FONT SIZE                               ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
@@ -1631,15 +1631,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                      ANIMATION SPEED                             ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
@@ -1691,15 +1691,15 @@ mod native_ui_impl {
 
             print_colored(
                 "╔═══════════════════════════════════════════════════════════════════╗\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
             print_colored(
                 "║                        ALIAS MANAGEMENT                          ║\n",
-                theme_accent(),
+                crate::ui::theme_accent(),
             )?;
             print_colored(
                 "╚═══════════════════════════════════════════════════════════════════╝\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
 
             println!();
@@ -1748,15 +1748,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                         CURRENT ALIASES                          ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         let aliases = state.list_aliases();
@@ -1765,14 +1765,14 @@ mod native_ui_impl {
             print_info("No aliases defined.")?;
             print_colored(
                 "Use 'Add Alias' to create command shortcuts.\n",
-                theme_muted(),
+                crate::ui::theme_muted(),
             )?;
         } else {
             println!();
             for (alias, command) in aliases {
-                print_colored(&format!("  {} ", alias), theme_accent())?;
-                print_colored("→ ", theme_muted())?;
-                print_colored(&format!("{}\n", command), theme_primary())?;
+                print_colored(&format!("  {} ", alias), crate::ui::theme_accent())?;
+                print_colored("→ ", crate::ui::theme_muted())?;
+                print_colored(&format!("{}\n", command), crate::ui::theme_primary())?;
             }
         }
 
@@ -1786,15 +1786,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                           ADD ALIAS                              ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
@@ -1825,15 +1825,15 @@ mod native_ui_impl {
         clear_screen()?;
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             "║                         REMOVE ALIAS                             ║\n",
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         let aliases = state.list_aliases();
@@ -1847,9 +1847,9 @@ mod native_ui_impl {
         println!();
         print_info("Current aliases:")?;
         for (alias, command) in aliases {
-            print_colored(&format!("  {} ", alias), theme_accent())?;
-            print_colored("→ ", theme_muted())?;
-            print_colored(&format!("{}\n", command), theme_primary())?;
+            print_colored(&format!("  {} ", alias), crate::ui::theme_accent())?;
+            print_colored("→ ", crate::ui::theme_muted())?;
+            print_colored(&format!("{}\n", command), crate::ui::theme_primary())?;
         }
 
         println!();
@@ -1869,15 +1869,15 @@ mod native_ui_impl {
 
             print_colored(
                 "╔═══════════════════════════════════════════════════════════════════╗\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
             print_colored(
                 "║                       SAVE SLOT MANAGER                          ║\n",
-                theme_accent(),
+                crate::ui::theme_accent(),
             )?;
             print_colored(
                 "╚═══════════════════════════════════════════════════════════════════╝\n",
-                theme_border(),
+                crate::ui::theme_border(),
             )?;
 
             println!();
@@ -1885,14 +1885,14 @@ mod native_ui_impl {
             // Display all save slots with metadata
             for slot in 0..=4 {
                 if let Some(metadata) = crate::state::GameState::get_slot_metadata(slot) {
-                    let modified = if let Some(time) = metadata.last_modified {
+                    let _modified = if let Some(time) = metadata.last_modified {
                         format!("{:?}", time)
                     } else {
                         "Unknown".to_string()
                     };
 
-                    print_colored(&format!("  Slot {}: ", slot), theme_accent())?;
-                    print_colored(&format!("{} ", metadata.player_name), theme_primary())?;
+                    print_colored(&format!("  Slot {}: ", slot), crate::ui::theme_accent())?;
+                    print_colored(&format!("{} ", metadata.player_name), crate::ui::theme_primary())?;
                     print_colored(
                         &format!(
                             "(Lv.{}, {} challenges, {:.1}KB)\n",
@@ -1900,11 +1900,11 @@ mod native_ui_impl {
                             metadata.completed_challenges,
                             metadata.file_size as f32 / 1024.0
                         ),
-                        theme_muted(),
+                        crate::ui::theme_muted(),
                     )?;
                 } else {
-                    print_colored(&format!("  Slot {}: ", slot), theme_accent())?;
-                    print_colored("Empty\n", theme_muted())?;
+                    print_colored(&format!("  Slot {}: ", slot), crate::ui::theme_accent())?;
+                    print_colored("Empty\n", crate::ui::theme_muted())?;
                 }
             }
 
@@ -2009,7 +2009,7 @@ mod native_ui_impl {
 
         print_colored(
             "╔═══════════════════════════════════════════════════════════════════╗\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
         print_colored(
             &format!(
@@ -2017,17 +2017,17 @@ mod native_ui_impl {
                 " ".repeat(22),
                 " ".repeat(22)
             ),
-            theme_accent(),
+            crate::ui::theme_accent(),
         )?;
         print_colored(
             "╚═══════════════════════════════════════════════════════════════════╝\n",
-            theme_border(),
+            crate::ui::theme_border(),
         )?;
 
         println!();
         print_colored(
             &format!("Challenge: {}\n", challenge.title),
-            theme_primary(),
+            crate::ui::theme_primary(),
         )?;
         println!();
 

@@ -653,7 +653,7 @@ fn show_practice_mode(state: &mut GameState) -> io::Result<()> {
                 ui::pause()?;
 
                 // Practice challenges don't affect main progress but give small XP
-                let mut practice_result = challenge.attempt(state)?;
+                let practice_result = challenge.attempt(state)?;
                 if practice_result {
                     // Give bonus XP for practice
                     state.add_xp(challenge.xp_reward / 2);
@@ -673,7 +673,7 @@ fn show_practice_mode(state: &mut GameState) -> io::Result<()> {
                         ui::pause()?;
 
                         // Practice challenges don't affect main progress but give small XP
-                        let mut practice_result = challenge.attempt(state)?;
+                        let practice_result = challenge.attempt(state)?;
                         if practice_result {
                             // Give bonus XP for practice
                             state.add_xp(challenge.xp_reward / 2);
