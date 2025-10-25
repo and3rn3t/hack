@@ -9,12 +9,16 @@
 
 ### Testing Strategies
 
--   **[TESTING.md](TESTING.md)** - Comprehensive testing guide and best practices
--   **[TESTING_STRATEGY.md](TESTING_STRATEGY.md)** - Overall testing approach and methodology
+- **[TESTING.md](TESTING.md)** - Comprehensive testing guide and best practices
+- **[TESTING_STRATEGY.md](TESTING_STRATEGY.md)** - Overall testing approach and methodology
 
 ### Advanced Testing
 
--   **[ADVANCED_TESTING.md](ADVANCED_TESTING.md)** - Advanced testing tools and techniques
+- **[ADVANCED_TESTING.md](ADVANCED_TESTING.md)** - Advanced testing tools and techniques
+
+### Web Version Testing
+
+- **[WEB_TESTING_STRATEGY.md](WEB_TESTING_STRATEGY.md)** - Comprehensive web testing strategy including WebAssembly, JavaScript, and E2E tests
 
 ---
 
@@ -50,32 +54,32 @@
 
 ### Built-in Tools
 
--   **`cargo test`** - Standard Rust test runner
--   **`cargo bench`** - Performance benchmarking
--   **VS Code Tasks** - 25+ automated testing tasks
+- **`cargo test`** - Standard Rust test runner
+- **`cargo bench`** - Performance benchmarking
+- **VS Code Tasks** - 25+ automated testing tasks
 
 ### External Tools
 
--   **Criterion** - Statistical benchmarking and regression detection
--   **Cargo-mutants** - Mutation testing for test quality validation
--   **Cargo-fuzz** - Fuzzing for edge case discovery
--   **Codecov** - Coverage reporting and analysis
+- **Criterion** - Statistical benchmarking and regression detection
+- **Cargo-mutants** - Mutation testing for test quality validation
+- **Cargo-fuzz** - Fuzzing for edge case discovery
+- **Codecov** - Coverage reporting and analysis
 
 ### Automation Scripts
 
--   **`scripts/quick-check.ps1`** - Fast pre-commit validation
--   **`scripts/test-coverage.ps1`** - Generate comprehensive coverage reports
--   **`scripts/run-benchmarks.ps1`** - Execute full performance test suite
--   **`scripts/run-mutation-tests.ps1`** - Validate test quality
+- **`scripts/quick-check.ps1`** - Fast pre-commit validation
+- **`scripts/test-coverage.ps1`** - Generate comprehensive coverage reports
+- **`scripts/run-benchmarks.ps1`** - Execute full performance test suite
+- **`scripts/run-mutation-tests.ps1`** - Validate test quality
 
 ---
 
 ## 🔗 Related Documentation
 
--   **[Developer Docs](../developer/)** - Implementation guides for testable code
--   **[Infrastructure](../infrastructure/)** - CI/CD pipeline and automation
--   **[Reference](../reference/)** - Configuration and project specifications
--   **[Getting Started](../getting-started/)** - Setup guides including test environment
+- **[Developer Docs](../developer/)** - Implementation guides for testable code
+- **[Infrastructure](../infrastructure/)** - CI/CD pipeline and automation
+- **[Reference](../reference/)** - Configuration and project specifications
+- **[Getting Started](../getting-started/)** - Setup guides including test environment
 
 ---
 

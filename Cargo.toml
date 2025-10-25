@@ -39,6 +39,7 @@ web = ["wasm-bindgen", "web-sys", "js-sys", "console_error_panic_hook"]
 [dev-dependencies]
 proptest = "1.4"
 criterion = "0.5"
+wasm-bindgen-test = "0.3"
 
 [[bench]]
 name = "challenge_benchmarks"
