@@ -9,6 +9,9 @@ let currentTheme = "horror";
 let currentChallenge = null;
 let commandHistory = [];
 let historyIndex = -1;
+let achievements = [];
+let audioContext = null;
+let ambientAudio = null;
 
 // Initialize the game
 async function init() {
@@ -35,6 +38,10 @@ async function init() {
 
         // Load saved game if available
         loadSavedGame();
+
+        // Load achievements and initialize audio
+        loadAchievements();
+        initializeAudio();
 
         updateLoadingProgress(90);
 
@@ -219,6 +226,9 @@ function addToCommandHistory(input) {
 }
 
 function executeCommand(command, args, originalInput) {
+    // Track command usage for achievements
+    trackCommand(command);
+
     const commandHandlers = {
         help: () => showHelpCommand(),
         tutorial: () => showTutorial(),
@@ -236,6 +246,9 @@ function executeCommand(command, args, originalInput) {
         load: () => loadGame(),
         export: () => exportSaveFile(),
         import: () => showImportHelp(),
+        achievements: () => showAchievements(),
+        leaderboard: () => showLeaderboard(),
+        share: () => shareProgress(),
         theme: () => handleThemeCommand(args),
         clear: () => terminal.clear(),
         exit: () =>
@@ -298,7 +311,7 @@ function startGame() {
     terminal.writeln(
         'Type "help" for available commands or "challenges" to see all challenges.'
     );
-    
+
     // Start atmospheric effects
     startAtmosphericEffects();
 
@@ -309,11 +322,12 @@ function startGame() {
 function startAtmosphericEffects() {
     // Occasional subtle glitch effects
     setInterval(() => {
-        if (Math.random() < 0.02 && gameState.sanity < 50) { // 2% chance, only when sanity is low
+        if (Math.random() < 0.02 && gameState.sanity < 50) {
+            // 2% chance, only when sanity is low
             triggerSubtleGlitch();
         }
     }, 5000);
-    
+
     // Sanity-based effects
     setInterval(() => {
         if (gameState.sanity < 25) {
@@ -323,20 +337,21 @@ function startAtmosphericEffects() {
 }
 
 function triggerSubtleGlitch() {
-    document.querySelector('.terminal-container').style.filter = 'hue-rotate(180deg)';
+    document.querySelector(".terminal-container").style.filter =
+        "hue-rotate(180deg)";
     setTimeout(() => {
-        document.querySelector('.terminal-container').style.filter = '';
+        document.querySelector(".terminal-container").style.filter = "";
     }, 100);
 }
 
 function triggerSanityEffect() {
     const messages = [
         "...something watches from the shadows...",
-        "...the code whispers secrets...", 
+        "...the code whispers secrets...",
         "...reality.exe has stopped responding...",
         "...the ghost grows stronger...",
     ];
-    
+
     const msg = messages[Math.floor(Math.random() * messages.length)];
     writeMuted(`\n${msg}\n`);
 }
@@ -370,6 +385,11 @@ function showHelpCommand() {
     terminal.writeln("  clear              - Clear the terminal");
     terminal.writeln("  tutorial           - Show interactive tutorial");
     terminal.writeln("  progress           - Show detailed progress report");
+    terminal.writeln("  achievements       - View unlocked achievements");
+    terminal.writeln("");
+    writeAccent("Community:");
+    terminal.writeln("  leaderboard        - View community leaderboard");
+    terminal.writeln("  share              - Share your progress");
 }
 
 function showTutorial() {
@@ -377,20 +397,24 @@ function showTutorial() {
     terminal.writeln("");
     writeAccent("Welcome to The Hack: Ghost Protocol!");
     terminal.writeln("");
-    
-    writeMuted("This is a horror-themed cybersecurity challenge game where you'll learn:");
+
+    writeMuted(
+        "This is a horror-themed cybersecurity challenge game where you'll learn:"
+    );
     terminal.writeln("• Base64 and other encoding techniques");
-    terminal.writeln("• Cryptography and hash functions");  
+    terminal.writeln("• Cryptography and hash functions");
     terminal.writeln("• Web security vulnerabilities");
     terminal.writeln("• Digital forensics methods");
     terminal.writeln("• Binary exploitation basics");
     terminal.writeln("");
-    
+
     writeWarning("⚠️  SANITY SYSTEM:");
-    writeMuted("You start with 100 sanity points. Each challenge costs sanity.");
+    writeMuted(
+        "You start with 100 sanity points. Each challenge costs sanity."
+    );
     writeMuted("If your sanity reaches 0, the ghost will consume your mind!");
     terminal.writeln("");
-    
+
     writeSuccess("💡 GETTING STARTED:");
     terminal.writeln('• Type "challenges" to see available challenges');
     terminal.writeln('• Use "challenge <number>" to start a challenge');
@@ -398,36 +422,52 @@ function showTutorial() {
     terminal.writeln('• Get hints with "hint" if you\'re stuck');
     terminal.writeln('• Use "skip" to skip a challenge (costs sanity)');
     terminal.writeln("");
-    
+
     writeAccent("The ghost is waiting... Begin when ready.");
 }
 
 function showProgressCommand() {
     const challengesJson = gameEngine.get_challenges_json();
     const allChallenges = JSON.parse(challengesJson);
-    
+
     writeInfo("📊 Your Progress:");
     terminal.writeln("");
-    
+
     const completedCount = gameState.completed_challenges.length;
     const totalCount = allChallenges.length;
     const completionPercent = Math.round((completedCount / totalCount) * 100);
-    
-    writeSuccess(`Challenges Completed: ${completedCount}/${totalCount} (${completionPercent}%)`);
-    
+
+    writeSuccess(
+        `Challenges Completed: ${completedCount}/${totalCount} (${completionPercent}%)`
+    );
+
     // Progress by level
     for (let level = 0; level <= 4; level++) {
-        const levelChallenges = allChallenges.filter(c => c.level === level);
-        const levelCompleted = levelChallenges.filter(c => 
-            gameState.completed_challenges.includes(c.id)).length;
-        const levelName = ["Beginner", "Intermediate", "Advanced", "Expert", "Master"][level];
-        
-        const bar = "█".repeat(Math.floor(levelCompleted / levelChallenges.length * 10)) + 
-                   "░".repeat(10 - Math.floor(levelCompleted / levelChallenges.length * 10));
-        
-        terminal.writeln(`Level ${level} (${levelName}): [${bar}] ${levelCompleted}/${levelChallenges.length}`);
+        const levelChallenges = allChallenges.filter((c) => c.level === level);
+        const levelCompleted = levelChallenges.filter((c) =>
+            gameState.completed_challenges.includes(c.id)
+        ).length;
+        const levelName = [
+            "Beginner",
+            "Intermediate",
+            "Advanced",
+            "Expert",
+            "Master",
+        ][level];
+
+        const bar =
+            "█".repeat(
+                Math.floor((levelCompleted / levelChallenges.length) * 10)
+            ) +
+            "░".repeat(
+                10 - Math.floor((levelCompleted / levelChallenges.length) * 10)
+            );
+
+        terminal.writeln(
+            `Level ${level} (${levelName}): [${bar}] ${levelCompleted}/${levelChallenges.length}`
+        );
     }
-    
+
     terminal.writeln("");
     writeWarning(`Sanity: ${gameState.sanity}/100`);
     writeAccent(`Experience: ${gameState.xp} XP (Level ${gameState.level})`);
@@ -436,16 +476,53 @@ function showProgressCommand() {
 function showStatsCommand() {
     const stats = JSON.parse(gameState.get_stats_json());
 
-    writeInfo("Player Statistics:");
+    writeInfo("📊 Player Statistics:");
     terminal.writeln("");
-    terminal.writeln(`Level: ${stats.level}`);
-    terminal.writeln(`Experience: ${stats.xp}`);
-    terminal.writeln(`Sanity: ${stats.sanity}/100`);
-    terminal.writeln(
-        `Challenges Completed: ${stats.completed_challenges.length}`
-    );
-    terminal.writeln(`Total Attempts: ${stats.total_attempts || 0}`);
-    terminal.writeln(`Hints Used: ${stats.hints_used || 0}`);
+
+    // Level and XP with visual bar
+    writeAccent(`🎯 Level: ${stats.level}`);
+    const xpProgress = Math.min(stats.xp / 100, 1) * 20; // Scale to 20 chars
+    const xpBar = "█".repeat(Math.floor(xpProgress)) + "░".repeat(20 - Math.floor(xpProgress));
+    terminal.writeln(`   XP: ${stats.xp} [${xpBar}]`);
+    // Sanity with colored bar
+    const sanityPercent = stats.sanity;
+    const sanityProgress = Math.floor(sanityPercent / 5); // 20 segments
+    const sanityBar = "█".repeat(sanityProgress) + "░".repeat(20 - sanityProgress);
+    const sanityColor = sanityPercent > 60 ? "🟢" : sanityPercent > 30 ? "🟡" : "🔴";
+    writeAccent(`🧠 Sanity: ${stats.sanity}/100 ${sanityColor}`);
+    terminal.writeln(`   [${sanityBar}]`);
+    terminal.writeln("");
+
+    // Challenge completion
+    writeAccent(`🎮 Challenges Completed: ${stats.completed_challenges.length}/11`);
+    const challengeProgress = Math.floor((stats.completed_challenges.length / 11) * 20);
+    const challengeBar = "█".repeat(challengeProgress) + "░".repeat(20 - challengeProgress);
+    terminal.writeln(`   [${challengeBar}]`);
+    terminal.writeln("");
+
+    // Performance metrics
+    writeAccent("📈 Performance Metrics:");
+    terminal.writeln(`   Total Attempts: ${stats.total_attempts || 0}`);
+    terminal.writeln(`   Hints Used: ${stats.hints_used || 0}`);
+    const efficiency = stats.completed_challenges.length > 0 ?
+        ((stats.total_attempts || 0) / stats.completed_challenges.length).toFixed(1) : "N/A";
+    terminal.writeln(`   Avg Attempts per Challenge: ${efficiency}`);
+    terminal.writeln("");
+
+    // Achievement summary
+    const unlockedCount = achievements.length;
+    const totalAchievements = Object.keys(ACHIEVEMENTS).length;
+    writeAccent(`🏆 Achievements: ${unlockedCount}/${totalAchievements} unlocked`);
+
+    if (unlockedCount > 0) {
+        terminal.writeln("   Recent achievements:");
+        achievements.slice(-3).forEach(id => {
+            const achievement = ACHIEVEMENTS[id];
+            if (achievement) {
+                writeMuted(`   • ${achievement.title}`);
+            }
+        });
+    }
 }
 
 function showChallengesCommand(level) {
@@ -490,6 +567,9 @@ function startChallenge(challengeId) {
 
     currentChallenge = challenge;
 
+    // Track challenge start for achievements
+    trackChallengeStart();
+
     terminal.writeln("");
     writeHorrorText("═".repeat(60));
     writeAccent(`CHALLENGE: ${challenge.title}`);
@@ -526,6 +606,10 @@ function submitAnswer(answer) {
 
     if (result.success) {
         writeSuccess(result.message);
+
+        // Track achievement for successful challenge completion
+        trackChallengeComplete(true);
+
         if (result.leveled_up) {
             writeAccent(`🎉 LEVEL UP! You are now level ${result.new_level}!`);
             triggerHorrorEffect();
@@ -547,6 +631,9 @@ function showHint() {
         writeError("No active challenge.");
         return;
     }
+
+    // Track hint usage for achievements
+    challengeHintCount++;
 
     // Get hints from challenge JSON data
     const hints = currentChallenge.hints || [];
@@ -735,18 +822,75 @@ function getTerminalTheme() {
             cursor: "#00aaff",
             selection: "#001a33",
         },
+        matrix: {
+            background: "#000000",
+            foreground: "#00ff00",
+            cursor: "#00ff00",
+            selection: "#002200",
+            brightGreen: "#00ff00",
+        },
+        cyberpunk: {
+            background: "#0d1117",
+            foreground: "#ff00ff",
+            cursor: "#00ffff",
+            selection: "#330033",
+            cyan: "#00ffff",
+            magenta: "#ff00ff",
+        },
+        retro: {
+            background: "#000000",
+            foreground: "#ffb000",
+            cursor: "#ffb000",
+            selection: "#332200",
+        },
+        contrast: {
+            background: "#000000",
+            foreground: "#ffffff",
+            cursor: "#ffffff",
+            selection: "#ffffff",
+        },
+        midnight: {
+            background: "#0f1419",
+            foreground: "#c7d2fe",
+            cursor: "#818cf8",
+            selection: "#312e81",
+        },
     };
 
     return themes[currentTheme] || themes.horror;
 }
 
 function changeTheme(themeName) {
-    if (["horror", "green", "blue"].includes(themeName)) {
+    const availableThemes = [
+        "horror",
+        "green",
+        "blue",
+        "matrix",
+        "cyberpunk",
+        "retro",
+        "contrast",
+        "midnight",
+    ];
+
+    if (availableThemes.includes(themeName)) {
         currentTheme = themeName;
         if (terminal) {
             terminal.options.theme = getTerminalTheme();
         }
         writeSuccess(`Theme changed to: ${themeName}`);
+
+        // Track theme achievement
+        const usedThemes = JSON.parse(
+            localStorage.getItem("usedThemes") || "[]"
+        );
+        if (!usedThemes.includes(themeName)) {
+            usedThemes.push(themeName);
+            localStorage.setItem("usedThemes", JSON.stringify(usedThemes));
+
+            if (usedThemes.length >= availableThemes.length) {
+                unlockAchievement("theme_master");
+            }
+        }
     } else {
         showThemes();
     }
@@ -754,9 +898,14 @@ function changeTheme(themeName) {
 
 function showThemes() {
     writeInfo("Available themes:");
-    terminal.writeln("  horror - Red and white horror theme");
-    terminal.writeln("  green  - Classic green terminal theme");
-    terminal.writeln("  blue   - Cool blue terminal theme");
+    terminal.writeln("  horror     - 🩸 Red and white horror theme");
+    terminal.writeln("  green      - 🟢 Classic green terminal theme");
+    terminal.writeln("  blue       - 🔵 Cool blue terminal theme");
+    terminal.writeln("  matrix     - 💚 Classic Matrix green theme");
+    terminal.writeln("  cyberpunk  - 💜 Neon pink and cyan theme");
+    terminal.writeln("  retro      - 🟨 Amber on black retro theme");
+    terminal.writeln("  contrast   - ⚫ High contrast accessibility theme");
+    terminal.writeln("  midnight   - 🌙 Dark blue midnight theme");
     terminal.writeln("Usage: theme <name>");
 }
 
@@ -822,7 +971,9 @@ function exportSaveFile() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `hack_simulator_save_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `hack_simulator_save_${
+            new Date().toISOString().split("T")[0]
+        }.json`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -841,20 +992,20 @@ function showImportHelp() {
     writeMuted("2. Visit this page on another device");
     writeMuted("3. Drag and drop your .json save file onto the terminal");
     writeMuted("4. Or use the file input that will appear...");
-    
+
     // Create hidden file input
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = ".json";
     fileInput.style.display = "none";
-    
+
     fileInput.addEventListener("change", (event) => {
         const file = event.target.files[0];
         if (file) {
             importSaveFile(file);
         }
     });
-    
+
     document.body.appendChild(fileInput);
     fileInput.click();
     setTimeout(() => fileInput.remove(), 1000);
@@ -864,18 +1015,256 @@ async function importSaveFile(file) {
     try {
         const saveData = await file.text();
         JSON.parse(saveData); // Validate JSON
-        
+
         // Backup current save
         const currentSave = localStorage.getItem("hackSimulatorSave");
         if (currentSave) {
             localStorage.setItem("hackSimulatorSave_backup", currentSave);
         }
-        
+
         localStorage.setItem("hackSimulatorSave", saveData);
         location.reload(); // Reload to apply new save
     } catch (error) {
         writeError("Invalid save file format: " + error.message);
     }
+}
+
+// Achievement System
+const ACHIEVEMENTS = {
+    first_blood: {
+        id: "first_blood",
+        title: "🩸 First Blood",
+        description: "Complete your first challenge",
+        condition: (stats) => stats.challengesCompleted >= 1,
+    },
+    speed_demon: {
+        id: "speed_demon",
+        title: "⚡ Speed Demon",
+        description: "Complete a challenge in under 30 seconds",
+        hidden: true,
+    },
+    hint_free: {
+        id: "hint_free",
+        title: "🧠 Hint-Free Hero",
+        description: "Complete a challenge without using hints",
+        hidden: true,
+    },
+    sanity_saver: {
+        id: "sanity_saver",
+        title: "🧘 Sanity Saver",
+        description: "Complete a level with over 80% sanity remaining",
+        hidden: true,
+    },
+    ghost_hunter: {
+        id: "ghost_hunter",
+        title: "👻 Ghost Hunter",
+        description: "Complete all challenges in the game",
+        condition: (stats) => stats.challengesCompleted >= 11,
+    },
+    explorer: {
+        id: "explorer",
+        title: "🗺️ Digital Explorer",
+        description: "Try at least 5 different commands",
+        hidden: true,
+    },
+    persistent: {
+        id: "persistent",
+        title: "🔄 Persistent Hacker",
+        description: "Fail a challenge 3 times but still complete it",
+        hidden: true,
+    },
+    theme_master: {
+        id: "theme_master",
+        title: "🎨 Theme Master",
+        description: "Try all available color themes",
+        hidden: true,
+    },
+};
+
+function checkAchievements() {
+    const stats = {
+        challengesCompleted: gameState.get_completed_challenges().length,
+        sanity: gameState.get_sanity(),
+        level: gameState.get_level(),
+    };
+
+    for (const achievement of Object.values(ACHIEVEMENTS)) {
+        if (achievement.condition && !achievements.includes(achievement.id)) {
+            if (achievement.condition(stats)) {
+                unlockAchievement(achievement.id);
+            }
+        }
+    }
+}
+
+function unlockAchievement(achievementId) {
+    if (achievements.includes(achievementId)) return;
+
+    achievements.push(achievementId);
+    const achievement = ACHIEVEMENTS[achievementId];
+
+    // Show achievement notification
+    showAchievementNotification(achievement);
+
+    // Save achievements
+    localStorage.setItem(
+        "hackSimulatorAchievements",
+        JSON.stringify(achievements)
+    );
+
+    // Play achievement sound
+    playAchievementSound();
+}
+
+function showAchievementNotification(achievement) {
+    writeAccent(`\n🏆 ACHIEVEMENT UNLOCKED! 🏆`);
+    writeSuccess(`${achievement.title}`);
+    writeMuted(`${achievement.description}\n`);
+}
+
+function showAchievements() {
+    writeInfo("🏆 Achievements");
+    terminal.writeln("");
+
+    let unlockedCount = 0;
+    for (const achievement of Object.values(ACHIEVEMENTS)) {
+        const unlocked = achievements.includes(achievement.id);
+        if (unlocked) unlockedCount++;
+
+        if (unlocked || !achievement.hidden) {
+            const status = unlocked ? "✅" : "🔒";
+            const title = unlocked ? achievement.title : "???";
+            const desc = unlocked
+                ? achievement.description
+                : "Keep playing to unlock!";
+
+            terminal.writeln(`  ${status} ${title}`);
+            writeMuted(`     ${desc}`);
+            terminal.writeln("");
+        }
+    }
+
+    writeAccent(
+        `Progress: ${unlockedCount}/${
+            Object.keys(ACHIEVEMENTS).length
+        } achievements unlocked`
+    );
+}
+
+function loadAchievements() {
+    const saved = localStorage.getItem("hackSimulatorAchievements");
+    if (saved) {
+        achievements = JSON.parse(saved);
+    }
+}
+
+// Achievement tracking helpers
+let challengeStartTime = null;
+let challengeHintCount = 0;
+let commandsUsed = new Set();
+
+function trackChallengeStart() {
+    challengeStartTime = Date.now();
+    challengeHintCount = 0;
+}
+
+function trackCommand(command) {
+    commandsUsed.add(command);
+    if (commandsUsed.size >= 5) {
+        unlockAchievement("explorer");
+    }
+}
+
+function trackChallengeComplete(success) {
+    if (!success || !challengeStartTime) return;
+
+    const timeElapsed = Date.now() - challengeStartTime;
+
+    // Speed achievement
+    if (timeElapsed < 30000) {
+        unlockAchievement("speed_demon");
+    }
+
+    // Hint-free achievement
+    if (challengeHintCount === 0) {
+        unlockAchievement("hint_free");
+    }
+
+    // Sanity saver (check after level completion)
+    if (gameState.get_sanity() > 80 && gameState.get_level() > 0) {
+        unlockAchievement("sanity_saver");
+    }
+
+    checkAchievements();
+}
+
+// Audio System
+function initializeAudio() {
+    try {
+        audioContext = new (globalThis.AudioContext ||
+            globalThis.webkitAudioContext)();
+        startAmbientAudio();
+    } catch (error) {
+        console.log("Audio not available:", error);
+    }
+}
+
+function playAchievementSound() {
+    if (!audioContext) return;
+
+    // Create a simple success tone
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.5
+    );
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+function startAmbientAudio() {
+    if (!audioContext || gameState.get_sanity() > 70) return;
+
+    // Create subtle ambient horror sounds based on sanity level
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    const filter = audioContext.createBiquadFilter();
+
+    oscillator.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.type = "sawtooth";
+    oscillator.frequency.setValueAtTime(60, audioContext.currentTime);
+
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(200, audioContext.currentTime);
+
+    const sanityLevel = gameState.get_sanity() / 100;
+    gainNode.gain.setValueAtTime(
+        0.02 * (1 - sanityLevel),
+        audioContext.currentTime
+    );
+
+    oscillator.start();
+
+    // Stop after 10 seconds, restart randomly
+    setTimeout(() => {
+        oscillator.stop();
+        if (Math.random() < 0.3) {
+            setTimeout(startAmbientAudio, Math.random() * 20000 + 10000);
+        }
+    }, 10000);
 }
 
 // Add drag and drop support for save files
@@ -886,11 +1275,64 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
     e.preventDefault();
     const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].name.endsWith('.json')) {
+    if (files.length > 0 && files[0].name.endsWith(".json")) {
         writeInfo("Importing save file...");
         importSaveFile(files[0]);
     }
 });
+
+// Social Features
+function showLeaderboard() {
+    writeInfo("🏆 Community Leaderboard");
+    terminal.writeln("");
+    
+    writeMuted("📊 Anonymous leaderboard coming soon!");
+    terminal.writeln("");
+    writeMuted("Your stats (local only):");
+    const stats = JSON.parse(gameState.get_stats_json());
+    terminal.writeln(`• Challenges completed: ${stats.completed_challenges.length}/11`);
+    terminal.writeln(`• Current level: ${stats.level}`);
+    terminal.writeln(`• Achievements unlocked: ${achievements.length}/${Object.keys(ACHIEVEMENTS).length}`);
+    terminal.writeln("");
+    
+    writeMuted("🔒 Your privacy is protected - we never collect personal data!");
+    writeMuted("🎮 Keep playing to improve your ranking!");
+}
+
+function shareProgress() {
+    const stats = JSON.parse(gameState.get_stats_json());
+    const completionPercent = Math.floor((stats.completed_challenges.length / 11) * 100);
+    const achievementCount = achievements.length;
+    
+    const shareText = `🎮 I'm playing The Hack: Ghost Protocol! 
+📊 Progress: ${completionPercent}% complete (${stats.completed_challenges.length}/11 challenges)
+🏆 Achievements: ${achievementCount}/${Object.keys(ACHIEVEMENTS).length} unlocked
+💀 Sanity: ${stats.sanity}/100
+
+Try it yourself at hack.andernet.dev - A horror-themed cybersecurity CTF game! 👻`;
+
+    // Copy to clipboard
+    try {
+        navigator.clipboard.writeText(shareText).then(() => {
+            writeSuccess("📋 Progress shared to clipboard!");
+            writeMuted("Paste this anywhere to share your achievements!");
+        }).catch(() => {
+            // Fallback: show the text for manual copying
+            showShareText(shareText);
+        });
+    } catch (error) {
+        showShareText(shareText);
+    }
+}
+
+function showShareText(text) {
+    writeInfo("📢 Share Your Progress:");
+    terminal.writeln("");
+    writeMuted("Copy this text to share:");
+    terminal.writeln("─".repeat(50));
+    terminal.writeln(text);
+    terminal.writeln("─".repeat(50));
+}
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", init);
