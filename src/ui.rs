@@ -14,8 +14,9 @@ pub use crossterm::style::Color;
 
 // Define our own Color enum for web builds
 #[cfg(feature = "web")]
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Color {
+    Reset,
     Black,
     Red,
     Green,
@@ -32,6 +33,8 @@ pub enum Color {
     DarkMagenta,
     DarkCyan,
     White,
+    Rgb { r: u8, g: u8, b: u8 },
+    AnsiValue(u8),
 }
 
 #[cfg(feature = "web")]
