@@ -39,7 +39,7 @@ async function init() {
         // Load saved game if available
         loadSavedGame();
 
-        // Load achievements and initialize audio
+        // Load achievements and initialize audio (without ambient sounds yet)
         loadAchievements();
         initializeAudio();
 
@@ -312,8 +312,13 @@ function startGame() {
         'Type "help" for available commands or "challenges" to see all challenges.'
     );
 
-    // Start atmospheric effects
+    // Start atmospheric effects and ambient audio
     startAtmosphericEffects();
+    
+    // Start ambient audio now that everything is initialized
+    if (audioContext) {
+        setTimeout(() => startAmbientAudio(), 2000); // Delay slightly for better UX
+    }
 
     updateUI();
     showPrompt();
@@ -322,16 +327,27 @@ function startGame() {
 function startAtmosphericEffects() {
     // Occasional subtle glitch effects
     setInterval(() => {
-        if (Math.random() < 0.02 && gameState.sanity < 50) {
-            // 2% chance, only when sanity is low
-            triggerSubtleGlitch();
+        if (Math.random() < 0.02 && gameState && typeof gameState.get_sanity === 'function') {
+            try {
+                if (gameState.get_sanity() < 50) {
+                    triggerSubtleGlitch();
+                }
+            } catch (error) {
+                // Silently ignore if sanity can't be retrieved
+            }
         }
     }, 5000);
 
     // Sanity-based effects
     setInterval(() => {
-        if (gameState.sanity < 25) {
-            triggerSanityEffect();
+        if (gameState && typeof gameState.get_sanity === 'function') {
+            try {
+                if (gameState.get_sanity() < 25) {
+                    triggerSanityEffect();
+                }
+            } catch (error) {
+                // Silently ignore if sanity can't be retrieved
+            }
         }
     }, 10000);
 }
@@ -1203,7 +1219,7 @@ function initializeAudio() {
     try {
         audioContext = new (globalThis.AudioContext ||
             globalThis.webkitAudioContext)();
-        startAmbientAudio();
+        // Don't start ambient audio immediately - wait for game to fully initialize
     } catch (error) {
         console.log("Audio not available:", error);
     }
@@ -1233,7 +1249,14 @@ function playAchievementSound() {
 }
 
 function startAmbientAudio() {
-    if (!audioContext || gameState.get_sanity() > 70) return;
+    if (!audioContext || !gameState || typeof gameState.get_sanity !== 'function') return;
+    
+    try {
+        if (gameState.get_sanity() > 70) return;
+    } catch (error) {
+        console.log("Could not get sanity level for ambient audio:", error);
+        return;
+    }
 
     // Create subtle ambient horror sounds based on sanity level
     const oscillator = audioContext.createOscillator();
@@ -1250,7 +1273,7 @@ function startAmbientAudio() {
     filter.type = "lowpass";
     filter.frequency.setValueAtTime(200, audioContext.currentTime);
 
-    const sanityLevel = gameState.get_sanity() / 100;
+    const sanityLevel = gameState && typeof gameState.get_sanity === 'function' ? gameState.get_sanity() / 100 : 0.5;
     gainNode.gain.setValueAtTime(
         0.02 * (1 - sanityLevel),
         audioContext.currentTime
