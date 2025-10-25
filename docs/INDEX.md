@@ -80,6 +80,14 @@ Comprehensive configuration documentation:
 | [docs/CI_CD_PIPELINE.md](CI_CD_PIPELINE.md)                                                     | Complete CI/CD documentation          | Developers/Maintainers   |
 | [.github/instructions/copilot-instructions.md](../.github/instructions/copilot-instructions.md) | AI coding assistant guidance          | Developers using Copilot |
 
+### 🎯 Developer-Focused Guides (New!)
+
+| Document                                                          | Description                                             | Audience                        |
+| ----------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------- |
+| [docs/CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md)       | Complete guide to designing and implementing challenges | Challenge Creators              |
+| [docs/API_DOCUMENTATION.md](API_DOCUMENTATION.md)                 | Comprehensive API reference for extensibility           | Library Users/Plugin Developers |
+| [docs/DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md) | Advanced debugging and problem-solving guide            | Developers/Maintainers          |
+
 ### Features & User Experience
 
 | Document                                      | Description                            | Audience           |
@@ -154,6 +162,27 @@ Comprehensive configuration documentation:
 2. Deep dive with [CONFIGURATION.md](CONFIGURATION.md)
 3. Check specific config files
 4. Ask in [Discussions](https://github.com/and3rn3t/hack/discussions)
+
+#### Create Advanced Challenges
+
+1. Read [CHALLENGE_DESIGN_GUIDE.md](CHALLENGE_DESIGN_GUIDE.md) - Complete creation guide
+2. Study existing challenges in `src/challenges.rs`
+3. Use [challenge proposal template](../.github/ISSUE_TEMPLATE/challenge_proposal.md)
+4. Test thoroughly before submitting
+
+#### Extend the Framework
+
+1. Study [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Complete API reference
+2. Check extension points and plugin architecture
+3. See integration examples for common patterns
+4. Follow plugin development workflow
+
+#### Debug Issues
+
+1. Check [DEVELOPER_TROUBLESHOOTING.md](DEVELOPER_TROUBLESHOOTING.md) - Complete debugging guide
+2. Run diagnostics and environment checks
+3. Use performance monitoring tools
+4. Follow systematic debugging workflow
 
 #### Report a Security Issue
 
