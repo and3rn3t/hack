@@ -32,7 +32,7 @@ console_error_panic_hook = { version = "0.1", optional = true }
 wee_alloc = { version = "0.4", optional = true }
 
 # Terminal dependencies (only for native builds)
-crossterm = { version = "0.27", optional = true }
+crossterm = { version = "0.29", optional = true }
 
 [features]
 default = ["native"]
