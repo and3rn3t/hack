@@ -817,13 +817,13 @@ mod native_ui_impl {
 
     pub fn print_glitch_effect(text: &str) -> io::Result<()> {
         use rand::Rng;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         for ch in text.chars() {
-            if rng.gen_bool(0.95) {
+            if rng.random_bool(0.95) {
                 print!("{}", ch);
             } else {
-                print!("{}", rng.gen_range('!'..='~'));
+                print!("{}", rng.random_range('!'..='~'));
             }
             io::stdout().flush()?;
             std::thread::sleep(std::time::Duration::from_millis(20));
@@ -955,10 +955,10 @@ mod native_ui_impl {
     /// Trigger a random jumpscare with configurable probability
     pub fn random_jumpscare(probability: f64) -> io::Result<()> {
         use rand::Rng;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        if rng.gen_bool(probability) {
-            let jumpscare_type = rng.gen_range(0..8);
+        if rng.random_bool(probability) {
+            let jumpscare_type = rng.random_range(0..8);
             match jumpscare_type {
                 0 => jumpscare_ghost_face()?,
                 1 => jumpscare_screen_shake()?,
@@ -1023,17 +1023,17 @@ mod native_ui_impl {
             "IT'S TOO LATE",
         ];
 
-        use rand::{seq::SliceRandom, Rng};
-        let mut rng = rand::thread_rng();
+        use rand::prelude::{IndexedRandom, Rng};
+        let mut rng = rand::rng();
         let message = messages.choose(&mut rng).unwrap();
 
         for _ in 0..10 {
             clear_screen()?;
-            let offset = rng.gen_range(0..5);
+            let offset = rng.random_range(0..5);
             println!("{}", "\n".repeat(offset));
 
-            for _ in 0..rng.gen_range(0..3) {
-                print!("{}", " ".repeat(rng.gen_range(0..20)));
+            for _ in 0..rng.random_range(0..3) {
+                print!("{}", " ".repeat(rng.random_range(0..20)));
             }
 
             print_colored(message, Color::Red)?;
@@ -1054,13 +1054,13 @@ mod native_ui_impl {
         println!("\n\n\n");
 
         use rand::Rng;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         for _ in 0..5 {
             print!("        ");
             for ch in text.chars() {
-                if rng.gen_bool(0.3) {
-                    let glitch_char = rng.gen_range('!'..='~');
+                if rng.random_bool(0.3) {
+                    let glitch_char = rng.random_range('!'..='~');
                     print_colored(&glitch_char.to_string(), Color::Red)?;
                 } else {
                     print_colored(&ch.to_string(), Color::White)?;
@@ -1143,16 +1143,16 @@ mod native_ui_impl {
     /// Static interference effect
     fn jumpscare_static() -> io::Result<()> {
         use rand::Rng;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
         clear_screen()?;
 
         for _ in 0..15 {
             for _ in 0..20 {
                 let chars = ['░', '▒', '▓', '█', ' ', '·', '∴'];
-                let ch = chars[rng.gen_range(0..chars.len())];
+                let ch = chars[rng.random_range(0..chars.len())];
 
-                let color = if rng.gen_bool(0.1) {
+                let color = if rng.random_bool(0.1) {
                     Color::Red
                 } else {
                     Color::DarkGrey
@@ -1180,8 +1180,8 @@ mod native_ui_impl {
             "join us...",
         ];
 
-        use rand::seq::SliceRandom;
-        let mut rng = rand::thread_rng();
+        use rand::prelude::IndexedRandom;
+        let mut rng = rand::rng();
         let whisper = whispers.choose(&mut rng).unwrap();
 
         clear_screen()?;
@@ -1232,10 +1232,10 @@ mod native_ui_impl {
     /// Subtle jumpscare - just a brief distortion (lower intensity)
     pub fn subtle_jumpscare() -> io::Result<()> {
         use rand::Rng;
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        if rng.gen_bool(0.15) {
-            match rng.gen_range(0..3) {
+        if rng.random_bool(0.15) {
+            match rng.random_range(0..3) {
                 0 => {
                     // Brief text corruption
                     print_colored("█", Color::Red)?;

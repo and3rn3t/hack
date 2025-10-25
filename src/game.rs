@@ -645,8 +645,8 @@ fn show_practice_mode(state: &mut GameState) -> io::Result<()> {
             "back" => break,
             "random" => {
                 use rand::Rng;
-                let mut rng = rand::thread_rng();
-                let idx = rng.gen_range(0..dynamic_challenges.len());
+                let mut rng = rand::rng();
+                let idx = rng.random_range(0..dynamic_challenges.len());
                 let challenge = &dynamic_challenges[idx];
 
                 ui::print_info(&format!("Randomly selected: {}", challenge.title))?;

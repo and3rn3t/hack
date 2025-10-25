@@ -228,8 +228,8 @@ pub fn show_completion_message(xp_earned: i32) -> io::Result<()> {
         "A ghost nods in approval before fading away...",
     ];
 
-    use rand::seq::SliceRandom;
-    let mut rng = rand::thread_rng();
+    use rand::prelude::IndexedRandom;
+    let mut rng = rand::rng();
     if let Some(msg) = messages.choose(&mut rng) {
         ui::print_colored(&format!("💀 {}\n", msg), Color::Magenta)?;
     }

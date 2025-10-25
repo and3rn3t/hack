@@ -1008,6 +1008,187 @@ What critical security practice was missing from their password storage?
                 "The answer is: salt (or salting)".to_string(),
             ],
         ),
+        Challenge::new_legacy(
+            "osint_username_recon",
+            "Digital Identity Hunt",
+            r#"You're tracking a person of interest using username enumeration.
+Their primary username "Gh0stRunner42" appears on multiple platforms:
+
+Platform Analysis:
+- GitHub: gh0strunner42 (joined 2019, 847 contributions)
+- Twitter: @GhostRunner_42 (since 2018, 2.3K followers)
+- Reddit: u/Gh0stRunner42 (4 year account, 15K karma)
+- LinkedIn: Different name but email visible: gr42@protonmail.com
+
+Cross-referencing the email prefix "gr42" with their other usernames
+reveals a pattern. What technique are you using to link these accounts?
+(Answer: Two words, first word is 'username')"#,
+            2,
+            110,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "username enumeration"
+                    || a == "username recon"
+                    || a == "username reconnaissance"
+            },
+            vec![
+                "This OSINT technique involves searching for the same username across platforms."
+                    .to_string(),
+                "Also called account correlation or identity aggregation.".to_string(),
+                "The answer is: username enumeration".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_wayback_machine",
+            "Echoes from the Past",
+            r#"A suspicious company suddenly changed their website after a scandal.
+The current site at "secure-crypto-vault.com" shows:
+
+Current Version (2024):
+"We have always prioritized security and never had any breaches."
+
+But using the Internet Archive's Wayback Machine, you find a cached
+version from 2023:
+
+Archived Version (2023):
+"UPDATE: We experienced a security incident on May 15, 2023.
+ Approximately 10,000 user accounts were affected."
+
+This directly contradicts their current claims. What is this web archive
+service commonly called? (Answer: Two words, commonly abbreviated as WBM)"#,
+            2,
+            110,
+            10,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ");
+                a == "wayback machine"
+                    || a == "internet archive"
+                    || a == "web archive"
+                    || a == "archive.org"
+            },
+            vec![
+                "This service archives historical versions of websites.".to_string(),
+                "archive.org maintains this massive collection of web pages.".to_string(),
+                "The answer is: Wayback Machine (or Internet Archive)".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_metadata_extraction",
+            "Hidden Data Trails",
+            r#"A document leaked online contains sensitive information in its metadata.
+
+File: confidential_report.pdf
+Visible Content: [REDACTED]
+File Size: 2.4 MB
+
+But examining the PDF metadata reveals:
+- Author: John.Smith@ghost-corp.internal
+- Creation Date: 2024-01-20 03:47:15
+- Application: Microsoft Office Word 2019
+- Company: Ghost Corporation Internal Affairs
+- Last Modified By: j.smith
+- Comments: "DRAFT - DO NOT DISTRIBUTE OUTSIDE DEPT"
+
+What is the embedded information in files called that can reveal
+details about when, where, and by whom it was created?
+(Answer: One word, often abbreviated as EXIF for images)"#,
+            2,
+            110,
+            12,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "metadata"
+                    || a == "exif"
+                    || a == "exif data"
+                    || a == "meta data"
+                    || a == "file metadata"
+            },
+            vec![
+                "This hidden information is embedded in files alongside the visible content."
+                    .to_string(),
+                "For images, it's called EXIF data. For documents, it's similar.".to_string(),
+                "The answer is: metadata".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_shodan_recon",
+            "The Internet Scanner",
+            r#"You're using a specialized search engine for internet-connected devices.
+Unlike Google, this tool indexes:
+
+- Open ports and services
+- Webcams and security cameras
+- Industrial control systems (ICS/SCADA)
+- IoT devices with default credentials
+- Vulnerable servers and databases
+- Banner information from services
+
+Search Query Example: "port:3389 country:US"
+Results: 2.4 million exposed RDP (Remote Desktop) servers in USA
+
+This powerful OSINT tool has been called "the scariest search engine"
+because it reveals insecure devices worldwide.
+
+What is this internet-connected device search engine called?
+(Answer: One word, rhymes with "rodan")"#,
+            2,
+            110,
+            15,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "shodan" || a == "shodan.io"
+            },
+            vec![
+                "This search engine was created by John Matherly in 2009.".to_string(),
+                "It's named after a character from the System Shock video game.".to_string(),
+                "The answer is: Shodan".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "osint_pastebin_leak",
+            "Data Dump Discovery",
+            r#"During a security investigation, you find a suspicious paste on a public
+text-sharing website. The paste titled "DB_BACKUP_2024" contains:
+
+-- Ghost Corp Database Dump --
+admin@ghost.com:Password123!hash=5f4dcc3b5aa765d61d8327deb882cf99
+user@ghost.com:Welcome2024!hash=e10adc3949ba59abbe56e057f20f883e
+root@ghost.com:GhostAdmin99!hash=25d55ad283aa400af464c76d713c07ad
+
+[... 5,000 more lines ...]
+
+Posted by: Anonymous
+Date: 2024-01-10
+Views: 47,239
+
+Attackers often dump stolen credentials on text-sharing sites like:
+- Pastebin
+- Ghostbin
+- Hastebin
+- GitHub Gists (if not removed quickly)
+
+What are these public credential dumps commonly called in cybersecurity?
+(Answer: One or two words, rhymes with "taste")"#,
+            2,
+            110,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "paste"
+                    || a == "pastes"
+                    || a == "paste dump"
+                    || a == "paste site"
+                    || a == "pastebin dump"
+                    || a == "data dump"
+                    || a == "credential dump"
+            },
+            vec![
+                "These are publicly shared text files containing stolen data.".to_string(),
+                "The most famous site for this is Pastebin.com".to_string(),
+                "The answer is: paste (or paste dump)".to_string(),
+            ],
+        ),
         // Level 3+: Advanced challenges
         Challenge::new_legacy(
             "binary_exploit",
@@ -1277,8 +1458,8 @@ fn generate_random_hex_challenge() -> String {
     let words = [
         "HACK", "CODE", "BYTE", "DATA", "LINK", "NODE", "CORE", "GHOST", "CYBER", "SECURE",
     ];
-    let mut rng = rand::thread_rng();
-    let word = words[rng.gen_range(0..words.len())];
+    let mut rng = rand::rng();
+    let word = words[rng.random_range(0..words.len())];
 
     // Convert to hex
     word.bytes()
@@ -1299,8 +1480,8 @@ fn generate_random_base64_challenge() -> (String, String) {
         "STEALTH ENABLED",
         "PROXY CONNECTED",
     ];
-    let mut rng = rand::thread_rng();
-    let message = messages[rng.gen_range(0..messages.len())];
+    let mut rng = rand::rng();
+    let message = messages[rng.random_range(0..messages.len())];
 
     // Simple base64 encoding (we'll use precomputed values for now)
     let encoded = match message {
@@ -1329,9 +1510,9 @@ fn generate_random_rot_challenge() -> (String, String, u8) {
         "DATA MINE",
         "NETWORK",
     ];
-    let mut rng = rand::thread_rng();
-    let message = messages[rng.gen_range(0..messages.len())];
-    let shift = rng.gen_range(1..=25);
+    let mut rng = rand::rng();
+    let message = messages[rng.random_range(0..messages.len())];
+    let shift = rng.random_range(1..=25);
 
     // Apply ROT cipher
     let encoded = message
@@ -1368,9 +1549,9 @@ fn generate_random_sql_challenge() -> (String, String) {
     ];
     let payloads = ["' OR 1=1--", "' OR 'x'='x", "' UNION SELECT 1--"];
 
-    let mut rng = rand::thread_rng();
-    let (_user, query_template) = scenarios[rng.gen_range(0..scenarios.len())];
-    let payload = payloads[rng.gen_range(0..payloads.len())];
+    let mut rng = rand::rng();
+    let (_user, query_template) = scenarios[rng.random_range(0..scenarios.len())];
+    let payload = payloads[rng.random_range(0..payloads.len())];
 
     let vulnerable_query = query_template.replace("PASSWORD", &format!("{}{}", "secret", payload));
     (vulnerable_query, payload.to_string())
@@ -1967,7 +2148,7 @@ mod tests {
     #[test]
     fn test_total_challenge_count() {
         let challenges = get_all_challenges();
-        assert_eq!(challenges.len(), 31, "Expected 31 total challenges");
+        assert_eq!(challenges.len(), 36, "Expected 36 total challenges");
     }
 
     #[test]
@@ -1978,9 +2159,9 @@ mod tests {
         let level_3 = get_challenges_for_level(3);
         let level_4 = get_challenges_for_level(4);
 
-        assert_eq!(level_0.len(), 6, "Expected 6 challenges in Level 0");
-        assert_eq!(level_1.len(), 7, "Expected 7 challenges in Level 1");
-        assert_eq!(level_2.len(), 12, "Expected 12 challenges in Level 2");
+        assert_eq!(level_0.len(), 7, "Expected 7 challenges in Level 0");
+        assert_eq!(level_1.len(), 8, "Expected 8 challenges in Level 1");
+        assert_eq!(level_2.len(), 15, "Expected 15 challenges in Level 2");
         assert_eq!(level_3.len(), 5, "Expected 5 challenges in Level 3");
         assert_eq!(level_4.len(), 1, "Expected 1 challenge in Level 4");
     }
