@@ -83,7 +83,9 @@ async function serveFile(filename, contentType) {
                 <li>✅ Web interface with xterm.js terminal emulator</li>
                 <li>✅ WebAssembly bindings and compilation</li>
                 <li>✅ Cloudflare Workers production deployment</li>
-                <li>✅ Version ${env.VERSION || '1.0.0'} deployed from ${env.DEPLOY_TAG || 'latest'}</li>
+                <li>✅ Version ${env.VERSION || "1.0.0"} deployed from ${
+            env.DEPLOY_TAG || "latest"
+        }</li>
             </ul>
         </div>
     </div>
