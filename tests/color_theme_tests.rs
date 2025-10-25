@@ -21,7 +21,7 @@ fn test_all_themes_exist() {
     assert!(theme_names.contains(&"High Contrast"));
     assert!(theme_names.contains(&"Dark"));
     assert!(theme_names.contains(&"Colorblind Friendly"));
-    assert!(theme_names.contains(&"Retro"));
+    assert!(theme_names.contains(&"Retro Green"));
 }
 
 #[test]
@@ -77,16 +77,16 @@ fn test_dark_theme() {
     assert_eq!(theme.name, "Dark");
     assert_eq!(theme.background, Color::Black);
     assert_eq!(theme.primary, Color::Grey);
-    assert_eq!(theme.accent, Color::DarkCyan);
+    assert_eq!(theme.accent, Color::Blue);
 }
 
 #[test]
 fn test_retro_theme() {
     let theme = ColorTheme::retro();
 
-    assert_eq!(theme.name, "Retro");
+    assert_eq!(theme.name, "Retro Green");
     assert_eq!(theme.primary, Color::Green);
-    assert_eq!(theme.accent, Color::Yellow);
+    assert_eq!(theme.accent, Color::Green);
     assert_eq!(theme.background, Color::Black);
 }
 
@@ -114,7 +114,7 @@ fn test_theme_persistence() {
 
     // Verify it persists
     let current_theme = get_theme();
-    assert_eq!(current_theme.name, "Retro");
+    assert_eq!(current_theme.name, "Retro Green");
 
     // Restore original
     set_theme(original_theme).unwrap();
