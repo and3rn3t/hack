@@ -3,6 +3,7 @@
 
 let gameEngine = null;
 let gameState = null;
+let wasmModule = null;
 let terminal = null;
 let currentTheme = "horror";
 let currentChallenge = null;
@@ -16,14 +17,14 @@ async function init() {
         updateLoadingProgress(10);
 
         // Load WebAssembly module
-        const wasm = await import("./pkg/hack_simulator.js");
-        await wasm.default();
+        wasmModule = await import("./pkg/hack_simulator.js");
+        await wasmModule.default();
 
         updateLoadingProgress(30);
 
         // Initialize game engine and state
-        gameEngine = new wasm.WebGameEngine();
-        gameState = new wasm.WebGameState();
+        gameEngine = new wasmModule.WebGameEngine();
+        gameState = new wasmModule.WebGameState();
 
         updateLoadingProgress(50);
 
@@ -220,7 +221,9 @@ function addToCommandHistory(input) {
 function executeCommand(command, args, originalInput) {
     const commandHandlers = {
         help: () => showHelpCommand(),
+        tutorial: () => showTutorial(),
         stats: () => showStatsCommand(),
+        progress: () => showProgressCommand(),
         challenges: () => showChallengesCommand(args[0]),
         list: () => showChallengesCommand(args[0]),
         start: () => handleChallengeCommand(args),
@@ -231,6 +234,8 @@ function executeCommand(command, args, originalInput) {
         submit: () => handleAnswerCommand(args),
         save: () => saveGame(),
         load: () => loadGame(),
+        export: () => exportSaveFile(),
+        import: () => showImportHelp(),
         theme: () => handleThemeCommand(args),
         clear: () => terminal.clear(),
         exit: () =>
@@ -293,9 +298,47 @@ function startGame() {
     terminal.writeln(
         'Type "help" for available commands or "challenges" to see all challenges.'
     );
+    
+    // Start atmospheric effects
+    startAtmosphericEffects();
 
     updateUI();
     showPrompt();
+}
+
+function startAtmosphericEffects() {
+    // Occasional subtle glitch effects
+    setInterval(() => {
+        if (Math.random() < 0.02 && gameState.sanity < 50) { // 2% chance, only when sanity is low
+            triggerSubtleGlitch();
+        }
+    }, 5000);
+    
+    // Sanity-based effects
+    setInterval(() => {
+        if (gameState.sanity < 25) {
+            triggerSanityEffect();
+        }
+    }, 10000);
+}
+
+function triggerSubtleGlitch() {
+    document.querySelector('.terminal-container').style.filter = 'hue-rotate(180deg)';
+    setTimeout(() => {
+        document.querySelector('.terminal-container').style.filter = '';
+    }, 100);
+}
+
+function triggerSanityEffect() {
+    const messages = [
+        "...something watches from the shadows...",
+        "...the code whispers secrets...", 
+        "...reality.exe has stopped responding...",
+        "...the ghost grows stronger...",
+    ];
+    
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    writeMuted(`\n${msg}\n`);
 }
 
 function showHelpCommand() {
@@ -321,8 +364,73 @@ function showHelpCommand() {
     writeAccent("Game Management:");
     terminal.writeln("  save               - Save your progress");
     terminal.writeln("  load               - Load saved progress");
+    terminal.writeln("  export             - Export save file for backup");
+    terminal.writeln("  import             - Import save file from backup");
     terminal.writeln("  theme <name>       - Change color theme");
     terminal.writeln("  clear              - Clear the terminal");
+    terminal.writeln("  tutorial           - Show interactive tutorial");
+    terminal.writeln("  progress           - Show detailed progress report");
+}
+
+function showTutorial() {
+    writeInfo("🎓 Interactive Tutorial");
+    terminal.writeln("");
+    writeAccent("Welcome to The Hack: Ghost Protocol!");
+    terminal.writeln("");
+    
+    writeMuted("This is a horror-themed cybersecurity challenge game where you'll learn:");
+    terminal.writeln("• Base64 and other encoding techniques");
+    terminal.writeln("• Cryptography and hash functions");  
+    terminal.writeln("• Web security vulnerabilities");
+    terminal.writeln("• Digital forensics methods");
+    terminal.writeln("• Binary exploitation basics");
+    terminal.writeln("");
+    
+    writeWarning("⚠️  SANITY SYSTEM:");
+    writeMuted("You start with 100 sanity points. Each challenge costs sanity.");
+    writeMuted("If your sanity reaches 0, the ghost will consume your mind!");
+    terminal.writeln("");
+    
+    writeSuccess("💡 GETTING STARTED:");
+    terminal.writeln('• Type "challenges" to see available challenges');
+    terminal.writeln('• Use "challenge <number>" to start a challenge');
+    terminal.writeln('• Submit answers with "answer <your_solution>"');
+    terminal.writeln('• Get hints with "hint" if you\'re stuck');
+    terminal.writeln('• Use "skip" to skip a challenge (costs sanity)');
+    terminal.writeln("");
+    
+    writeAccent("The ghost is waiting... Begin when ready.");
+}
+
+function showProgressCommand() {
+    const challengesJson = gameEngine.get_challenges_json();
+    const allChallenges = JSON.parse(challengesJson);
+    
+    writeInfo("📊 Your Progress:");
+    terminal.writeln("");
+    
+    const completedCount = gameState.completed_challenges.length;
+    const totalCount = allChallenges.length;
+    const completionPercent = Math.round((completedCount / totalCount) * 100);
+    
+    writeSuccess(`Challenges Completed: ${completedCount}/${totalCount} (${completionPercent}%)`);
+    
+    // Progress by level
+    for (let level = 0; level <= 4; level++) {
+        const levelChallenges = allChallenges.filter(c => c.level === level);
+        const levelCompleted = levelChallenges.filter(c => 
+            gameState.completed_challenges.includes(c.id)).length;
+        const levelName = ["Beginner", "Intermediate", "Advanced", "Expert", "Master"][level];
+        
+        const bar = "█".repeat(Math.floor(levelCompleted / levelChallenges.length * 10)) + 
+                   "░".repeat(10 - Math.floor(levelCompleted / levelChallenges.length * 10));
+        
+        terminal.writeln(`Level ${level} (${levelName}): [${bar}] ${levelCompleted}/${levelChallenges.length}`);
+    }
+    
+    terminal.writeln("");
+    writeWarning(`Sanity: ${gameState.sanity}/100`);
+    writeAccent(`Experience: ${gameState.xp} XP (Level ${gameState.level})`);
 }
 
 function showStatsCommand() {
@@ -352,9 +460,7 @@ function showChallengesCommand(level) {
         : challenges;
 
     for (const challenge of filteredChallenges) {
-        const completed = gameState
-            .completed_challenges()
-            .includes(challenge.id);
+        const completed = gameState.completed_challenges.includes(challenge.id);
         const status = completed ? "[✓]" : "[ ]";
         const statusColor = completed ? "success" : "muted";
 
@@ -367,7 +473,10 @@ function showChallengesCommand(level) {
 }
 
 function startChallenge(challengeId) {
-    const challenge = gameEngine.get_challenge(challengeId);
+    // Get all challenges as JSON and find the one we need
+    const challengesJson = gameEngine.get_challenges_json();
+    const challenges = JSON.parse(challengesJson);
+    const challenge = challenges.find((c) => c.id === challengeId);
 
     if (!challenge) {
         writeError(`Challenge '${challengeId}' not found.`);
@@ -383,22 +492,18 @@ function startChallenge(challengeId) {
 
     terminal.writeln("");
     writeHorrorText("═".repeat(60));
-    writeAccent(`CHALLENGE: ${challenge.title()}`);
+    writeAccent(`CHALLENGE: ${challenge.title}`);
     writeHorrorText("═".repeat(60));
     terminal.writeln("");
 
+    writeMuted(`Level: ${challenge.level} | Category: ${challenge.category}`);
     writeMuted(
-        `Level: ${challenge.level()} | Category: ${challenge.category()}`
-    );
-    writeMuted(
-        `Reward: ${challenge.xp_reward()} XP | Sanity Cost: ${challenge.sanity_cost()}`
+        `Reward: ${challenge.xp_reward} XP | Sanity Cost: ${challenge.sanity_cost}`
     );
     terminal.writeln("");
 
-    terminal.writeln(challenge.description());
-    terminal.writeln("");
     writeInfo("Challenge:");
-    terminal.writeln(challenge.prompt());
+    terminal.writeln(challenge.description);
     terminal.writeln("");
     writeMuted("Submit your answer with: answer <your_answer>");
     writeMuted("Get a hint with: hint");
@@ -412,7 +517,7 @@ function submitAnswer(answer) {
     }
 
     const resultJson = gameEngine.validate_challenge_answer(
-        currentChallenge.id(),
+        currentChallenge.id,
         answer,
         gameState
     );
@@ -443,9 +548,11 @@ function showHint() {
         return;
     }
 
-    // Get next available hint (simple implementation)
-    const hint = currentChallenge.get_hint(0); // For now, just show first hint
-    if (hint) {
+    // Get hints from challenge JSON data
+    const hints = currentChallenge.hints || [];
+    if (hints.length > 0) {
+        // For now, show the first hint. Could be enhanced to track hint progression
+        const hint = hints[0];
         writeWarning(`💡 Hint: ${hint}`);
     } else {
         writeError("No hints available for this challenge.");
@@ -459,9 +566,7 @@ function skipChallenge() {
     }
 
     writeWarning("Skipping challenge...");
-    const stillAlive = gameState.decrease_sanity(
-        currentChallenge.sanity_cost()
-    );
+    const stillAlive = gameState.decrease_sanity(currentChallenge.sanity_cost);
 
     if (!stillAlive) {
         showGameOver();
@@ -479,7 +584,7 @@ function showGameOver() {
 }
 
 function resetGame() {
-    gameState = new gameEngine.constructor.Module.WebGameState();
+    gameState = new wasmModule.WebGameState();
     currentChallenge = null;
     document.getElementById("gameOver").style.display = "none";
     updateUI();
@@ -488,8 +593,7 @@ function resetGame() {
 
 function saveGame() {
     try {
-        const saveData =
-            gameEngine.constructor.Module.generate_save_file(gameState);
+        const saveData = wasmModule.generate_save_file(gameState);
         localStorage.setItem("hack_game_save", saveData);
         writeSuccess("Game saved successfully!");
     } catch (error) {
@@ -502,7 +606,7 @@ function loadGame() {
     try {
         const saveData = localStorage.getItem("hack_game_save");
         if (saveData) {
-            gameState = gameEngine.constructor.Module.load_save_file(saveData);
+            gameState = wasmModule.load_save_file(saveData);
             writeSuccess("Game loaded successfully!");
             updateUI();
         } else {
@@ -518,27 +622,27 @@ function loadSavedGame() {
     const saveData = localStorage.getItem("hack_game_save");
     if (saveData) {
         try {
-            gameState = gameEngine.constructor.Module.load_save_file(saveData);
+            gameState = wasmModule.load_save_file(saveData);
         } catch (error) {
             console.error("Could not load saved game, starting fresh:", error);
             // Clear corrupted save data
             localStorage.removeItem("hack_game_save");
             // Initialize new game state
-            gameState = new gameEngine.constructor.Module.WebGameState();
+            gameState = new wasmModule.WebGameState();
         }
     }
 }
 
 function updateUI() {
-    document.getElementById("playerLevel").textContent = gameState.level();
-    document.getElementById("playerXP").textContent = gameState.xp();
-    document.getElementById("playerSanity").textContent = gameState.sanity();
+    document.getElementById("playerLevel").textContent = gameState.level;
+    document.getElementById("playerXP").textContent = gameState.xp;
+    document.getElementById("playerSanity").textContent = gameState.sanity;
     document.getElementById("challengesCompleted").textContent =
-        gameState.completed_challenges().length;
+        gameState.completed_challenges.length;
 
     // Update sanity color based on level
     const sanityElement = document.getElementById("playerSanity");
-    const sanity = gameState.sanity();
+    const sanity = gameState.sanity;
     if (sanity < 25) {
         sanityElement.style.color = "var(--text-danger)";
     } else if (sanity < 50) {
@@ -704,6 +808,89 @@ globalThis.toggleTheme = () => {
 globalThis.resetGame = () => {
     resetGame();
 };
+
+function exportSaveFile() {
+    try {
+        const saveData = localStorage.getItem("hackSimulatorSave");
+        if (!saveData) {
+            writeWarning("No save file found to export.");
+            return;
+        }
+
+        // Create downloadable file
+        const blob = new Blob([saveData], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `hack_simulator_save_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+        writeSuccess("Save file exported successfully!");
+        writeMuted("File saved to your Downloads folder.");
+    } catch (error) {
+        writeError("Failed to export save file: " + error.message);
+    }
+}
+
+function showImportHelp() {
+    writeInfo("Import Save File:");
+    writeMuted("1. Use 'export' command first to backup your current progress");
+    writeMuted("2. Visit this page on another device");
+    writeMuted("3. Drag and drop your .json save file onto the terminal");
+    writeMuted("4. Or use the file input that will appear...");
+    
+    // Create hidden file input
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".json";
+    fileInput.style.display = "none";
+    
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            importSaveFile(file);
+        }
+    });
+    
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    setTimeout(() => fileInput.remove(), 1000);
+}
+
+async function importSaveFile(file) {
+    try {
+        const saveData = await file.text();
+        JSON.parse(saveData); // Validate JSON
+        
+        // Backup current save
+        const currentSave = localStorage.getItem("hackSimulatorSave");
+        if (currentSave) {
+            localStorage.setItem("hackSimulatorSave_backup", currentSave);
+        }
+        
+        localStorage.setItem("hackSimulatorSave", saveData);
+        location.reload(); // Reload to apply new save
+    } catch (error) {
+        writeError("Invalid save file format: " + error.message);
+    }
+}
+
+// Add drag and drop support for save files
+document.addEventListener("dragover", (e) => {
+    e.preventDefault();
+});
+
+document.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].name.endsWith('.json')) {
+        writeInfo("Importing save file...");
+        importSaveFile(files[0]);
+    }
+});
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", init);

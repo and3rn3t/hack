@@ -1,6 +1,9 @@
 name = "hack-ghost-protocol"
 compatibility_date = "2024-01-01"
 
+# Custom domain: hack.andernet.dev
+# Configured via Cloudflare dashboard
+
 [assets]
 directory = "web/static"
 
