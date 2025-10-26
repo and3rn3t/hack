@@ -297,6 +297,25 @@ function detectMobile() {
     return isMobile;
 }
 
+// Send quick command from mobile quick bar
+function sendQuickCommand(command) {
+    if (!terminal) return;
+    
+    // Provide haptic feedback if available
+    if ('vibrate' in navigator) {
+        navigator.vibrate(10);
+    }
+    
+    // Write command to terminal
+    terminal.write(command);
+    
+    // Execute the command
+    setTimeout(() => {
+        terminal.write('\r');
+        handleCommand(command);
+    }, 100);
+}
+
 // Initialize mobile-specific features
 function initializeMobileFeatures() {
     // Add virtual keyboard
@@ -1810,16 +1829,38 @@ function cleanupLoadingAssets() {
 
 function updateLoadingProgress(percent, message) {
     const progress = document.getElementById("loadingProgress");
+    const percentDisplay = document.getElementById("loadingPercent");
+    const statusDisplay = document.getElementById("loadingStatus");
+    const tipDisplay = document.getElementById("loadingTip");
+    
     if (progress) {
         progress.style.width = `${percent}%`;
     }
+    
+    if (percentDisplay) {
+        percentDisplay.textContent = `${percent}%`;
+    }
 
     // Update loading message if provided
-    if (message) {
-        const loadingText = document.querySelector(".loading-text");
-        if (loadingText) {
-            loadingText.textContent = message;
-        }
+    if (message && statusDisplay) {
+        statusDisplay.textContent = message;
+    }
+    
+    // Rotate tips during loading
+    if (tipDisplay && Math.random() < 0.3) { // 30% chance to change tip
+        const tips = [
+            "💡 Tip: Use 'hint' command when stuck on challenges",
+            "💡 Tip: Your sanity decreases with each challenge",
+            "💡 Tip: Tab completion works for all commands",
+            "💡 Tip: Try different color themes with 'theme' command",
+            "💡 Tip: Don't trust everything the ghost tells you...",
+            "💡 Tip: Some challenges have hidden clues in descriptions",
+            "💡 Tip: Save your progress frequently!",
+            "💡 Tip: Commands are case-insensitive",
+            "💡 Tip: Check 'status' to see your progress",
+            "💡 Tip: The ghost knows more than it reveals..."
+        ];
+        tipDisplay.textContent = tips[Math.floor(Math.random() * tips.length)];
     }
 }
 

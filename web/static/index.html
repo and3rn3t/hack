@@ -67,6 +67,31 @@
                 box-sizing: border-box;
             }
 
+            /* Minimal scrollbar styling */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--border-color);
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--text-muted);
+            }
+
+            /* Firefox scrollbar */
+            * {
+                scrollbar-width: thin;
+                scrollbar-color: var(--border-color) transparent;
+            }
+
             body {
                 font-family: "Courier New", "Monaco", "Menlo", monospace;
                 background: var(--bg-primary);
@@ -99,27 +124,215 @@
                 z-index: 1000;
             }
 
+            .ghost-logo {
+                margin-bottom: 30px;
+                animation: ghost-float 3s ease-in-out infinite;
+            }
+
+            .ghost-logo pre {
+                color: var(--text-accent);
+                font-size: 0.7em;
+                line-height: 1.2;
+                text-align: center;
+                margin: 0;
+                text-shadow: 0 0 10px var(--text-accent);
+            }
+
+            @keyframes ghost-float {
+                0%, 100% {
+                    transform: translateY(0px);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+
             .loading-text {
                 color: var(--text-accent);
                 font-size: 1.2em;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
                 animation: pulse 2s infinite;
+                min-height: 30px;
             }
 
             .loading-bar {
-                width: 300px;
-                height: 4px;
+                width: 350px;
+                max-width: 90%;
+                height: 6px;
                 background: var(--border-color);
-                border-radius: 2px;
+                border-radius: 3px;
                 overflow: hidden;
+                position: relative;
             }
 
             .loading-progress {
                 height: 100%;
-                background: var(--text-accent);
+                background: linear-gradient(
+                    90deg,
+                    var(--text-accent) 0%,
+                    rgba(0, 255, 65, 0.5) 50%,
+                    var(--text-accent) 100%
+                );
+                background-size: 200% 100%;
                 width: 0%;
                 transition: width 0.3s ease;
-                animation: glow 2s infinite alternate;
+                animation: progress-shimmer 2s linear infinite;
+            }
+
+            @keyframes progress-shimmer {
+                0% {
+                    background-position: -100% 0;
+                }
+                100% {
+                    background-position: 200% 0;
+                }
+            }
+
+            .loading-percentage {
+                color: var(--text-accent);
+                font-size: 0.9em;
+                margin-top: 10px;
+                font-family: 'Courier New', monospace;
+            }
+
+            .loading-tips {
+                margin-top: 40px;
+                max-width: 500px;
+                text-align: center;
+                padding: 0 20px;
+            }
+
+            .tip-text {
+                color: var(--text-muted);
+                font-size: 0.9em;
+                animation: tip-fade 3s infinite;
+                min-height: 25px;
+            }
+
+            @keyframes tip-fade {
+                0%, 100% {
+                    opacity: 0.5;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            /* Mobile enhancements */
+            .mobile-quick-bar {
+                display: none;
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--border-color);
+                padding: 10px;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .mobile-quick-bar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .quick-cmd {
+                flex-shrink: 0;
+                padding: 10px 15px;
+                border: 1px solid var(--border-color);
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                border-radius: 4px;
+                min-width: 70px;
+                font-family: inherit;
+                font-size: 0.9em;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+            .quick-cmd:hover, .quick-cmd:active {
+                background: var(--border-color);
+                color: var(--text-accent);
+                transform: scale(1.05);
+            }
+
+            @media (max-width: 768px) {
+                .mobile-quick-bar {
+                    display: flex;
+                }
+
+                .header {
+                    flex-direction: column;
+                    padding: 15px;
+                }
+
+                .stats {
+                    width: 100%;
+                    justify-content: space-around;
+                    margin-top: 10px;
+                }
+
+                .controls {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                    padding: 8px 15px;
+                }
+
+                .btn {
+                    min-width: 80px;
+                    padding: 12px 16px;
+                    font-size: 0.85em;
+                }
+
+                .terminal-container {
+                    padding: 10px;
+                }
+
+                .loading-bar {
+                    width: 90%;
+                }
+
+                .ghost-logo pre {
+                    font-size: 0.5em;
+                }
+
+                .loading-text {
+                    font-size: 1em;
+                    padding: 0 20px;
+                    text-align: center;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .title {
+                    font-size: 1em;
+                }
+
+                .stat {
+                    font-size: 0.75em;
+                }
+
+                .stat-value {
+                    font-size: 1em;
+                }
+
+                .controls {
+                    gap: 6px;
+                    padding: 8px 10px;
+                }
+
+                .btn {
+                    min-width: 70px;
+                    padding: 10px 12px;
+                    font-size: 0.8em;
+                }
+
+                .loading-text {
+                    font-size: 0.9em;
+                }
+
+                .loading-tips {
+                    font-size: 0.85em;
+                }
             }
 
             @keyframes pulse {
@@ -643,9 +856,28 @@
     <body>
         <!-- Loading screen -->
         <div class="loading" id="loading">
-            <div class="loading-text">Initializing Ghost Protocol...</div>
+            <div class="ghost-logo">
+                <pre>
+    ▓▓▓▓▓▓▓▓▓▓▓
+  ▓▓▓▓▓▓▓▓▓▓▓▓▓
+ ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓▓▒▒▓▓▓▓▓▒▒▓▓▓▓
+▓▓▓▒▒▓▓▓▓▓▒▒▓▓▓▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓▓▓▓▓███▓▓▓▓▓▓▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+ ▓▓ ▓▓ ▓▓ ▓▓ ▓▓
+▓  ▓  ▓  ▓  ▓  ▓
+                </pre>
+            </div>
+            <div class="loading-text" id="loadingStatus">Initializing Ghost Protocol...</div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-percentage" id="loadingPercent">0%</div>
+            <div class="loading-tips">
+                <div class="tip-text" id="loadingTip">💡 Tip: Use 'hint' command when stuck on challenges</div>
             </div>
         </div>
 
@@ -687,6 +919,16 @@
             <div class="terminal-container">
                 <div id="terminal"></div>
                 <div class="scanlines"></div>
+            </div>
+
+            <!-- Mobile quick command bar -->
+            <div class="mobile-quick-bar" id="mobileQuickBar">
+                <button class="quick-cmd" onclick="sendQuickCommand('help')">❓ Help</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('hint')">💡 Hint</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('list')">📋 List</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('status')">📊 Status</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('save')">💾 Save</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('theme')">🎨 Theme</button>
             </div>
 
             <div class="controls">
