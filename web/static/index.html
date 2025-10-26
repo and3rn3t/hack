@@ -139,7 +139,8 @@
             }
 
             @keyframes ghost-float {
-                0%, 100% {
+                0%,
+                100% {
                     transform: translateY(0px);
                 }
                 50% {
@@ -192,7 +193,7 @@
                 color: var(--text-accent);
                 font-size: 0.9em;
                 margin-top: 10px;
-                font-family: 'Courier New', monospace;
+                font-family: "Courier New", monospace;
             }
 
             .loading-tips {
@@ -210,7 +211,8 @@
             }
 
             @keyframes tip-fade {
-                0%, 100% {
+                0%,
+                100% {
                     opacity: 0.5;
                 }
                 50% {
@@ -249,7 +251,8 @@
                 white-space: nowrap;
             }
 
-            .quick-cmd:hover, .quick-cmd:active {
+            .quick-cmd:hover,
+            .quick-cmd:active {
                 background: var(--border-color);
                 color: var(--text-accent);
                 transform: scale(1.05);
@@ -332,6 +335,150 @@
 
                 .loading-tips {
                     font-size: 0.85em;
+                }
+            }
+
+            /* Narrative Choice Modal */
+            .narrative-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 2000;
+                animation: fadeIn 0.5s ease;
+            }
+
+            .narrative-modal.active {
+                display: flex;
+            }
+
+            .narrative-content {
+                max-width: 700px;
+                width: 90%;
+                padding: 30px;
+                background: var(--bg-primary);
+                border: 2px solid var(--text-danger);
+                box-shadow: 0 0 30px var(--text-danger);
+                border-radius: 4px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .narrative-title {
+                color: var(--text-danger);
+                text-align: center;
+                margin-bottom: 15px;
+                font-size: 1.8em;
+                text-shadow: 0 0 10px var(--text-danger);
+                font-weight: bold;
+            }
+
+            .narrative-description {
+                color: var(--text-primary);
+                margin-bottom: 25px;
+                line-height: 1.6;
+                text-align: center;
+                font-size: 1.1em;
+            }
+
+            .narrative-choices {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 20px;
+            }
+
+            .narrative-choice-btn {
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                padding: 20px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-align: left;
+                color: var(--text-primary);
+                font-family: inherit;
+                font-size: 1em;
+                border-radius: 4px;
+            }
+
+            .narrative-choice-btn:hover {
+                border-color: var(--text-accent);
+                box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+                transform: translateX(10px);
+                background: var(--bg-primary);
+            }
+
+            .narrative-choice-btn:active {
+                transform: translateX(5px);
+            }
+
+            .narrative-choice-btn.locked {
+                opacity: 0.5;
+                cursor: not-allowed;
+                border-color: var(--text-muted);
+            }
+
+            .narrative-choice-btn.locked:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .choice-text {
+                color: var(--text-primary);
+                margin-bottom: 10px;
+                font-size: 1.1em;
+                font-weight: bold;
+            }
+
+            .choice-effects {
+                margin-top: 10px;
+                font-size: 0.9em;
+                color: var(--text-muted);
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .effect-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .effect-sanity {
+                color: var(--text-warning);
+            }
+
+            .effect-sanity.positive {
+                color: var(--text-accent);
+            }
+
+            .effect-xp {
+                color: var(--text-accent);
+            }
+
+            .effect-unlock {
+                color: #00ffff;
+            }
+
+            .choice-requirement {
+                color: var(--text-danger);
+                font-size: 0.85em;
+                margin-top: 8px;
+                font-style: italic;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
                 }
             }
 
@@ -871,13 +1018,17 @@
 ▓  ▓  ▓  ▓  ▓  ▓
                 </pre>
             </div>
-            <div class="loading-text" id="loadingStatus">Initializing Ghost Protocol...</div>
+            <div class="loading-text" id="loadingStatus">
+                Initializing Ghost Protocol...
+            </div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
             <div class="loading-percentage" id="loadingPercent">0%</div>
             <div class="loading-tips">
-                <div class="tip-text" id="loadingTip">💡 Tip: Use 'hint' command when stuck on challenges</div>
+                <div class="tip-text" id="loadingTip">
+                    💡 Tip: Use 'hint' command when stuck on challenges
+                </div>
             </div>
         </div>
 
@@ -890,6 +1041,19 @@
             <button class="btn btn-primary" onclick="resetGame()">
                 Try Again
             </button>
+        </div>
+
+        <!-- Narrative Choice Modal -->
+        <div class="narrative-modal" id="narrativeModal">
+            <div class="narrative-content">
+                <div class="narrative-title" id="narrativeTitle">A Choice Emerges...</div>
+                <div class="narrative-description" id="narrativeDescription">
+                    The story awaits your decision...
+                </div>
+                <div class="narrative-choices" id="narrativeChoices">
+                    <!-- Choices will be dynamically inserted here -->
+                </div>
+            </div>
         </div>
 
         <!-- Main game container -->
@@ -923,12 +1087,24 @@
 
             <!-- Mobile quick command bar -->
             <div class="mobile-quick-bar" id="mobileQuickBar">
-                <button class="quick-cmd" onclick="sendQuickCommand('help')">❓ Help</button>
-                <button class="quick-cmd" onclick="sendQuickCommand('hint')">💡 Hint</button>
-                <button class="quick-cmd" onclick="sendQuickCommand('list')">📋 List</button>
-                <button class="quick-cmd" onclick="sendQuickCommand('status')">📊 Status</button>
-                <button class="quick-cmd" onclick="sendQuickCommand('save')">💾 Save</button>
-                <button class="quick-cmd" onclick="sendQuickCommand('theme')">🎨 Theme</button>
+                <button class="quick-cmd" onclick="sendQuickCommand('help')">
+                    ❓ Help
+                </button>
+                <button class="quick-cmd" onclick="sendQuickCommand('hint')">
+                    💡 Hint
+                </button>
+                <button class="quick-cmd" onclick="sendQuickCommand('list')">
+                    📋 List
+                </button>
+                <button class="quick-cmd" onclick="sendQuickCommand('status')">
+                    📊 Status
+                </button>
+                <button class="quick-cmd" onclick="sendQuickCommand('save')">
+                    💾 Save
+                </button>
+                <button class="quick-cmd" onclick="sendQuickCommand('theme')">
+                    🎨 Theme
+                </button>
             </div>
 
             <div class="controls">

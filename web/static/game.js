@@ -300,18 +300,18 @@ function detectMobile() {
 // Send quick command from mobile quick bar
 function sendQuickCommand(command) {
     if (!terminal) return;
-    
+
     // Provide haptic feedback if available
-    if ('vibrate' in navigator) {
+    if ("vibrate" in navigator) {
         navigator.vibrate(10);
     }
-    
+
     // Write command to terminal
     terminal.write(command);
-    
+
     // Execute the command
     setTimeout(() => {
-        terminal.write('\r');
+        terminal.write("\r");
         handleCommand(command);
     }, 100);
 }
@@ -1832,11 +1832,11 @@ function updateLoadingProgress(percent, message) {
     const percentDisplay = document.getElementById("loadingPercent");
     const statusDisplay = document.getElementById("loadingStatus");
     const tipDisplay = document.getElementById("loadingTip");
-    
+
     if (progress) {
         progress.style.width = `${percent}%`;
     }
-    
+
     if (percentDisplay) {
         percentDisplay.textContent = `${percent}%`;
     }
@@ -1845,9 +1845,10 @@ function updateLoadingProgress(percent, message) {
     if (message && statusDisplay) {
         statusDisplay.textContent = message;
     }
-    
+
     // Rotate tips during loading
-    if (tipDisplay && Math.random() < 0.3) { // 30% chance to change tip
+    if (tipDisplay && Math.random() < 0.3) {
+        // 30% chance to change tip
         const tips = [
             "💡 Tip: Use 'hint' command when stuck on challenges",
             "💡 Tip: Your sanity decreases with each challenge",
@@ -1858,7 +1859,7 @@ function updateLoadingProgress(percent, message) {
             "💡 Tip: Save your progress frequently!",
             "💡 Tip: Commands are case-insensitive",
             "💡 Tip: Check 'status' to see your progress",
-            "💡 Tip: The ghost knows more than it reveals..."
+            "💡 Tip: The ghost knows more than it reveals...",
         ];
         tipDisplay.textContent = tips[Math.floor(Math.random() * tips.length)];
     }
@@ -3196,6 +3197,248 @@ function showShareText(text) {
     terminal.writeln("─".repeat(50));
     terminal.writeln(text);
     terminal.writeln("─".repeat(50));
+}
+
+// ============================================================================
+// Branching Narrative System (v1.6.0)
+// ============================================================================
+
+/**
+ * Show a narrative choice modal to the player
+ * @param {Object} branch - The narrative branch object
+ */
+function showNarrativeChoice(branch) {
+    const modal = document.getElementById('narrativeModal');
+    const title = document.getElementById('narrativeTitle');
+    const description = document.getElementById('narrativeDescription');
+    const choicesContainer = document.getElementById('narrativeChoices');
+
+    if (!modal || !title || !description || !choicesContainer) {
+        console.error('Narrative modal elements not found');
+        return;
+    }
+
+    // Set title and description
+    title.textContent = branch.title;
+    description.textContent = branch.description;
+
+    // Clear previous choices
+    choicesContainer.innerHTML = '';
+
+    // Create choice buttons
+    branch.choices.forEach((choice, index) => {
+        const choiceBtn = document.createElement('button');
+        choiceBtn.className = 'narrative-choice-btn';
+
+        // Check if choice is available
+        const isAvailable = checkChoiceRequirements(choice);
+        if (!isAvailable) {
+            choiceBtn.classList.add('locked');
+            choiceBtn.disabled = true;
+        }
+
+        // Choice text
+        const choiceText = document.createElement('div');
+        choiceText.className = 'choice-text';
+        choiceText.textContent = choice.text;
+        choiceBtn.appendChild(choiceText);
+
+        // Effects display
+        const effectsDiv = document.createElement('div');
+        effectsDiv.className = 'choice-effects';
+        
+        if (choice.effects) {
+            if (choice.effects.sanity_change !== 0) {
+                const sanityEffect = document.createElement('span');
+                sanityEffect.className = 'effect-item effect-sanity';
+                if (choice.effects.sanity_change > 0) {
+                    sanityEffect.classList.add('positive');
+                }
+                const sign = choice.effects.sanity_change > 0 ? '+' : '';
+                sanityEffect.textContent = `${sign}${choice.effects.sanity_change} Sanity`;
+                effectsDiv.appendChild(sanityEffect);
+            }
+
+            if (choice.effects.xp_change > 0) {
+                const xpEffect = document.createElement('span');
+                xpEffect.className = 'effect-item effect-xp';
+                xpEffect.textContent = `+${choice.effects.xp_change} XP`;
+                effectsDiv.appendChild(xpEffect);
+            }
+
+            if (choice.effects.unlock_challenges && choice.effects.unlock_challenges.length > 0) {
+                const unlockEffect = document.createElement('span');
+                unlockEffect.className = 'effect-item effect-unlock';
+                unlockEffect.textContent = '🔓 Unlocks hidden challenge';
+                effectsDiv.appendChild(unlockEffect);
+            }
+        }
+
+        choiceBtn.appendChild(effectsDiv);
+
+        // Requirements display
+        if (!isAvailable && choice.requirements) {
+            const reqDiv = document.createElement('div');
+            reqDiv.className = 'choice-requirement';
+            reqDiv.textContent = '🔒 Requirements not met';
+            choiceBtn.appendChild(reqDiv);
+        }
+
+        // Click handler
+        if (isAvailable) {
+            choiceBtn.onclick = () => makeNarrativeChoice(branch.id, index, choice);
+        }
+
+        choicesContainer.appendChild(choiceBtn);
+    });
+
+    // Show modal
+    modal.classList.add('active');
+
+    // Haptic feedback on mobile
+    if ('vibrate' in navigator) {
+        navigator.vibrate(20);
+    }
+}
+
+/**
+ * Check if choice requirements are met
+ * @param {Object} choice - The choice object
+ * @returns {boolean} - Whether requirements are met
+ */
+function checkChoiceRequirements(choice) {
+    if (!choice.requirements || !gameState) {
+        return true;
+    }
+
+    const reqs = choice.requirements;
+
+    // Check level requirement
+    if (reqs.min_level !== undefined && reqs.min_level !== null) {
+        if (gameState.current_level < reqs.min_level) {
+            return false;
+        }
+    }
+
+    // Check required challenges
+    if (reqs.required_challenges && reqs.required_challenges.length > 0) {
+        for (const challengeId of reqs.required_challenges) {
+            if (!gameState.completed_challenges.includes(challengeId)) {
+                return false;
+            }
+        }
+    }
+
+    // Check required flags
+    if (reqs.required_flags && reqs.required_flags.length > 0) {
+        for (const flag of reqs.required_flags) {
+            if (!gameState.story_flags || !gameState.story_flags.includes(flag)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Handle player making a narrative choice
+ * @param {string} branchId - The branch ID
+ * @param {number} choiceIndex - Index of the chosen option
+ * @param {Object} choice - The choice object
+ */
+async function makeNarrativeChoice(branchId, choiceIndex, choice) {
+    try {
+        // Apply choice effects through WASM
+        if (wasmModule && gameState) {
+            // Apply sanity change
+            if (choice.effects.sanity_change) {
+                gameState.sanity = Math.max(0, Math.min(100, 
+                    gameState.sanity + choice.effects.sanity_change));
+                updateUI();
+            }
+
+            // Apply XP change
+            if (choice.effects.xp_change) {
+                gameState.experience += choice.effects.xp_change;
+                updateUI();
+            }
+
+            // Add story flags
+            if (choice.effects.story_flags) {
+                if (!gameState.story_flags) {
+                    gameState.story_flags = [];
+                }
+                choice.effects.story_flags.forEach(flag => {
+                    if (!gameState.story_flags.includes(flag)) {
+                        gameState.story_flags.push(flag);
+                    }
+                });
+            }
+
+            // Record choice in history
+            if (!gameState.choice_history) {
+                gameState.choice_history = [];
+            }
+            gameState.choice_history.push(choice.branch_id);
+            gameState.active_narrative_branch = choice.branch_id;
+
+            // Show choice response
+            terminal.writeln('');
+            terminal.writeln('\x1b[35m═══════════════════════════════════════════════════\x1b[0m');
+            terminal.writeln('\x1b[36m' + choice.response + '\x1b[0m');
+            terminal.writeln('\x1b[35m═══════════════════════════════════════════════════\x1b[0m');
+            terminal.writeln('');
+
+            // Show effects applied
+            if (choice.effects.sanity_change !== 0) {
+                const sign = choice.effects.sanity_change > 0 ? '+' : '';
+                const color = choice.effects.sanity_change > 0 ? '\x1b[32m' : '\x1b[33m';
+                terminal.writeln(`${color}Sanity ${sign}${choice.effects.sanity_change}\x1b[0m`);
+            }
+            if (choice.effects.xp_change > 0) {
+                terminal.writeln(`\x1b[32m+${choice.effects.xp_change} XP\x1b[0m`);
+            }
+            terminal.writeln('');
+
+            // Save game state
+            saveGame();
+        }
+
+        // Hide modal
+        hideNarrativeModal();
+
+        // Haptic feedback
+        if ('vibrate' in navigator) {
+            navigator.vibrate([10, 50, 10]);
+        }
+
+    } catch (error) {
+        console.error('Error applying narrative choice:', error);
+        terminal.writeln('\x1b[31mError processing your choice. Please try again.\x1b[0m');
+    }
+}
+
+/**
+ * Hide the narrative modal
+ */
+function hideNarrativeModal() {
+    const modal = document.getElementById('narrativeModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+/**
+ * Check if a narrative branch should trigger
+ * @param {number} level - Current player level
+ * @param {number} sanity - Current sanity
+ * @returns {Object|null} - Branch to trigger or null
+ */
+function checkNarrativeTriggers(level, sanity) {
+    // This will be called by WASM after level changes
+    // For now, return null - will be implemented with WASM integration
+    return null;
 }
 
 // Initialize when page loads

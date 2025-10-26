@@ -215,6 +215,14 @@ pub struct GameState {
     pub user_preferences: UserPreferences,
     #[serde(default)]
     pub progress_analytics: ProgressAnalytics,
+
+    // v1.6.0 branching narrative system
+    #[serde(default)]
+    pub story_flags: HashSet<String>,
+    #[serde(default)]
+    pub choice_history: Vec<String>,
+    #[serde(default)]
+    pub active_narrative_branch: String,
 }
 
 impl GameState {
@@ -234,6 +242,9 @@ impl GameState {
             challenge_start_times: std::collections::HashMap::new(),
             user_preferences: UserPreferences::default(),
             progress_analytics: ProgressAnalytics::default(),
+            story_flags: HashSet::new(),
+            choice_history: Vec::new(),
+            active_narrative_branch: "main".to_string(),
         }
     }
 
@@ -928,6 +939,50 @@ impl GameState {
     pub fn update_session_analytics(&mut self, minutes_played: u64) {
         self.progress_analytics.total_playtime_minutes += minutes_played;
         self.progress_analytics.last_session = chrono::Utc::now();
+    }
+
+    // ===== v1.6.0 Branching Narrative Methods =====
+
+    /// Add a story flag when a narrative choice is made
+    pub fn add_story_flag(&mut self, flag: String) {
+        self.story_flags.insert(flag);
+    }
+
+    /// Check if a story flag is set
+    pub fn has_story_flag(&self, flag: &str) -> bool {
+        self.story_flags.contains(flag)
+    }
+
+    /// Get all story flags
+    pub fn get_story_flags(&self) -> &HashSet<String> {
+        &self.story_flags
+    }
+
+    /// Record a narrative choice
+    pub fn record_narrative_choice(&mut self, branch_id: String) {
+        self.choice_history.push(branch_id);
+    }
+
+    /// Get narrative choice history
+    pub fn get_choice_history(&self) -> &[String] {
+        &self.choice_history
+    }
+
+    /// Set active narrative branch
+    pub fn set_active_narrative_branch(&mut self, branch: String) {
+        self.active_narrative_branch = branch;
+    }
+
+    /// Get active narrative branch
+    pub fn get_active_narrative_branch(&self) -> &str {
+        &self.active_narrative_branch
+    }
+
+    /// Check if a narrative branch has been visited
+    pub fn has_visited_branch(&self, branch_prefix: &str) -> bool {
+        self.choice_history
+            .iter()
+            .any(|choice| choice.starts_with(branch_prefix))
     }
 
     // ===== v1.2.0 Enhanced Save System Methods =====
