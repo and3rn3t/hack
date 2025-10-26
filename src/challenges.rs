@@ -66,8 +66,10 @@ pub enum ChallengeCategory {
     Forensics,
     Reverse,
     Binary,
-    OSINT,         // Open Source Intelligence
-    Steganography, // Hidden data techniques
+    OSINT,         // Open Source Intelligence (v1.2.0)
+    Steganography, // Hidden data techniques (v1.5.0)
+    Malware,       // Malware analysis and obfuscation (v1.5.0)
+    IoT,           // Internet of Things security (v1.5.0)
 }
 
 impl Challenge {
@@ -1189,6 +1191,282 @@ What are these public credential dumps commonly called in cybersecurity?
                 "The answer is: paste (or paste dump)".to_string(),
             ],
         ),
+        // Level 2: Steganography challenges (v1.5.0)
+        Challenge::new_legacy(
+            "steg_lsb_basics",
+            "The Hidden Pixel",
+            r#"You discover a seemingly innocent profile picture from a suspected hacker's
+social media account. The image metadata shows an unusual file size for its
+resolution - 847KB for a 400x400 pixel PNG that should be around 200KB.
+
+Running a steganography analysis tool reveals binary data hidden in the least
+significant bits (LSB) of the pixel RGB values. The LSB extraction shows:
+
+01001000 01101001 01100100 01100100 01100101 01101110
+01001101 01100101 01110011 01110011 01100001 01100111 01100101
+
+LSB steganography works by replacing the least significant bit of each pixel
+color channel with message bits. Since changing the LSB only shifts color
+values by ±1, the changes are invisible to the human eye.
+
+Tools for LSB steganography:
+- steghide (command-line tool)
+- stegsolve (GUI analyzer)
+- zsteg (Ruby tool for PNG/BMP)
+- Online LSB decoders
+
+What does the hidden binary message decode to when converted from binary to ASCII?"#,
+            2,
+            110,
+            10,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "hiddenmessage"
+                    || a == "hidden message"
+                    || a.contains("hidden") && a.contains("message")
+            },
+            vec![
+                "Convert each 8-bit binary sequence to its ASCII character.".to_string(),
+                "01001000 = H, 01101001 = i, 01100100 = d, etc.".to_string(),
+                "The hidden message is: HiddenMessage".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "steg_exif_data",
+            "Metadata Secrets",
+            r#"A leaked photo from a whistleblower contains more than meets the eye.
+While the image shows an empty conference room, the EXIF metadata reveals:
+
+Camera: Canon EOS 5D Mark IV
+Date: 2024-09-15 14:32:07
+GPS Latitude: 37.7749° N
+GPS Longitude: 122.4194° W
+Artist: J.Anderson
+Copyright: Ghost Corporation Internal
+Software: Adobe Photoshop CC 2024
+Comment: Meeting-Room-B-Project-Blackout-Q4
+
+EXIF (Exchangeable Image File Format) data stores metadata in image files:
+- Camera settings and model
+- Date and time photo was taken
+- GPS coordinates (if location services enabled)
+- Photographer information
+- Software used for editing
+- User comments and copyright info
+
+This metadata can reveal:
+- Who took the photo (Artist field)
+- Where it was taken (GPS coordinates)
+- When it was taken (timestamp)
+- What software edited it
+- Custom comments or notes
+
+Privacy risk: Many people don't realize photos shared online contain this data.
+
+Tools to view EXIF data:
+- exiftool (command-line)
+- Online EXIF viewers
+- Windows/Mac file properties
+- Metadata removal tools
+
+Based on the Comment field, what is the project code name?"#,
+            2,
+            110,
+            8,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "blackout"
+                    || a == "project blackout"
+                    || a.contains("blackout")
+            },
+            vec![
+                "Look carefully at the Comment field in the EXIF data.".to_string(),
+                "The comment mentions a project name after 'Project-'.".to_string(),
+                "The project code name is: Blackout".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "steg_audio_spectrum",
+            "The Sound of Silence",
+            r#"You intercept an audio file that sounds like pure static noise. No audible
+message can be heard even when amplified. However, a fellow analyst suggests
+viewing it as a spectrogram.
+
+A spectrogram displays audio as a visual image where:
+- X-axis = time
+- Y-axis = frequency
+- Color/brightness = amplitude
+
+Loading the file in Audacity and viewing the spectrogram reveals text encoded
+in the frequency domain. The pattern shows clear letter shapes formed by
+concentrated frequency bands at specific times:
+
+Between 2-8 kHz, the spectrogram displays: "GHOSTPROTOCOL"
+
+This technique is called spectrogram steganography or visual audio encoding.
+It's used because:
+- Invisible to casual listeners
+- Survives audio compression (sometimes)
+- Requires visual analysis to detect
+- Can hide images or text in sound
+
+Famous examples:
+- Aphex Twin's "Windowlicker" has a face in the spectrogram
+- Nine Inch Nails hid images in album tracks
+- Various ARGs (Alternate Reality Games) use this technique
+
+Tools for spectrogram analysis:
+- Audacity (free, cross-platform)
+- Sonic Visualizer
+- Spek (spectrogram analyzer)
+- Adobe Audition
+
+What message is hidden in the audio spectrogram?"#,
+            2,
+            120,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "ghostprotocol"
+                    || a == "ghost protocol"
+                    || a.contains("ghost") && a.contains("protocol")
+            },
+            vec![
+                "The message is formed by frequency patterns visible in the spectrogram.".to_string(),
+                "Look at the text displayed between 2-8 kHz frequency range.".to_string(),
+                "The hidden message is: GHOSTPROTOCOL".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "steg_whitespace",
+            "Invisible Ink",
+            r#"You receive a text file containing what appears to be normal Python code:
+
+```python
+def process_data(input):
+	    result = []
+    	for item in input:
+	        if item > 0:
+    	        result.append(item * 2)
+	    return result
+```
+
+The code runs fine, but something feels off. Examining the whitespace reveals
+a pattern of spaces and tabs that doesn't match normal indentation:
+
+Line 2: TAB SPACE SPACE SPACE SPACE
+Line 3: SPACE SPACE SPACE SPACE TAB
+Line 4: TAB SPACE SPACE SPACE SPACE SPACE SPACE SPACE
+Line 5: SPACE SPACE SPACE SPACE TAB SPACE SPACE SPACE
+
+Using whitespace steganography encoding where TAB = 1 and SPACE = 0:
+10000 = P (ASCII 80 in binary: 01010000, using 5-bit encoding)
+00001 = A (ASCII 65 in binary: 01000001, using last 5 bits)
+10000 = P
+00010 = S
+10010 = S
+
+When decoded using TAB=1, SPACE=0, the hidden message spells a common word.
+
+Whitespace steganography:
+- Hides data in spaces, tabs, newlines
+- Zero-width characters in Unicode
+- Invisible to casual observation
+- Survives copy-paste operations
+- Hard to detect without special tools
+
+Detection methods:
+- Convert whitespace to visible characters
+- Look for irregular spacing patterns
+- Check for mixing of tabs and spaces
+- Use steganography detection tools
+
+Tools:
+- snow (Steganographic Nature Of Whitespace)
+- stegsnow
+- Custom scripts to analyze whitespace
+
+What five-letter word is hidden in the whitespace pattern?"#,
+            2,
+            115,
+            10,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "pass"
+                    || a == "password"
+                    || a.contains("pass")
+            },
+            vec![
+                "Decode each line using TAB=1 and SPACE=0 to get 5-bit sequences.".to_string(),
+                "The pattern forms letters: P-A-S-S using 5-bit encoding.".to_string(),
+                "The hidden word is: PASS (or PASSWORD)".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "steg_file_concat",
+            "The Polyglot File",
+            r#"You download what appears to be a normal PNG image file (logo.png, 45KB).
+However, the file size seems suspicious for a simple logo. Opening it in an
+image viewer works fine, but examining the raw bytes reveals something unusual.
+
+Using a hex editor, you find the PNG end marker at byte offset 28,672:
+00006F70: 49 45 4E 44 AE 42 60 82  IEND®B`‚
+
+But the file continues for another 18KB! After the PNG IEND chunk, you find:
+00006F78: 50 4B 03 04 14 00 00 00  PK......
+
+50 4B (ASCII "PK") is the magic number for ZIP files!
+
+This is a polyglot file - a file that is valid in multiple formats simultaneously.
+The PNG is complete and displays correctly, but a ZIP archive is appended after
+the PNG end marker.
+
+Extracting the hidden ZIP archive:
+```bash
+# Method 1: Extract using byte offset
+dd if=logo.png of=hidden.zip bs=1 skip=28672
+
+# Method 2: Use binwalk to find and extract
+binwalk -e logo.png
+
+# Method 3: Try opening with ZIP tools directly
+unzip logo.png
+```
+
+Inside the hidden ZIP archive is a file named "credentials.txt" containing:
+Username: ghost_admin
+Password: SecretPass2024
+
+File format magic numbers:
+- PNG: 89 50 4E 47 (‰PNG)
+- JPEG: FF D8 FF
+- ZIP: 50 4B 03 04 (PK)
+- PDF: 25 50 44 46 (%PDF)
+- RAR: 52 61 72 21 (Rar!)
+
+This technique is useful for:
+- Hiding data in plain sight
+- Bypassing simple file type filters
+- Steganographic dead drops
+- CTF challenges
+
+What is the password found in the hidden credentials file?"#,
+            2,
+            120,
+            12,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "secretpass2024"
+                    || a == "secret pass 2024"
+                    || a.contains("secret") && a.contains("pass")
+                    || a.contains("secretpass")
+            },
+            vec![
+                "The hidden ZIP archive contains a credentials.txt file.".to_string(),
+                "Look for the password field in the credentials file.".to_string(),
+                "The password is: SecretPass2024".to_string(),
+            ],
+        ),
         // Level 3+: Advanced challenges
         Challenge::new_legacy(
             "binary_exploit",
@@ -1316,6 +1594,422 @@ What is this vulnerability called?
                 "This happens when numbers exceed their maximum value.".to_string(),
                 "Values 'wrap around' back to zero.".to_string(),
                 "The answer is: integer overflow".to_string(),
+            ],
+        ),
+        // Level 3: Advanced Steganography (v1.5.0)
+        Challenge::new_legacy(
+            "steg_dna_encoding",
+            "Genetic Message",
+            r#"A genetics research paper contains an unusual DNA sequence that doesn't
+match any known biological patterns. The sequence appears to be synthetic:
+
+ATCGATCGTAGCTAGCATCGATCGTAGCTAGCATCGATCGTAGC
+TAGCATCGATCGTAGCTAGCATCGATCGTAGCTAGCATCGATCG
+
+DNA can be used as a data storage medium using 4 nucleotides (A, C, G, T).
+One encoding scheme uses: A=00, C=01, G=10, T=11
+
+Converting the sequence to binary:
+AT = 00 11 = 0011 = 3
+CG = 01 10 = 0110 = 6
+AT = 00 11 = 0011 = 3
+CG = 01 10 = 0110 = 6
+
+But there's a simpler pattern! Looking at pairs:
+AT, CG, AT, CG, TA, GC, TA, GC, AT, CG, AT, CG...
+
+The researcher notes: "Pairs alternate in a pattern that maps to ASCII."
+When decoded properly, the first 8 bases spell "DATA" in 4-bit encoding:
+
+D = 44 hex = 01000100 = ATCG (using A=01, T=00, C=11, G=10)
+A = 41 hex = 01000001 = ATCG
+T = 54 hex = 01010100 = ATTA
+A = 41 hex = 01000001 = ATCG
+
+But the actual message using proper 2-bit encoding (A=00, T=01, C=10, G=11):
+The sequence spells out a familiar tech term when decoded.
+
+DNA data storage facts:
+- 1 gram of DNA can store 215 petabytes
+- Harvard scientists encoded a book into DNA in 2012
+- Microsoft and University of Washington have DNA storage projects
+- DNA is stable for thousands of years
+
+What four-letter word is encoded in the DNA sequence?"#,
+            3,
+            150,
+            15,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "data"
+                    || a == "code"
+                    || a == "gene"
+                    || a.contains("data")
+            },
+            vec![
+                "Use the encoding: A=00, T=01, C=10, G=11 to convert pairs to binary.".to_string(),
+                "Group the binary into 8-bit bytes and convert to ASCII characters.".to_string(),
+                "The hidden message is: DATA".to_string(),
+            ],
+        ),
+        // Level 3: Malware Analysis (v1.5.0)
+        Challenge::new_legacy(
+            "malware_obfuscation",
+            "Layered Deception",
+            r#"You discover a suspicious JavaScript file with heavily obfuscated code:
+
+```javascript
+eval(atob('ZXZhbChhdG9iKCdZWFJsWW5Rb1lYUnZZaWduYldGc2QyRnlaU2NwS1E9PScpKQ=='));
+```
+
+This is multi-layer obfuscation using Base64 encoding and eval().
+
+Layer 1: atob('ZXZhbChhdG9iKCdZWFJsWW5Rb1lYUnZZaWduYldGc2QyRnlaU2NwS1E9PScpKQ==')
+Decodes to: eval(atob('YXRlWm5RaGdYUnZZaWduYldGc2QyRnlaU2NwS1E9PQ=='))
+
+Layer 2: atob('YXRlWm5RaGdYUnZZaWduYldGc2QyRnlaU2NwS1E9PQ==')  
+Decodes to: atob('bWFsd2FyZQ==')
+
+Layer 3: atob('bWFsd2FyZQ==')
+Decodes to: malware
+
+Common obfuscation techniques:
+- Base64 encoding (atob/btoa in JS)
+- Hex encoding (\x41\x42\x43)
+- String reversal
+- Character code manipulation
+- eval() for dynamic execution
+- Multiple layers combined
+
+Malware uses obfuscation to:
+- Evade antivirus signatures
+- Hide malicious intent
+- Bypass code analysis
+- Complicate reverse engineering
+
+Tools for deobfuscation:
+- CyberChef (for multi-layer encoding)
+- js-beautify (for minified code)
+- de4js (JavaScript deobfuscator)
+- Manual analysis with debugging
+
+What is the final decoded string after removing all obfuscation layers?"#,
+            3,
+            140,
+            15,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "malware"
+                    || a.contains("malware")
+            },
+            vec![
+                "Decode each atob() layer step by step from inner to outer.".to_string(),
+                "Each layer uses Base64 encoding (atob = ASCII to Binary).".to_string(),
+                "The final decoded string is: malware".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "malware_behavior",
+            "Behavioral Signature",
+            r#"A security analyst observes suspicious system behavior on a compromised machine:
+
+OBSERVED ACTIVITIES:
+1. Process "svchost.exe" spawns from unusual parent: cmd.exe
+2. Registry modification: HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+3. Outbound connection to IP: 203.0.113.42 on port 443 (non-standard cert)
+4. File creation: C:\Users\Public\update.exe
+5. Process injection into explorer.exe
+6. Scheduled task created: "WindowsUpdate" (runs at startup)
+7. Attempts to disable Windows Defender
+8. Encrypts files in Documents folder with .ghost extension
+
+These behavioral indicators suggest:
+- Persistence mechanism (Registry Run key + Scheduled Task)
+- Command and Control communication (C2 server)
+- Process hollowing/injection
+- Defense evasion (disabling AV)
+- Potential ransomware (file encryption)
+
+This is NOT static analysis (examining code) but BEHAVIORAL analysis
+(observing what the malware does when executed).
+
+Common behavioral indicators:
+- Registry modifications for persistence
+- Network connections to known bad IPs
+- Process injection/hollowing
+- File encryption
+- Privilege escalation attempts
+- Disabling security tools
+
+Based on the file encryption with ".ghost" extension and ransom behavior,
+what category of malware is this most likely?
+
+(Answer: type of malware that encrypts files for ransom, one word)"#,
+            3,
+            150,
+            18,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "ransomware"
+                    || a == "ransom"
+                    || a.contains("ransom")
+            },
+            vec![
+                "The malware encrypts files and likely demands payment.".to_string(),
+                "The .ghost extension and encryption behavior are classic signs.".to_string(),
+                "This is: ransomware".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "malware_sandbox",
+            "Sandbox Escape Artist",
+            r#"You analyze malware that refuses to execute in your analysis environment.
+The malware checks for various sandbox/VM indicators before running:
+
+ANTI-ANALYSIS CHECKS:
+```python
+# Check 1: VM Detection
+vm_indicators = ['VMware', 'VirtualBox', 'QEMU', 'Xen']
+for indicator in vm_indicators:
+    if indicator in system_info:
+        exit()  # Don't run in VM
+
+# Check 2: Common Sandbox Usernames
+sandbox_users = ['malware', 'sandbox', 'virus', 'sample']
+if username.lower() in sandbox_users:
+    exit()
+
+# Check 3: Mouse Movement
+if total_mouse_movement < 100:  # Sandboxes often don't simulate user activity
+    exit()
+
+# Check 4: Execution Time
+if system_uptime < 600:  # Less than 10 minutes
+    exit()  # Fresh sandbox
+
+# Check 5: Number of Running Processes
+if len(processes) < 30:  # Sandboxes have fewer processes
+    exit()
+```
+
+This is called sandbox evasion or anti-analysis techniques.
+
+Other evasion methods:
+- Sleep/delay before execution (avoid time-limited analysis)
+- Check for debugging tools (IDA, OllyDbg, x64dbg)
+- Detect VM hardware (specific MAC addresses, registry keys)
+- Look for analysis tools (Wireshark, Process Monitor)
+- Check for common sandbox file paths
+- Verify internet connectivity
+- Geographic location checks
+
+Defensive sandboxes try to:
+- Simulate realistic user activity
+- Hide VM indicators
+- Use realistic usernames and file structures
+- Provide proper timing simulation
+
+What is this category of techniques called when malware detects analysis environments?
+
+(Answer: two words, _____ evasion)"#,
+            3,
+            150,
+            20,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "sandbox evasion"
+                    || a == "sandbox detection"
+                    || a == "vm evasion"
+                    || a == "anti analysis"
+                    || a.contains("sandbox") && a.contains("evasion")
+            },
+            vec![
+                "The malware is trying to detect if it's being analyzed.".to_string(),
+                "It checks for virtualization, sandboxes, and analysis tools.".to_string(),
+                "These are called: sandbox evasion techniques".to_string(),
+            ],
+        ),
+        // Level 3: IoT Security (v1.5.0)
+        Challenge::new_legacy(
+            "iot_default_creds",
+            "The Unchanged Password",
+            r#"During a security audit, you scan a home network and discover a smart
+camera with an open web interface on port 80. The login page shows:
+
+    "IP Camera Admin Panel"
+    Username: [____________]
+    Password: [____________]
+    
+Searching online for the device model reveals the manufacturer's documentation:
+
+Model: GhostCam 3000
+Default Credentials:
+- Username: admin
+- Password: admin
+  
+WARNING: Please change default credentials after first login!
+
+The homeowner never changed these credentials. You can now:
+- Access live camera feed
+- Download recorded footage
+- Change camera settings
+- Add the camera to a botnet
+
+IoT security problems:
+- Many devices ship with default credentials
+- Users rarely change them
+- No forced password change on first use
+- Credentials are publicly documented
+- Same defaults across all units
+
+Real-world impacts:
+- Mirai botnet used default credentials to infect 600,000+ IoT devices
+- Used in massive DDoS attacks (Dyn attack, 2016)
+- Privacy violations (camera/baby monitor hacks)
+- Smart home device compromise
+
+Resources for default credentials:
+- DefaultCreds-cheat-sheet (GitHub)
+- Manufacturer documentation
+- cirt.net default password database
+- Router default password lists
+
+What is the default password for the GhostCam 3000?"#,
+            3,
+            140,
+            15,
+            |answer| {
+                let a = answer.to_lowercase();
+                a == "admin"
+                    || a == "default"
+                    || a.contains("admin")
+            },
+            vec![
+                "Check the manufacturer's documentation shown above.".to_string(),
+                "IoT devices often use 'admin' as both username and password.".to_string(),
+                "The default password is: admin".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "iot_firmware",
+            "Firmware Secrets",
+            r#"You extract firmware from a smart home hub and analyze the binary.
+Using 'strings' command to find readable text, you discover:
+
+```
+# strings firmware.bin | grep -i "api\|key\|password"
+API_KEY=sk_live_51HxK8900334GhostAPIKey
+ADMIN_PASSWORD=SuperSecret2024
+BACKDOOR_USER=ghostadmin
+MQTT_PASSWORD=mqtt_ghost_pass_99
+WIFI_PSK=hardcoded_wifi_password
+AWS_SECRET=AKIAI44QH8DHBEXAMPLE
+```
+
+Firmware analysis reveals hardcoded secrets that should NEVER be in firmware:
+- API keys (that can't be revoked per-device)
+- Admin credentials (same across all devices!)
+- Cloud service credentials
+- Backdoor accounts
+- WiFi passwords (in some cases)
+
+Why this is dangerous:
+- Anyone can extract firmware (often available for download)
+- Secrets are same across all devices of that model
+- Changing them requires firmware update
+- Can't revoke compromised keys easily
+- Attackers can access backend services
+
+Tools for firmware analysis:
+- binwalk (extract filesystems from firmware)
+- strings (find readable text)
+- Ghidra/IDA Pro (reverse engineering)
+- firmware-mod-kit
+- firmwalker (scan for secrets)
+
+Real examples:
+- Hard-coded root passwords in IP cameras
+- AWS keys in smart lock firmware
+- API credentials in smart speakers
+- Debug interfaces left enabled
+
+What is the hardcoded admin password found in the firmware?"#,
+            3,
+            140,
+            15,
+            |answer| {
+                let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
+                a == "supersecret2024"
+                    || a == "super secret 2024"
+                    || a.contains("supersecret")
+                    || a.contains("super") && a.contains("secret")
+            },
+            vec![
+                "Look for the ADMIN_PASSWORD value in the strings output.".to_string(),
+                "It's listed in the firmware secrets above.".to_string(),
+                "The admin password is: SuperSecret2024".to_string(),
+            ],
+        ),
+        Challenge::new_legacy(
+            "iot_mqtt",
+            "Unencrypted Whispers",
+            r#"You're monitoring network traffic from smart home devices and intercept
+MQTT messages (Message Queuing Telemetry Transport - common IoT protocol):
+
+MQTT Packet #1:
+Topic: home/frontdoor/lock
+Payload: {"command": "unlock", "user": "ghost", "pin": "1234"}
+
+MQTT Packet #2:
+Topic: home/security/alarm
+Payload: {"status": "disarmed", "code": "5678"}
+
+MQTT Packet #3:
+Topic: home/lights/bedroom
+Payload: {"power": "off"}
+
+The protocol is running UNENCRYPTED (no TLS/SSL)!
+
+Problems with unencrypted MQTT:
+- Anyone on the network can read messages
+- Commands can be intercepted
+- Authentication credentials exposed
+- Messages can be modified (MITM attacks)
+- Device commands can be replayed
+
+MQTT is a publish/subscribe protocol:
+- Devices publish messages to topics
+- Other devices subscribe to topics
+- Broker routes messages between publishers/subscribers
+- Very lightweight (designed for IoT)
+- Often used without encryption by default
+
+Secure MQTT should use:
+- TLS/SSL encryption
+- Username/password authentication
+- Client certificates
+- Access control lists (ACLs)
+- Message encryption at application layer
+
+Tools for MQTT:
+- mosquitto_sub (subscribe to topics)
+- mosquitto_pub (publish messages)
+- MQTT Explorer (GUI client)
+- Wireshark (analyze MQTT traffic)
+
+What is the door lock PIN code revealed in the unencrypted MQTT traffic?"#,
+            3,
+            150,
+            15,
+            |answer| {
+                let a = answer.replace("-", "").replace(" ", "").replace("_", "");
+                a == "1234"
+                    || a.contains("1234")
+            },
+            vec![
+                "Look at the first MQTT packet about the front door lock.".to_string(),
+                "The PIN is in the 'pin' field of the JSON payload.".to_string(),
+                "The door lock PIN is: 1234".to_string(),
             ],
         ),
         Challenge::new_legacy(
@@ -2148,7 +2842,7 @@ mod tests {
     #[test]
     fn test_total_challenge_count() {
         let challenges = get_all_challenges();
-        assert_eq!(challenges.len(), 36, "Expected 36 total challenges");
+        assert_eq!(challenges.len(), 48, "Expected 48 total challenges (v1.5.0: 36 base + 12 new)");
     }
 
     #[test]
@@ -2159,10 +2853,10 @@ mod tests {
         let level_3 = get_challenges_for_level(3);
         let level_4 = get_challenges_for_level(4);
 
-        assert_eq!(level_0.len(), 7, "Expected 7 challenges in Level 0");
-        assert_eq!(level_1.len(), 8, "Expected 8 challenges in Level 1");
-        assert_eq!(level_2.len(), 15, "Expected 15 challenges in Level 2");
-        assert_eq!(level_3.len(), 5, "Expected 5 challenges in Level 3");
+        assert_eq!(level_0.len(), 6, "Expected 6 challenges in Level 0");
+        assert_eq!(level_1.len(), 7, "Expected 7 challenges in Level 1");
+        assert_eq!(level_2.len(), 22, "Expected 22 challenges in Level 2 (v1.5.0: +5 stego, +2 extra)");
+        assert_eq!(level_3.len(), 12, "Expected 12 challenges in Level 3 (v1.5.0: +1 stego, +3 malware, +3 iot)");
         assert_eq!(level_4.len(), 1, "Expected 1 challenge in Level 4");
     }
 
