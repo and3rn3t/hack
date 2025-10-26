@@ -6,7 +6,15 @@ use std::sync::OnceLock;
 
 #[cfg(feature = "web")]
 fn default_check_answer() -> fn(&str) -> bool {
-    |_| false
+    fn always_false(_: &str) -> bool {
+        false
+    }
+    always_false
+}
+
+#[cfg(feature = "web")]
+fn default_check_answer_override() -> Option<fn(&str) -> bool> {
+    None
 }
 
 /// Challenge difficulty variant (v1.2.0)
@@ -52,7 +60,10 @@ pub struct ChallengeVariant {
     pub sanity_multiplier: f32,
     pub hints_override: Option<Vec<String>>,
     pub time_limit: Option<u64>, // in seconds, for advanced/expert modes
-    #[cfg_attr(feature = "web", serde(skip, default = "default_check_answer"))]
+    #[cfg_attr(
+        feature = "web",
+        serde(skip, default = "default_check_answer_override")
+    )]
     pub check_answer_override: Option<fn(&str) -> bool>,
     pub solution_override: Option<String>,
 }
@@ -1275,9 +1286,7 @@ Based on the Comment field, what is the project code name?"#,
             8,
             |answer| {
                 let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
-                a == "blackout"
-                    || a == "project blackout"
-                    || a.contains("blackout")
+                a == "blackout" || a == "project blackout" || a.contains("blackout")
             },
             vec![
                 "Look carefully at the Comment field in the EXIF data.".to_string(),
@@ -1332,7 +1341,8 @@ What message is hidden in the audio spectrogram?"#,
                     || a.contains("ghost") && a.contains("protocol")
             },
             vec![
-                "The message is formed by frequency patterns visible in the spectrogram.".to_string(),
+                "The message is formed by frequency patterns visible in the spectrogram."
+                    .to_string(),
                 "Look at the text displayed between 2-8 kHz frequency range.".to_string(),
                 "The hidden message is: GHOSTPROTOCOL".to_string(),
             ],
@@ -1392,9 +1402,7 @@ What five-letter word is hidden in the whitespace pattern?"#,
             10,
             |answer| {
                 let a = answer.to_lowercase().replace("-", " ").replace("_", " ");
-                a == "pass"
-                    || a == "password"
-                    || a.contains("pass")
+                a == "pass" || a == "password" || a.contains("pass")
             },
             vec![
                 "Decode each line using TAB=1 and SPACE=0 to get 5-bit sequences.".to_string(),
@@ -1641,10 +1649,7 @@ What four-letter word is encoded in the DNA sequence?"#,
             15,
             |answer| {
                 let a = answer.to_lowercase();
-                a == "data"
-                    || a == "code"
-                    || a == "gene"
-                    || a.contains("data")
+                a == "data" || a == "code" || a == "gene" || a.contains("data")
             },
             vec![
                 "Use the encoding: A=00, T=01, C=10, G=11 to convert pairs to binary.".to_string(),
@@ -1667,7 +1672,7 @@ This is multi-layer obfuscation using Base64 encoding and eval().
 Layer 1: atob('ZXZhbChhdG9iKCdZWFJsWW5Rb1lYUnZZaWduYldGc2QyRnlaU2NwS1E9PScpKQ==')
 Decodes to: eval(atob('YXRlWm5RaGdYUnZZaWduYldGc2QyRnlaU2NwS1E9PQ=='))
 
-Layer 2: atob('YXRlWm5RaGdYUnZZaWduYldGc2QyRnlaU2NwS1E9PQ==')  
+Layer 2: atob('YXRlWm5RaGdYUnZZaWduYldGc2QyRnlaU2NwS1E9PQ==')
 Decodes to: atob('bWFsd2FyZQ==')
 
 Layer 3: atob('bWFsd2FyZQ==')
@@ -1699,8 +1704,7 @@ What is the final decoded string after removing all obfuscation layers?"#,
             15,
             |answer| {
                 let a = answer.to_lowercase();
-                a == "malware"
-                    || a.contains("malware")
+                a == "malware" || a.contains("malware")
             },
             vec![
                 "Decode each atob() layer step by step from inner to outer.".to_string(),
@@ -1750,9 +1754,7 @@ what category of malware is this most likely?
             18,
             |answer| {
                 let a = answer.to_lowercase();
-                a == "ransomware"
-                    || a == "ransom"
-                    || a.contains("ransom")
+                a == "ransomware" || a == "ransom" || a.contains("ransom")
             },
             vec![
                 "The malware encrypts files and likely demands payment.".to_string(),
@@ -1839,14 +1841,14 @@ camera with an open web interface on port 80. The login page shows:
     "IP Camera Admin Panel"
     Username: [____________]
     Password: [____________]
-    
+
 Searching online for the device model reveals the manufacturer's documentation:
 
 Model: GhostCam 3000
 Default Credentials:
 - Username: admin
 - Password: admin
-  
+
 WARNING: Please change default credentials after first login!
 
 The homeowner never changed these credentials. You can now:
@@ -1880,9 +1882,7 @@ What is the default password for the GhostCam 3000?"#,
             15,
             |answer| {
                 let a = answer.to_lowercase();
-                a == "admin"
-                    || a == "default"
-                    || a.contains("admin")
+                a == "admin" || a == "default" || a.contains("admin")
             },
             vec![
                 "Check the manufacturer's documentation shown above.".to_string(),
@@ -2003,8 +2003,7 @@ What is the door lock PIN code revealed in the unencrypted MQTT traffic?"#,
             15,
             |answer| {
                 let a = answer.replace("-", "").replace(" ", "").replace("_", "");
-                a == "1234"
-                    || a.contains("1234")
+                a == "1234" || a.contains("1234")
             },
             vec![
                 "Look at the first MQTT packet about the front door lock.".to_string(),
@@ -2842,7 +2841,11 @@ mod tests {
     #[test]
     fn test_total_challenge_count() {
         let challenges = get_all_challenges();
-        assert_eq!(challenges.len(), 48, "Expected 48 total challenges (v1.5.0: 36 base + 12 new)");
+        assert_eq!(
+            challenges.len(),
+            48,
+            "Expected 48 total challenges (v1.5.0: 36 base + 12 new)"
+        );
     }
 
     #[test]
@@ -2855,8 +2858,16 @@ mod tests {
 
         assert_eq!(level_0.len(), 6, "Expected 6 challenges in Level 0");
         assert_eq!(level_1.len(), 7, "Expected 7 challenges in Level 1");
-        assert_eq!(level_2.len(), 22, "Expected 22 challenges in Level 2 (v1.5.0: +5 stego, +2 extra)");
-        assert_eq!(level_3.len(), 12, "Expected 12 challenges in Level 3 (v1.5.0: +1 stego, +3 malware, +3 iot)");
+        assert_eq!(
+            level_2.len(),
+            22,
+            "Expected 22 challenges in Level 2 (v1.5.0: +5 stego, +2 extra)"
+        );
+        assert_eq!(
+            level_3.len(),
+            12,
+            "Expected 12 challenges in Level 3 (v1.5.0: +1 stego, +3 malware, +3 iot)"
+        );
         assert_eq!(level_4.len(), 1, "Expected 1 challenge in Level 4");
     }
 
