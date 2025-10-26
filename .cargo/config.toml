@@ -46,3 +46,8 @@ watch-test = "watch -x 'test'"
 
 [target.x86_64-apple-darwin]
 # macOS-specific configuration
+
+[target.wasm32-unknown-unknown]
+# WebAssembly configuration
+# Enable wasm_js flag for getrandom support
+rustflags = ["--cfg", "getrandom_backend=\"wasm_js\""]
