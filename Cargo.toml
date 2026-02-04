@@ -48,7 +48,7 @@ web = [
 
 [dev-dependencies]
 proptest = "1.4"
-criterion = "0.7"
+criterion = "0.8"
 wasm-bindgen-test = "0.3"
 
 [[bench]]
